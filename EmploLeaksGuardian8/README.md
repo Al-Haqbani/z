@@ -2,6 +2,14 @@
 
 EmploLeaksGuardian is a lightweight Python tool that scans various platforms for leaked API keys or secrets. It demonstrates a pluggable architecture with placeholder implementations for multiple sources such as GitHub, DockerHub, and more.
 
+## Downloading with Git
+
+Clone the repository using:
+```bash
+git clone https://github.com/yourname/EmploLeaksGuardian.git
+cd EmploLeaksGuardian/EmploLeaksGuardian8
+```
+
 ## Usage
 
 ```
