@@ -13,7 +13,7 @@ class GitHubSearcher:
         "Mozilla/5.0 (X11; Linux x86_64)"
     ]
 
-    def __init__(self, token=None, silent=False):
+    def __init__(self, token=None, silent=False, **_):
         self.token = token
         self.silent = silent
 
@@ -24,7 +24,7 @@ class GitHubSearcher:
             headers["Authorization"] = f"token {self.token}"
         return headers
 
-    def search(self, keyword, scan_commits=False):
+    def search(self, keyword, scan_commits=False, **_):
         endpoint = f"{self.BASE_URL}/search/code"
         params = {"q": keyword, "per_page": 5}
         leaks = []

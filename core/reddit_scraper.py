@@ -10,7 +10,7 @@ class RedditSearcher:
 
     BASE_URL = "https://www.reddit.com/search.json"
 
-    def __init__(self, silent=False):
+    def __init__(self, silent=False, **_):
         self.silent = silent
 
     def _headers(self):

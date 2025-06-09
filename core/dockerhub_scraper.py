@@ -9,7 +9,7 @@ class DockerHubSearcher:
 
     BASE_URL = "https://hub.docker.com/v2"
 
-    def __init__(self, silent=False):
+    def __init__(self, silent=False, **_):
         self.silent = silent
 
     def search(self, keyword, **kwargs):

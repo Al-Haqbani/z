@@ -12,7 +12,7 @@ class PyPiPackageSearcher:
     SEARCH_URL = "https://pypi.org/search/"
     INFO_URL = "https://pypi.org/pypi/{pkg}/json"
 
-    def __init__(self, silent=False):
+    def __init__(self, silent=False, **_):
         self.silent = silent
 
     def _extract_names(self, html):

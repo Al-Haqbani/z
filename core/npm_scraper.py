@@ -10,7 +10,7 @@ class NPMPackageSearcher:
 
     BASE_URL = "https://registry.npmjs.org"
 
-    def __init__(self, silent=False):
+    def __init__(self, silent=False, **_):
         self.silent = silent
 
     def search(self, keyword, **kwargs):

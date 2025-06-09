@@ -10,7 +10,7 @@ class HuggingFaceSearcher:
 
     BASE_URL = "https://huggingface.co/api/models"
 
-    def __init__(self, silent=False):
+    def __init__(self, silent=False, **_):
         self.silent = silent
 
     def search(self, keyword, **kwargs):

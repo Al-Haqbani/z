@@ -11,7 +11,7 @@ class PastebinSearcher:
     SEARCH_URL = "https://psbdmp.ws/api/search/"
     DUMP_URL = "https://psbdmp.ws/api/dump/"
 
-    def __init__(self, silent=False):
+    def __init__(self, silent=False, **_):
         self.silent = silent
 
     def search(self, keyword, **kwargs):
