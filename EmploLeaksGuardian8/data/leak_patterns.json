@@ -1,0 +1,11 @@
+[
+    {"name": "GitHub Token", "regex": "ghp_[A-Za-z0-9]{36}"},
+    {"name": "Slack Token", "regex": "xox[baprs]-[A-Za-z0-9-]{10,48}"},
+    {"name": "AWS Access Key", "regex": "AKIA[0-9A-Z]{16}"},
+    {"name": "AWS Secret Key", "regex": "(?i)aws(.{0,20})?(?:['\\\"'][0-9a-zA-Z\\/+=]{40}['\\\""])"},
+    {"name": "Google API Key", "regex": "AIza[0-9A-Za-z\\-_]{35}"},
+    {"name": "Stripe Secret", "regex": "sk_live_[0-9a-zA-Z]{24}"},
+    {"name": "Twilio API Key", "regex": "SK[0-9a-fA-F]{32}"},
+    {"name": "SendGrid Key", "regex": "SG\\.[A-Za-z0-9_-]{22}\\.[A-Za-z0-9_-]{43}"},
+    {"name": "Facebook Access Token", "regex": "EAACEdEose0cBA[0-9A-Za-z]+"}
+]
