@@ -1,0 +1,4 @@
+[
+    {"name": "GitHub Token", "regex": "ghp_[A-Za-z0-9]{36}"},
+    {"name": "Slack Token", "regex": "xox[baprs]-[A-Za-z0-9-]{10,48}"}
+]
