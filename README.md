@@ -2,6 +2,8 @@
 
 EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It demonstrates a pluggable architecture and includes basic implementations for GitHub, DockerHub, HuggingFace, NPM, PyPI, Reddit and Pastebin.
 
+The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy.
+
 ## Usage
 
 ```
