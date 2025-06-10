@@ -4,7 +4,7 @@ EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms fo
 
 The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy.
 
-It can optionally search specific employee accounts by username and also provides a small web interface on `localhost:8000` for controlling scans and viewing results.
+It can optionally search specific employee accounts by username and also provides a modern web interface on `localhost:8000` for controlling scans and viewing results. The UI is styled with Bootstrap for a clean look.
 
 ## Usage
 

@@ -7,39 +7,108 @@ app = Flask(__name__)
 
 INDEX_HTML = """
 <!doctype html>
-<title>EmploLeaksGuardian</title>
-<h1>EmploLeaksGuardian Search</h1>
-<form method="post" action="/search">
-Keyword: <input name="keyword" required><br>
-Employees (comma separated usernames): <input name="employees"><br>
-GitHub Token: <input name="token"><br>
-Platforms:<br>
-{% for p in platforms %}
-  <label><input type="checkbox" name="platforms" value="{{p}}" checked> {{p}}</label><br>
-{% endfor %}
-<label><input type="checkbox" name="use_employees"> Search Employee Accounts</label><br>
-<input type="submit" value="Search">
-</form>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>EmploLeaksGuardian</title>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">
+    <style>
+      body { padding-top: 40px; }
+    </style>
+  </head>
+  <body class=\"bg-light\">
+    <div class=\"container\">
+      <div class=\"text-center mb-4\">
+        <h1 class=\"display-5\">EmploLeaksGuardian</h1>
+        <p class=\"lead\">Search multiple platforms for leaked secrets</p>
+      </div>
+      <form method=\"post\" action=\"/search\" class=\"bg-white p-4 rounded shadow-sm\">
+        <div class=\"mb-3\">
+          <label class=\"form-label\">Keyword</label>
+          <input name=\"keyword\" class=\"form-control\" required>
+        </div>
+        <div class=\"mb-3\">
+          <label class=\"form-label\">Employees (comma separated usernames)</label>
+          <input name=\"employees\" class=\"form-control\">
+        </div>
+        <div class=\"mb-3\">
+          <label class=\"form-label\">GitHub Token</label>
+          <input name=\"token\" class=\"form-control\">
+        </div>
+        <div class=\"mb-3\">
+          <label class=\"form-label\">Platforms</label>
+          <div class=\"row\">
+            {% for p in platforms %}
+            <div class=\"col-6 col-md-4\">
+              <div class=\"form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"platforms\" value=\"{{p}}\" id=\"p_{{p}}\" checked>
+                <label class=\"form-check-label\" for=\"p_{{p}}\">{{p}}</label>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class=\"form-check mb-3\">
+          <input class=\"form-check-input\" type=\"checkbox\" name=\"use_employees\" id=\"use_emp\">
+          <label class=\"form-check-label\" for=\"use_emp\">Search Employee Accounts</label>
+        </div>
+        <button class=\"btn btn-primary\" type=\"submit\">Search</button>
+      </form>
+    </div>
+  </body>
+</html>
 """
 
 RESULTS_HTML = """
 <!doctype html>
-<title>Results</title>
-<h1>Results</h1>
-<table border="1" cellpadding="5" cellspacing="0">
-<tr><th>#</th><th>Source</th><th>File</th><th>Leak Type</th><th>Value</th><th>Severity</th></tr>
-{% for idx, r in enumerate(results,1) %}
-<tr style="background-color:{% if r.severity=='high' %}#ffcccc{% elif r.severity=='medium' %}#fff4cc{% else %}#f0f0f0{% endif %};">
-<td>{{idx}}</td>
-<td>{{r.source}}</td>
-<td><a href="{{r.file}}" target="_blank">link</a></td>
-<td>{{r.leak_type}}</td>
-<td>{{r.value}}</td>
-<td>{{r.severity}}</td>
-</tr>
-{% endfor %}
-</table>
-<a href="/">Back</a>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>Results</title>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">
+    <style>
+      body { padding-top: 40px; }
+    </style>
+  </head>
+  <body class=\"bg-light\">
+    <div class=\"container\">
+      <h1 class=\"mb-4\">Results</h1>
+      {% if results %}
+      <div class=\"table-responsive\">
+        <table class=\"table table-bordered table-striped\">
+          <thead class=\"table-dark\">
+            <tr>
+              <th>#</th>
+              <th>Source</th>
+              <th>File</th>
+              <th>Leak Type</th>
+              <th>Value</th>
+              <th>Severity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for idx, r in enumerate(results,1) %}
+            <tr class="{% if r.severity=='high' %}table-danger{% elif r.severity=='medium' %}table-warning{% else %}table-light{% endif %}">
+              <td>{{idx}}</td>
+              <td>{{r.source}}</td>
+              <td><a href="{{r.file}}" target="_blank">{{r.file}}</a></td>
+              <td>{{r.leak_type}}</td>
+              <td><code>{{r.value}}</code></td>
+              <td>{{r.severity}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p>No leaks found.</p>
+      {% endif %}
+      <a href="/" class=\"btn btn-secondary mt-3\">Back</a>
+    </div>
+  </body>
+</html>
 """
 
 @app.route("/")
