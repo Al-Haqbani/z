@@ -24,33 +24,40 @@ class GitHubSearcher:
             headers["Authorization"] = f"token {self.token}"
         return headers
 
-    def search(self, keyword, scan_commits=False, **_):
+    def search(self, keyword, scan_commits=False, employees=None, **_):
         endpoint = f"{self.BASE_URL}/search/code"
-        params = {"q": keyword, "per_page": 5}
+        queries = [keyword]
+        if employees:
+            for user in str(employees).split(','):
+                user = user.strip()
+                if user:
+                    queries.append(f"{keyword} user:{user}")
         leaks = []
-        try:
-            resp = requests.get(endpoint, headers=self._headers(), params=params)
-            if resp.status_code == 200:
-                data = resp.json()
-                for item in data.get("items", []):
-                    raw_url = item.get("html_url", "").replace("blob/", "raw/")
-                    file_resp = requests.get(raw_url, headers=self._headers())
-                    if file_resp.status_code == 200:
-                        found = detect_leaks(file_resp.text)
-                        for name, value in found:
-                            leaks.append({
-                                "source": "GitHub",
-                                "file": raw_url,
-                                "leak_type": name,
-                                "value": value,
-                            })
-                    time.sleep(random.uniform(1, 3))
-            else:
+        for q in queries:
+            params = {"q": q, "per_page": 5}
+            try:
+                resp = requests.get(endpoint, headers=self._headers(), params=params)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    for item in data.get("items", []):
+                        raw_url = item.get("html_url", "").replace("blob/", "raw/")
+                        file_resp = requests.get(raw_url, headers=self._headers())
+                        if file_resp.status_code == 200:
+                            found = detect_leaks(file_resp.text)
+                            for name, value in found:
+                                leaks.append({
+                                    "source": "GitHub",
+                                    "file": raw_url,
+                                    "leak_type": name,
+                                    "value": value,
+                                })
+                        time.sleep(random.uniform(1, 3))
+                else:
+                    if not self.silent:
+                        print(
+                            f"GitHub API request failed: {resp.status_code} {resp.text[:100]}"
+                        )
+            except Exception as exc:
                 if not self.silent:
-                    print(
-                        f"GitHub API request failed: {resp.status_code} {resp.text[:100]}"
-                    )
-        except Exception as exc:
-            if not self.silent:
-                print(f"GitHub search error: {exc}")
+                    print(f"GitHub search error: {exc}")
         return leaks
