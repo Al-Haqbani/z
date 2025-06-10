@@ -24,7 +24,10 @@ def main():
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 employees = GitHubSearcher.get_repo_contributors(repo, token)
-            results = SearchManager.start_search(platform, keyword, token=token, employees=employees)
+            verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
+            results = SearchManager.start_search(
+                platform, keyword, token=token, employees=employees, verify_ai=verify_ai
+            )
             if results:
                 print_results(results)
             else:
@@ -36,7 +39,10 @@ def main():
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 employees = GitHubSearcher.get_repo_contributors(repo, token)
-            results = SearchManager.run_full_auto_mode(keyword, token=token, employees=employees)
+            verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
+            results = SearchManager.run_full_auto_mode(
+                keyword, token=token, employees=employees, verify_ai=verify_ai
+            )
             if results:
                 print_results(results)
             else:

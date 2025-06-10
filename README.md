@@ -5,6 +5,7 @@ EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms fo
 The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy.
 
 It can optionally search employees automatically by inspecting the contributors of a repository you provide. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look.
+Leak results may also be verified by a free AI classifier. When enabled from the prompts, each detected token is checked with a lightweight model from HuggingFace to reduce false positives.
 
 ## Usage
 
@@ -21,6 +22,12 @@ To use the web interface separately, run:
 
 ```
 python3 webapp.py
+```
+
+AI verification requires the optional `transformers` and `torch` packages. Install them with:
+
+```
+pip install transformers torch
 ```
 
 This implementation provides a basic framework. Each searcher can be extended or improved by customizing the logic in the `core/` directory.
