@@ -5,6 +5,16 @@ import time
 from .leak_detector import detect_leaks
 
 
+def _fetch_json(url, headers):
+    try:
+        resp = requests.get(url, headers=headers)
+        if resp.status_code == 200:
+            return resp.json()
+    except Exception:
+        pass
+    return None
+
+
 class GitHubSearcher:
     BASE_URL = "https://api.github.com"
     USER_AGENTS = [
@@ -24,14 +34,26 @@ class GitHubSearcher:
             headers["Authorization"] = f"token {self.token}"
         return headers
 
+    @classmethod
+    def get_repo_contributors(cls, repo, token=None):
+        """Return a list of usernames contributing to the given repo."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        url = f"{cls.BASE_URL}/repos/{repo}/contributors"
+        data = _fetch_json(url, headers)
+        if not data:
+            return []
+        return [item.get("login") for item in data if item.get("login")]
+
     def search(self, keyword, scan_commits=False, employees=None, **_):
         endpoint = f"{self.BASE_URL}/search/code"
         queries = [keyword]
         if employees:
-            for user in str(employees).split(','):
-                user = user.strip()
-                if user:
-                    queries.append(f"{keyword} user:{user}")
+            if isinstance(employees, str):
+                employees = [e.strip() for e in employees.split(',') if e.strip()]
+            for user in employees:
+                queries.append(f"{keyword} user:{user}")
         leaks = []
         for q in queries:
             params = {"q": q, "per_page": 5}

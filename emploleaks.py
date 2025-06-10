@@ -1,6 +1,7 @@
 import sys
 from core.token_manager import get_github_token
 from core.search_manager import SearchManager
+from core.github_api import GitHubSearcher
 from output.terminal_output import print_results
 
 try:
@@ -21,7 +22,8 @@ def main():
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
             if use_emp:
-                employees = input("Employee usernames (comma separated): ")
+                repo = input("GitHub repository (owner/repo) for lookup: ")
+                employees = GitHubSearcher.get_repo_contributors(repo, token)
             results = SearchManager.start_search(platform, keyword, token=token, employees=employees)
             if results:
                 print_results(results)
@@ -32,7 +34,8 @@ def main():
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
             if use_emp:
-                employees = input("Employee usernames (comma separated): ")
+                repo = input("GitHub repository (owner/repo) for lookup: ")
+                employees = GitHubSearcher.get_repo_contributors(repo, token)
             results = SearchManager.run_full_auto_mode(keyword, token=token, employees=employees)
             if results:
                 print_results(results)

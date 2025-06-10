@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from typing import List, Dict
 
 
@@ -18,11 +19,19 @@ def _load_patterns() -> List[Dict[str, str]]:
     try:
         with open(json_path, "r", encoding="utf-8") as f:
             patterns = json.load(f)
-        # ensure we loaded a list of dicts with name/regex keys
-        if isinstance(patterns, list) and all(
-            isinstance(p, dict) and "name" in p and "regex" in p for p in patterns
-        ):
-            return patterns
+        cleaned = []
+        if isinstance(patterns, list):
+            for p in patterns:
+                if not isinstance(p, dict) or "name" not in p or "regex" not in p:
+                    continue
+                reg = p["regex"].replace("\\z", "\\Z")
+                try:
+                    re.compile(reg)
+                except re.error:
+                    continue
+                cleaned.append({"name": p["name"], "regex": reg})
+        if cleaned:
+            return cleaned
     except Exception:
         pass
 
