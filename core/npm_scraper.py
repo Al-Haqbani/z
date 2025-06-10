@@ -35,6 +35,11 @@ class NPMPackageSearcher:
                                 "value": value,
                             })
                     time.sleep(random.uniform(1, 2))
+            else:
+                if not self.silent:
+                    print(
+                        f"NPM API request failed: {resp.status_code} {resp.text[:100]}"
+                    )
         except Exception as exc:
             if not self.silent:
                 print(f"NPM search error: {exc}")
