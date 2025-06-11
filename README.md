@@ -12,6 +12,12 @@ Leak results may also be verified by a free AI classifier. When enabled from the
 ```
 python3 emploleaks.py
 ```
+Install the dependencies first:
+
+```
+pip install -r requirements.txt
+```
+
 The tool will prompt for a GitHub token which is required for GitHub API access.
 If you skip the token or provide an invalid one, GitHub searches may return no
 results and you will see a warning message.
@@ -29,5 +35,9 @@ AI verification requires the optional `transformers` and `torch` packages. Insta
 ```
 pip install transformers torch
 ```
+
+The main dependencies (listed in `requirements.txt`) are required to run the
+scanner. The optional packages above are only needed if you enable the AI
+verification feature from the prompts.
 
 This implementation provides a basic framework. Each searcher can be extended or improved by customizing the logic in the `core/` directory.
