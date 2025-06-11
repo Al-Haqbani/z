@@ -5,6 +5,7 @@ from .npm_scraper import NPMPackageSearcher
 from .pypi_scraper import PyPiPackageSearcher
 from .reddit_scraper import RedditSearcher
 from .pastebin_scraper import PastebinSearcher
+from .gitlab_api import GitLabSearcher
 from .ai_verifier import is_valid_leak
 
 
@@ -17,6 +18,7 @@ class SearchManager:
         "pypi": PyPiPackageSearcher,
         "reddit": RedditSearcher,
         "pastebin": PastebinSearcher,
+        "gitlab": GitLabSearcher,
     }
 
     @classmethod

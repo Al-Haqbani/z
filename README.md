@@ -1,12 +1,12 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, DockerHub, HuggingFace, NPM, PyPI, Reddit and Pastebin by performing real HTTP requests.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit and Pastebin by performing real HTTP requests.
 In addition, a **Smart JS Scanner** can crawl JavaScript files from any domain (including optional subdomains and archived copies via the Wayback Machine).
 
 The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy.
 
-It can optionally search employees automatically by inspecting the contributors of a repository you provide. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look.
-Leak results may also be verified by a free AI classifier. When enabled from the prompts, each detected token is checked with a lightweight model from HuggingFace to reduce false positives.
+It can optionally search employees automatically by inspecting the contributors of a repository you provide. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser.
+Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives.
 
 ## Usage
 
@@ -52,4 +52,4 @@ python3 emploleaks.py
 # choose "Smart JS Scan" from the menu
 ```
 
-This implementation provides a basic framework. Each searcher can be extended or improved by customizing the logic in the `core/` directory.
+This implementation provides a basic framework. Each searcher can be extended or improved by customizing the logic in the `core/` directory. Support for **GitLab** has been added in this version to broaden coverage across more code hosting platforms.

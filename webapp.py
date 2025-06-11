@@ -49,9 +49,23 @@ INDEX_HTML = """
             {% endfor %}
           </div>
         </div>
-        <div class=\"form-check mb-3\">
+        <div class=\"form-check mb-2\">
           <input class=\"form-check-input\" type=\"checkbox\" name=\"use_employees\" id=\"use_emp\">
           <label class=\"form-check-label\" for=\"use_emp\">Search Employee Accounts</label>
+        </div>
+        <div class=\"row mb-3\">
+          <div class=\"col-md-4 form-check\">
+            <input class=\"form-check-input\" type=\"checkbox\" name=\"scan_commits\" id=\"scan_commits\">
+            <label class=\"form-check-label\" for=\"scan_commits\">Scan Commits</label>
+          </div>
+          <div class=\"col-md-4 form-check\">
+            <input class=\"form-check-input\" type=\"checkbox\" name=\"verify_ai\" id=\"verify_ai\">
+            <label class=\"form-check-label\" for=\"verify_ai\">Verify with AI</label>
+          </div>
+          <div class=\"col-md-4 form-check\">
+            <input class=\"form-check-input\" type=\"checkbox\" name=\"silent\" id=\"silent\">
+            <label class=\"form-check-label\" for=\"silent\">Silent Mode</label>
+          </div>
         </div>
         <button class=\"btn btn-primary\" type=\"submit\">Search</button>
       </form>
@@ -75,6 +89,7 @@ RESULTS_HTML = """
   <body class=\"bg-light\">
     <div class=\"container\">
       <h1 class=\"mb-4\">Results</h1>
+      <p class=\"mb-3\"><strong>{{ results|length }} leaks found</strong></p>
       {% if results %}
       <div class=\"table-responsive\">
         <table class=\"table table-bordered table-striped\">
@@ -128,16 +143,19 @@ def search():
     token = request.form.get("token") or os.environ.get("GITHUB_TOKEN")
     employees = request.form.get("employees")
     use_emp = request.form.get("use_employees") == "on"
+    scan_commits = request.form.get("scan_commits") == "on"
+    verify_ai = request.form.get("verify_ai") == "on"
+    silent = request.form.get("silent") == "on"
     chosen = request.form.getlist("platforms")
     results = []
     if not chosen:
         chosen = list(SearchManager.PLATFORM_MAP.keys())
-    kwargs = {"token": token, "employees": employees if use_emp else None}
+    kwargs = {"token": token, "scan_commits": scan_commits, "silent": silent}
     if set(chosen) == set(SearchManager.PLATFORM_MAP.keys()):
-        results = SearchManager.run_full_auto_mode(keyword, **kwargs)
+        results = SearchManager.run_full_auto_mode(keyword, employees=employees if use_emp else None, verify_ai=verify_ai, **kwargs)
     else:
         for platform in chosen:
-            results.extend(SearchManager.start_search(platform, keyword, **kwargs))
+            results.extend(SearchManager.start_search(platform, keyword, employees=employees if use_emp else None, verify_ai=verify_ai, **kwargs))
     for r in results:
         r.setdefault("severity", _assign_severity(r.get("leak_type", "")))
     return render_template_string(RESULTS_HTML, results=results)
