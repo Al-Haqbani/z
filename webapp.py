@@ -34,7 +34,15 @@ INDEX_HTML = """
         </div>
         <div class=\"mb-3\">
           <label class=\"form-label\">GitHub Token</label>
-          <input name=\"token\" class=\"form-control\">
+          <input name=\"github_token\" class=\"form-control\">
+        </div>
+        <div class=\"mb-3\">
+          <label class=\"form-label\">GitLab Token</label>
+          <input name=\"gitlab_token\" class=\"form-control\">
+        </div>
+        <div class=\"mb-3\">
+          <label class=\"form-label\">SwaggerHub Token</label>
+          <input name=\"swagger_token\" class=\"form-control\">
         </div>
         <div class=\"mb-3\">
           <label class=\"form-label\">Platforms</label>
@@ -140,7 +148,9 @@ def _assign_severity(leak_type: str) -> str:
 @app.route("/search", methods=["POST"])
 def search():
     keyword = request.form.get("keyword", "")
-    token = request.form.get("token") or os.environ.get("GITHUB_TOKEN")
+    gh_token = request.form.get("github_token") or os.environ.get("GITHUB_TOKEN")
+    gl_token = request.form.get("gitlab_token") or os.environ.get("GITLAB_TOKEN")
+    swagger_token = request.form.get("swagger_token") or os.environ.get("SWAGGER_TOKEN")
     employees = request.form.get("employees")
     use_emp = request.form.get("use_employees") == "on"
     scan_commits = request.form.get("scan_commits") == "on"
@@ -150,12 +160,26 @@ def search():
     results = []
     if not chosen:
         chosen = list(SearchManager.PLATFORM_MAP.keys())
-    kwargs = {"token": token, "scan_commits": scan_commits, "silent": silent}
+    tokens = {"github": gh_token, "gitlab": gl_token, "swaggerhub": swagger_token}
+    kwargs = {"tokens": tokens, "scan_commits": scan_commits, "silent": silent}
     if set(chosen) == set(SearchManager.PLATFORM_MAP.keys()):
-        results = SearchManager.run_full_auto_mode(keyword, employees=employees if use_emp else None, verify_ai=verify_ai, **kwargs)
+        results = SearchManager.run_full_auto_mode(
+            keyword,
+            employees=employees if use_emp else None,
+            verify_ai=verify_ai,
+            **kwargs,
+        )
     else:
         for platform in chosen:
-            results.extend(SearchManager.start_search(platform, keyword, employees=employees if use_emp else None, verify_ai=verify_ai, **kwargs))
+            results.extend(
+                SearchManager.start_search(
+                    platform,
+                    keyword,
+                    employees=employees if use_emp else None,
+                    verify_ai=verify_ai,
+                    **kwargs,
+                )
+            )
     for r in results:
         r.setdefault("severity", _assign_severity(r.get("leak_type", "")))
     return render_template_string(RESULTS_HTML, results=results)

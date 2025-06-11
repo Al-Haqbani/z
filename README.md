@@ -1,7 +1,9 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit and Pastebin by performing real HTTP requests.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin and **SwaggerHub** by performing real HTTP requests.
 In addition, a **Smart JS Scanner** can crawl JavaScript files from any domain (including optional subdomains and archived copies via the Wayback Machine).
+
+When commit scanning is enabled, GitHub results also include leaked secrets found in commit messages and diffs, allowing detection of tokens in deleted files.
 
 The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy.
 
@@ -19,9 +21,10 @@ Install the dependencies first:
 pip install -r requirements.txt
 ```
 
-The tool will prompt for a GitHub token which is required for GitHub API access.
-If you skip the token or provide an invalid one, GitHub searches may return no
-results and you will see a warning message.
+At startup you will be asked for API tokens for GitHub, GitLab and SwaggerHub.
+Providing these tokens greatly improves the results on those platforms. If you
+skip a token or provide an invalid one, searches on that platform may return no
+results and you may see warning messages.
 
 Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results are displayed in a formatted table using `rich`, or you can launch the web interface from the menu.
 
@@ -52,4 +55,4 @@ python3 emploleaks.py
 # choose "Smart JS Scan" from the menu
 ```
 
-This implementation provides a basic framework. Each searcher can be extended or improved by customizing the logic in the `core/` directory. Support for **GitLab** has been added in this version to broaden coverage across more code hosting platforms.
+This implementation provides a basic framework. Each searcher can be extended or improved by customizing the logic in the `core/` directory. Support for **GitLab** and **SwaggerHub** has been added to broaden coverage across more platforms.

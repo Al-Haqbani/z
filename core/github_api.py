@@ -47,7 +47,8 @@ class GitHubSearcher:
         return [item.get("login") for item in data if item.get("login")]
 
     def search(self, keyword, scan_commits=False, employees=None, **_):
-        endpoint = f"{self.BASE_URL}/search/code"
+        code_endpoint = f"{self.BASE_URL}/search/code"
+        commit_endpoint = f"{self.BASE_URL}/search/commits"
         queries = [keyword]
         if employees:
             if isinstance(employees, str):
@@ -58,7 +59,7 @@ class GitHubSearcher:
         for q in queries:
             params = {"q": q, "per_page": 5}
             try:
-                resp = requests.get(endpoint, headers=self._headers(), params=params)
+                resp = requests.get(code_endpoint, headers=self._headers(), params=params)
                 if resp.status_code == 200:
                     data = resp.json()
                     for item in data.get("items", []):
@@ -82,4 +83,36 @@ class GitHubSearcher:
             except Exception as exc:
                 if not self.silent:
                     print(f"GitHub search error: {exc}")
+
+            if scan_commits:
+                headers = self._headers()
+                headers["Accept"] = "application/vnd.github.cloak-preview"
+                try:
+                    c_resp = requests.get(commit_endpoint, headers=headers, params=params)
+                    if c_resp.status_code == 200:
+                        cdata = c_resp.json()
+                        for item in cdata.get("items", []):
+                            commit_url = item.get("url")
+                            details = _fetch_json(commit_url, headers)
+                            if not details:
+                                continue
+                            msg = details.get("commit", {}).get("message", "")
+                            patch = "\n".join(f.get("patch", "") for f in details.get("files", []))
+                            content = msg + "\n" + patch
+                            for name, value in detect_leaks(content):
+                                leaks.append({
+                                    "source": "GitHub",
+                                    "file": item.get("html_url", commit_url),
+                                    "leak_type": name,
+                                    "value": value,
+                                })
+                            time.sleep(random.uniform(1, 2))
+                    else:
+                        if not self.silent:
+                            print(
+                                f"GitHub commit search failed: {c_resp.status_code} {c_resp.text[:100]}"
+                            )
+                except Exception as exc:
+                    if not self.silent:
+                        print(f"GitHub commit search error: {exc}")
         return leaks
