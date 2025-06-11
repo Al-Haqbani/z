@@ -14,7 +14,7 @@ def main():
     print("EmploLeaksGuardian - Simple Leak Scanner")
     token = get_github_token()
     while True:
-        print("\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Web Interface\n4. Exit")
+        print("\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. Web Interface\n5. Exit")
         choice = input("Select option: ")
         if choice == "1":
             platform = input("Platform (github/dockerhub/huggingface/npm/pypi/reddit/pastebin): ")
@@ -48,11 +48,32 @@ def main():
             else:
                 print("No leaks found.")
         elif choice == "3":
+            from is_scanner.js_scanner import run_smart_scan
+
+            domain = input("Domain: ")
+            sub = input("Enumerate subdomains? (y/N): ").lower() == "y"
+            use_wb = input("Use Wayback? (Y/n): ").lower() != "n"
+            use_lf = input("Run LinkFinder? (y/N): ").lower() == "y"
+            found = run_smart_scan(domain, include_subdomains=sub, use_wayback=use_wb, use_linkfinder=use_lf)
+            results = [
+                {
+                    "source": "JavaScript",
+                    "file": item["url"],
+                    "leak_type": item["leak_type"],
+                    "value": item["value"],
+                }
+                for item in found
+            ]
+            if results:
+                print_results(results)
+            else:
+                print("No leaks found.")
+        elif choice == "4":
             if web_app:
                 web_app.run(port=8000)
             else:
                 print("Web interface not available (Flask missing)")
-        elif choice == "4":
+        elif choice == "5":
             sys.exit()
         else:
             print("Invalid option")

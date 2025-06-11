@@ -1,6 +1,7 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It demonstrates a pluggable architecture and includes basic implementations for GitHub, DockerHub, HuggingFace, NPM, PyPI, Reddit and Pastebin.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, DockerHub, HuggingFace, NPM, PyPI, Reddit and Pastebin by performing real HTTP requests.
+In addition, a **Smart JS Scanner** can crawl JavaScript files from any domain (including optional subdomains and archived copies via the Wayback Machine).
 
 The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy.
 
@@ -22,7 +23,7 @@ The tool will prompt for a GitHub token which is required for GitHub API access.
 If you skip the token or provide an invalid one, GitHub searches may return no
 results and you will see a warning message.
 
-Follow the prompts to perform a normal scan on a chosen platform or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results are displayed in a formatted table using `rich`, or you can launch the web interface from the menu.
+Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results are displayed in a formatted table using `rich`, or you can launch the web interface from the menu.
 
 To use the web interface separately, run:
 
@@ -39,5 +40,16 @@ pip install transformers torch
 The main dependencies (listed in `requirements.txt`) are required to run the
 scanner. The optional packages above are only needed if you enable the AI
 verification feature from the prompts.
+
+### Smart JS Scanner
+
+The third menu option lets you scan a website's JavaScript files. You can choose
+to enumerate subdomains, fetch archived files from the Wayback Machine and even
+run [LinkFinder](https://github.com/GerbenJavado/LinkFinder) for deeper crawling.
+
+```bash
+python3 emploleaks.py
+# choose "Smart JS Scan" from the menu
+```
 
 This implementation provides a basic framework. Each searcher can be extended or improved by customizing the logic in the `core/` directory.
