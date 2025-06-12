@@ -54,6 +54,75 @@ class GitHubSearcher:
         return repos
 
     @classmethod
+    def get_user_repos(cls, username, token=None):
+        """Return a list of repo names for the given user."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        repos = []
+        page = 1
+        while True:
+            url = f"{cls.BASE_URL}/users/{username}/repos?per_page=100&page={page}"
+            data = _fetch_json(url, headers)
+            if not data:
+                break
+            repos.extend([r.get("full_name") for r in data if r.get("full_name")])
+            if len(data) < 100:
+                break
+            page += 1
+        return repos
+
+    @classmethod
+    def scan_repo(cls, repo, token=None, silent=False):
+        """Scan every file in the given repository."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        info = _fetch_json(f"{cls.BASE_URL}/repos/{repo}", headers)
+        if not info:
+            return []
+        branch = info.get("default_branch", "master")
+        tree_url = f"{cls.BASE_URL}/repos/{repo}/git/trees/{branch}?recursive=1"
+        tree = _fetch_json(tree_url, headers)
+        if not tree:
+            return []
+        leaks = []
+        for item in tree.get("tree", []):
+            if item.get("type") != "blob":
+                continue
+            path = item.get("path")
+            raw_url = f"https://raw.githubusercontent.com/{repo}/{branch}/{path}"
+            try:
+                resp = requests.get(raw_url, headers=headers)
+                if resp.status_code == 200:
+                    for name, value in detect_leaks(resp.text):
+                        leaks.append({
+                            "source": "GitHub",
+                            "file": raw_url,
+                            "leak_type": name,
+                            "value": value,
+                        })
+                time.sleep(random.uniform(0.5, 1.5))
+            except Exception:
+                if not silent:
+                    print(f"GitHub file fetch error for {raw_url}")
+        if full_scan:
+            repos = []
+            if repo:
+                repos.append(repo)
+            if organization:
+                repos.extend(self.get_org_repos(organization, self.token))
+            if employees:
+                if isinstance(employees, str):
+                    employees = [e.strip() for e in employees.split(',') if e.strip()]
+                for user in employees:
+                    repos.extend(self.get_user_repos(user, self.token))
+            for r in repos:
+                leaks.extend(self.scan_repo(r, token=self.token, silent=self.silent))
+
+        return leaks
+
+    @classmethod
     def get_repo_contributors(cls, repo, token=None):
         """Return a list of usernames contributing to the given repo."""
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
@@ -72,6 +141,8 @@ class GitHubSearcher:
         employees=None,
         organization=None,
         deep_scan=False,
+        full_scan=False,
+        repo=None,
         **_,
     ):
         code_endpoint = f"{self.BASE_URL}/search/code"
@@ -90,38 +161,45 @@ class GitHubSearcher:
                 queries.append(q)
         leaks = []
         for q in queries:
-            params = {"q": q, "per_page": 5}
-            try:
-                resp = requests.get(code_endpoint, headers=self._headers(), params=params)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    for item in data.get("items", []):
-                        raw_url = item.get("html_url", "").replace("blob/", "raw/")
-                        file_resp = requests.get(raw_url, headers=self._headers())
-                        if file_resp.status_code == 200:
-                            found = detect_leaks(file_resp.text)
-                            for name, value in found:
-                                leaks.append({
-                                    "source": "GitHub",
-                                    "file": raw_url,
-                                    "leak_type": name,
-                                    "value": value,
-                                })
-                        time.sleep(random.uniform(1, 3))
-                else:
+            page = 1
+            while True:
+                params = {"q": q, "per_page": 100, "page": page}
+                try:
+                    resp = requests.get(code_endpoint, headers=self._headers(), params=params)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        items = data.get("items", [])
+                        for item in items:
+                            raw_url = item.get("html_url", "").replace("blob/", "raw/")
+                            file_resp = requests.get(raw_url, headers=self._headers())
+                            if file_resp.status_code == 200:
+                                for name, value in detect_leaks(file_resp.text):
+                                    leaks.append({
+                                        "source": "GitHub",
+                                        "file": raw_url,
+                                        "leak_type": name,
+                                        "value": value,
+                                    })
+                            time.sleep(random.uniform(1, 3))
+                        if len(items) < 100:
+                            break
+                        page += 1
+                    else:
+                        if not self.silent:
+                            print(
+                                f"GitHub API request failed: {resp.status_code} {resp.text[:100]}"
+                            )
+                        break
+                except Exception as exc:
                     if not self.silent:
-                        print(
-                            f"GitHub API request failed: {resp.status_code} {resp.text[:100]}"
-                        )
-            except Exception as exc:
-                if not self.silent:
-                    print(f"GitHub search error: {exc}")
+                        print(f"GitHub search error: {exc}")
+                    break
 
             if scan_commits:
                 headers = self._headers()
                 headers["Accept"] = "application/vnd.github.cloak-preview"
                 try:
-                    c_resp = requests.get(commit_endpoint, headers=headers, params=params)
+                    c_resp = requests.get(commit_endpoint, headers=headers, params={"q": q, "per_page": 100})
                     if c_resp.status_code == 200:
                         cdata = c_resp.json()
                         for item in cdata.get("items", []):
@@ -151,7 +229,7 @@ class GitHubSearcher:
 
             if deep_scan:
                 try:
-                    i_resp = requests.get(issue_endpoint, headers=self._headers(), params=params)
+                    i_resp = requests.get(issue_endpoint, headers=self._headers(), params={"q": q, "per_page": 100})
                     if i_resp.status_code == 200:
                         for item in i_resp.json().get("items", []):
                             body = item.get("body", "") or ""
