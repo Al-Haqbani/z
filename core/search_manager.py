@@ -23,15 +23,28 @@ class SearchManager:
         "swaggerhub": SwaggerHubSearcher,
     }
 
+    @staticmethod
+    def _dedup_results(results):
+        seen = set()
+        out = []
+        for item in results:
+            key = (item.get("source"), item.get("file"), item.get("value"))
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append(item)
+        return out
+
     @classmethod
     def _verify_results(cls, results, verify_ai=False):
-        if not verify_ai:
-            return results
-        verified = []
-        for item in results:
-            if is_valid_leak(item.get("value", "")):
-                verified.append(item)
-        return verified
+        filtered = []
+        if verify_ai:
+            for item in results:
+                if is_valid_leak(item.get("value", "")):
+                    filtered.append(item)
+        else:
+            filtered = results
+        return cls._dedup_results(filtered)
 
     @classmethod
     def start_search(

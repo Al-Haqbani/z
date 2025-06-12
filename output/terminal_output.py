@@ -13,7 +13,7 @@ def print_results(results):
     table = Table(title="Leak Results")
     table.add_column("#", style="cyan")
     table.add_column("Source")
-    table.add_column("File")
+    table.add_column("File", overflow="fold")
     table.add_column("Leak Type")
     table.add_column("Value")
     table.add_column("Severity")

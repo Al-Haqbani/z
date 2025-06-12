@@ -5,7 +5,7 @@ from typing import List, Tuple
 from .regex_patterns import LEAK_PATTERNS
 
 _COMPILED_PATTERNS: List[Tuple[str, re.Pattern]] = [
-    (p["name"], re.compile(p["regex"])) for p in LEAK_PATTERNS
+    (p["name"], re.compile(p["regex"], re.IGNORECASE)) for p in LEAK_PATTERNS
 ]
 
 def _build_master_regex() -> re.Pattern | None:
@@ -13,7 +13,7 @@ def _build_master_regex() -> re.Pattern | None:
     for p in LEAK_PATTERNS:
         parts.append(f"({p['regex']})")
     try:
-        return re.compile("|".join(parts), re.MULTILINE)
+        return re.compile("|".join(parts), re.MULTILINE | re.IGNORECASE)
     except re.error:
         return None
 

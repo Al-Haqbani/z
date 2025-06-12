@@ -3,6 +3,7 @@ from core.token_manager import get_token, get_github_token
 from core.search_manager import SearchManager
 from core.github_api import GitHubSearcher
 from output.terminal_output import print_results
+from report_generator.generate_report import generate_html_report
 
 try:
     from webapp import app as web_app
@@ -41,6 +42,8 @@ def main():
             )
             if results:
                 print_results(results)
+                report_path = generate_html_report(results, path="results.html")
+                print(f"Report saved to {report_path}")
             else:
                 print("No leaks found.")
         elif choice == "2":
@@ -59,6 +62,8 @@ def main():
             )
             if results:
                 print_results(results)
+                report_path = generate_html_report(results, path="results.html")
+                print(f"Report saved to {report_path}")
             else:
                 print("No leaks found.")
         elif choice == "3":
@@ -80,6 +85,8 @@ def main():
             ]
             if results:
                 print_results(results)
+                report_path = generate_html_report(results, path="results.html")
+                print(f"Report saved to {report_path}")
             else:
                 print("No leaks found.")
         elif choice == "4":

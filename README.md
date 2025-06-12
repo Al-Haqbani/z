@@ -33,7 +33,7 @@ Providing these tokens greatly improves the results on those platforms. If you
 skip a token or provide an invalid one, searches on that platform may return no
 results and you may see warning messages.
 
-Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results are displayed in a formatted table using `rich`, or you can launch the web interface from the menu.
+Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results are displayed in a formatted table using `rich`. After each scan an HTML report named `results.html` is written with the complete links and color‑coded severity. You can also launch the web interface from the menu.
 
 To use the web interface separately, run:
 

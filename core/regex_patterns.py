@@ -26,7 +26,7 @@ def _load_patterns() -> List[Dict[str, str]]:
                     continue
                 reg = p["regex"].replace("\\z", "\\Z")
                 try:
-                    re.compile(reg)
+                    re.compile(reg, re.IGNORECASE)
                 except re.error:
                     continue
                 cleaned.append({"name": p["name"], "regex": reg})
