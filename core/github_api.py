@@ -106,20 +106,31 @@ class GitHubSearcher:
             except Exception:
                 if not silent:
                     print(f"GitHub file fetch error for {raw_url}")
-        if full_scan:
-            repos = []
-            if repo:
-                repos.append(repo)
-            if organization:
-                repos.extend(self.get_org_repos(organization, self.token))
-            if employees:
-                if isinstance(employees, str):
-                    employees = [e.strip() for e in employees.split(',') if e.strip()]
-                for user in employees:
-                    repos.extend(self.get_user_repos(user, self.token))
-            for r in repos:
-                leaks.extend(self.scan_repo(r, token=self.token, silent=self.silent))
+        return leaks
 
+    @classmethod
+    def scan_repo_wayback(cls, repo, silent=False):
+        """Scan archived versions of repo files via the Wayback Machine."""
+        from utils.wayback_scraper import get_archived_repo_files
+
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        leaks = []
+        for url in get_archived_repo_files(repo)[:200]:
+            wb_url = f"https://web.archive.org/web/{url}"
+            try:
+                resp = requests.get(wb_url, headers=headers, timeout=10)
+                if resp.status_code == 200:
+                    for name, value in detect_leaks(resp.text):
+                        leaks.append({
+                            "source": "Wayback", 
+                            "file": wb_url, 
+                            "leak_type": name,
+                            "value": value,
+                        })
+                time.sleep(random.uniform(0.5, 1.5))
+            except Exception:
+                if not silent:
+                    print(f"Wayback fetch error for {wb_url}")
         return leaks
 
     @classmethod
@@ -143,6 +154,7 @@ class GitHubSearcher:
         deep_scan=False,
         full_scan=False,
         repo=None,
+        scan_wayback=False,
         **_,
     ):
         code_endpoint = f"{self.BASE_URL}/search/code"
@@ -199,30 +211,41 @@ class GitHubSearcher:
                 headers = self._headers()
                 headers["Accept"] = "application/vnd.github.cloak-preview"
                 try:
-                    c_resp = requests.get(commit_endpoint, headers=headers, params={"q": q, "per_page": 100})
-                    if c_resp.status_code == 200:
-                        cdata = c_resp.json()
-                        for item in cdata.get("items", []):
-                            commit_url = item.get("url")
-                            details = _fetch_json(commit_url, headers)
-                            if not details:
-                                continue
-                            msg = details.get("commit", {}).get("message", "")
-                            patch = "\n".join(f.get("patch", "") for f in details.get("files", []))
-                            content = msg + "\n" + patch
-                            for name, value in detect_leaks(content):
-                                leaks.append({
-                                    "source": "GitHub",
-                                    "file": item.get("html_url", commit_url),
-                                    "leak_type": name,
-                                    "value": value,
-                                })
-                            time.sleep(random.uniform(1, 2))
-                    else:
-                        if not self.silent:
-                            print(
-                                f"GitHub commit search failed: {c_resp.status_code} {c_resp.text[:100]}"
-                            )
+                    c_page = 1
+                    while True:
+                        c_resp = requests.get(
+                            commit_endpoint,
+                            headers=headers,
+                            params={"q": q, "per_page": 100, "page": c_page},
+                        )
+                        if c_resp.status_code == 200:
+                            cdata = c_resp.json()
+                            items = cdata.get("items", [])
+                            for item in items:
+                                commit_url = item.get("url")
+                                details = _fetch_json(commit_url, headers)
+                                if not details:
+                                    continue
+                                msg = details.get("commit", {}).get("message", "")
+                                patch = "\n".join(f.get("patch", "") for f in details.get("files", []))
+                                content = msg + "\n" + patch
+                                for name, value in detect_leaks(content):
+                                    leaks.append({
+                                        "source": "GitHub",
+                                        "file": item.get("html_url", commit_url),
+                                        "leak_type": name,
+                                        "value": value,
+                                    })
+                                time.sleep(random.uniform(1, 2))
+                            if len(items) < 100:
+                                break
+                            c_page += 1
+                        else:
+                            if not self.silent:
+                                print(
+                                    f"GitHub commit search failed: {c_resp.status_code} {c_resp.text[:100]}"
+                                )
+                            break
                 except Exception as exc:
                     if not self.silent:
                         print(f"GitHub commit search error: {exc}")
@@ -247,4 +270,18 @@ class GitHubSearcher:
                 except Exception as exc:
                     if not self.silent:
                         print(f"GitHub issue search error: {exc}")
+
+        if full_scan or repo:
+            repos = []
+            if repo:
+                repos.append(repo)
+            if organization:
+                repos.extend(self.get_org_repos(organization, self.token))
+            if employees:
+                for user in employees:
+                    repos.extend(self.get_user_repos(user, self.token))
+            for r in repos:
+                leaks.extend(self.scan_repo(r, token=self.token, silent=self.silent))
+                if scan_wayback:
+                    leaks.extend(self.scan_repo_wayback(r, silent=self.silent))
         return leaks

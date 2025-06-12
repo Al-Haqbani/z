@@ -74,6 +74,10 @@ INDEX_HTML = """
             <input class="form-check-input" type="checkbox" name="full_scan" id="full_scan">
             <label class="form-check-label" for="full_scan">Full Repo Scan</label>
           </div>
+          <div class="col-md-4 form-check">
+            <input class="form-check-input" type="checkbox" name="scan_wayback" id="scan_wayback">
+            <label class="form-check-label" for="scan_wayback">Wayback Repo</label>
+          </div>
           <div class=\"col-md-4 form-check\">
             <input class=\"form-check-input\" type=\"checkbox\" name=\"verify_ai\" id=\"verify_ai\">
             <label class=\"form-check-label\" for=\"verify_ai\">Verify with AI</label>
@@ -166,6 +170,7 @@ def search():
     scan_commits = request.form.get("scan_commits") == "on"
     deep_scan = request.form.get("deep_scan") == "on"
     full_scan = request.form.get("full_scan") == "on"
+    scan_wayback = request.form.get("scan_wayback") == "on"
     verify_ai = request.form.get("verify_ai") == "on"
     silent = request.form.get("silent") == "on"
     chosen = request.form.getlist("platforms")
@@ -173,13 +178,14 @@ def search():
     if not chosen:
         chosen = list(SearchManager.PLATFORM_MAP.keys())
     tokens = {"github": gh_token, "gitlab": gl_token, "swaggerhub": swagger_token}
-    kwargs = {"tokens": tokens, "scan_commits": scan_commits, "silent": silent, "deep_scan": deep_scan, "full_scan": full_scan}
+    kwargs = {"tokens": tokens, "scan_commits": scan_commits, "silent": silent, "deep_scan": deep_scan, "full_scan": full_scan, "scan_wayback": scan_wayback}
     if set(chosen) == set(SearchManager.PLATFORM_MAP.keys()):
         results = SearchManager.run_full_auto_mode(
             keyword,
             employees=employees if use_emp else None,
             verify_ai=verify_ai,
             full_scan=full_scan,
+            scan_wayback=scan_wayback,
             **kwargs,
         )
     else:
@@ -191,6 +197,7 @@ def search():
                     employees=employees if use_emp else None,
                     verify_ai=verify_ai,
                     full_scan=full_scan,
+                    scan_wayback=scan_wayback,
                     **kwargs,
                 )
             )

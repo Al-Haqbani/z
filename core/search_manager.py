@@ -78,6 +78,7 @@ class SearchManager:
         notify=False,
         tokens=None,
         full_scan=False,
+        scan_wayback=False,
         **kwargs,
     ):
         tokens = tokens or {}
@@ -92,6 +93,7 @@ class SearchManager:
             employees=employees,
             organization=organization,
             full_scan=full_scan,
+            scan_wayback=scan_wayback,
             **kwargs,
         )
         results = cls._verify_results(results, verify_ai, active_verify)
@@ -110,6 +112,7 @@ class SearchManager:
         notify=False,
         tokens=None,
         full_scan=False,
+        scan_wayback=False,
         **kwargs,
     ):
         """Run searches on all platforms concurrently."""
@@ -126,6 +129,7 @@ class SearchManager:
                 employees=employees,
                 organization=organization,
                 full_scan=full_scan,
+                scan_wayback=scan_wayback,
                 **kwargs,
             )
 

@@ -37,6 +37,7 @@ def main():
                 org = input("Organization name: ")
             deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
             full_repo = input("Full repo scan? (y/N): ").lower() == "y"
+            wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
@@ -51,6 +52,7 @@ def main():
                 organization=org,
                 deep_scan=deep_scan,
                 full_scan=full_repo,
+                scan_wayback=wayback,
             )
             if results:
                 print_results(results)
@@ -70,6 +72,7 @@ def main():
                 org = input("Organization name: ")
             deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
             full_repo = input("Full repo scan? (y/N): ").lower() == "y"
+            wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
@@ -83,6 +86,7 @@ def main():
                 organization=org,
                 deep_scan=deep_scan,
                 full_scan=full_repo,
+                scan_wayback=wayback,
             )
             if results:
                 print_results(results)
