@@ -12,9 +12,9 @@ Recent updates also integrate private key signatures (RSA, DSA, EC and PGP) and 
 
 To further reduce false positives, matches are filtered using a small entropy check. Short or low‑entropy strings are ignored unless they resemble real credentials.
 
-It can optionally search employees automatically by inspecting the contributors of a repository you provide. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser.
+It can optionally search employees automatically by inspecting the contributors of a repository you provide. You can also search an entire GitHub organization in one go by supplying an org name. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
-Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives.
+Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active token verification*, which validates GitHub tokens directly via the API. Optional Telegram or Discord notifications can alert you when leaks are found.
 The CLI now highlights the severity of each finding in color for quick triage.
 
 ## Usage
@@ -50,6 +50,9 @@ pip install transformers torch
 The main dependencies (listed in `requirements.txt`) are required to run the
 scanner. The optional packages above are only needed if you enable the AI
 verification feature from the prompts.
+
+If you set the environment variables `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` or
+`DISCORD_WEBHOOK_URL`, the tool can send alerts when leaks are discovered.
 
 ### Smart JS Scanner
 

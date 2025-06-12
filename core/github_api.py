@@ -35,6 +35,25 @@ class GitHubSearcher:
         return headers
 
     @classmethod
+    def get_org_repos(cls, org, token=None):
+        """Return a list of repo names within the organization."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        repos = []
+        page = 1
+        while True:
+            url = f"{cls.BASE_URL}/orgs/{org}/repos?per_page=100&page={page}"
+            data = _fetch_json(url, headers)
+            if not data:
+                break
+            repos.extend([r.get("full_name") for r in data if r.get("full_name")])
+            if len(data) < 100:
+                break
+            page += 1
+        return repos
+
+    @classmethod
     def get_repo_contributors(cls, repo, token=None):
         """Return a list of usernames contributing to the given repo."""
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
@@ -46,15 +65,20 @@ class GitHubSearcher:
             return []
         return [item.get("login") for item in data if item.get("login")]
 
-    def search(self, keyword, scan_commits=False, employees=None, **_):
+    def search(self, keyword, scan_commits=False, employees=None, organization=None, **_):
         code_endpoint = f"{self.BASE_URL}/search/code"
         commit_endpoint = f"{self.BASE_URL}/search/commits"
         queries = [keyword]
+        if organization:
+            queries = [f"{keyword} org:{organization}"]
         if employees:
             if isinstance(employees, str):
                 employees = [e.strip() for e in employees.split(',') if e.strip()]
             for user in employees:
-                queries.append(f"{keyword} user:{user}")
+                q = f"{keyword} user:{user}"
+                if organization:
+                    q += f" org:{organization}"
+                queries.append(q)
         leaks = []
         for q in queries:
             params = {"q": q, "per_page": 5}

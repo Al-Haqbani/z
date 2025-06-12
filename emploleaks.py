@@ -32,13 +32,21 @@ def main():
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 employees = GitHubSearcher.get_repo_contributors(repo, github_token)
+            org = None
+            if input("Scan entire GitHub org? (y/N): ").lower() == "y":
+                org = input("Organization name: ")
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
+            active_verify = input("Active token verify? (y/N): ").lower() == "y"
+            notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
             results = SearchManager.start_search(
                 platform,
                 keyword,
                 employees=employees,
                 verify_ai=verify_ai,
+                active_verify=active_verify,
+                notify=notify,
                 tokens=tokens,
+                organization=org,
             )
             if results:
                 print_results(results)
@@ -53,12 +61,20 @@ def main():
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 employees = GitHubSearcher.get_repo_contributors(repo, github_token)
+            org = None
+            if input("Scan entire GitHub org? (y/N): ").lower() == "y":
+                org = input("Organization name: ")
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
+            active_verify = input("Active token verify? (y/N): ").lower() == "y"
+            notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
             results = SearchManager.run_full_auto_mode(
                 keyword,
                 employees=employees,
                 verify_ai=verify_ai,
+                active_verify=active_verify,
+                notify=notify,
                 tokens=tokens,
+                organization=org,
             )
             if results:
                 print_results(results)
