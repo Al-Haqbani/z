@@ -43,6 +43,12 @@ def _load_patterns() -> List[Dict[str, str]]:
         {"name": "Bearer Token", "regex": r"Bearer [A-Za-z0-9\-_]{20,}"},
         {"name": "Generic API Key", "regex": r"(?i)(?:api[_-]?key|access[_-]?token)[=:\s]*['\"]?([A-Za-z0-9_\-]{20,})"},
         {"name": "Generic Password", "regex": r"(?i)(?:password|secret|token)[=:\s]*['\"]?([A-Za-z0-9_\-]{8,})"},
+        {"name": "RSA Private Key", "regex": r"-----BEGIN RSA PRIVATE KEY-----"},
+        {"name": "DSA Private Key", "regex": r"-----BEGIN DSA PRIVATE KEY-----"},
+        {"name": "EC Private Key", "regex": r"-----BEGIN EC PRIVATE KEY-----"},
+        {"name": "PGP Private Key", "regex": r"-----BEGIN PGP PRIVATE KEY BLOCK-----"},
+        {"name": "JWT", "regex": r"ey[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.[A-Za-z0-9-_.+/=]*"},
+        {"name": "Bearer JWT", "regex": r"Bearer [A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/=]*"},
     ]
 
 

@@ -1,6 +1,23 @@
 import math
 import re
+from typing import List, Tuple
+
 from .regex_patterns import LEAK_PATTERNS
+
+_COMPILED_PATTERNS: List[Tuple[str, re.Pattern]] = [
+    (p["name"], re.compile(p["regex"])) for p in LEAK_PATTERNS
+]
+
+def _build_master_regex() -> re.Pattern | None:
+    parts = []
+    for p in LEAK_PATTERNS:
+        parts.append(f"({p['regex']})")
+    try:
+        return re.compile("|".join(parts), re.MULTILINE)
+    except re.error:
+        return None
+
+_MASTER_REGEX = _build_master_regex()
 
 
 def _entropy(value: str) -> float:
@@ -24,19 +41,27 @@ def detect_leaks(text, entropy_threshold: float = 3.0):
     """
     results = []
     seen = set()
-    for pattern in LEAK_PATTERNS:
-        for match in re.findall(pattern["regex"], text):
-            if isinstance(match, tuple):
-                match = match[0]
-            if len(match) < 8:
+
+    if _MASTER_REGEX:
+        candidates = [m.group(0) for m in _MASTER_REGEX.finditer(text)]
+    else:
+        candidates = [text]
+
+    for cand in candidates:
+        for name, regex in _COMPILED_PATTERNS:
+            m = regex.search(cand)
+            if not m:
                 continue
-            if _entropy(match) < entropy_threshold:
+            val = m.group(1) if m.groups() else m.group(0)
+            if len(val) < 8 or _entropy(val) < entropy_threshold:
                 continue
-            key = (pattern["name"], match)
+            key = (name, val)
             if key in seen:
                 continue
             seen.add(key)
-            results.append((pattern["name"], match))
+            results.append((name, val))
+            break
+
     return results
 
 
