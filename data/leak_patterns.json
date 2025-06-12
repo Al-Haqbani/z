@@ -847,4 +847,25 @@
     "name": "zendesk-secret-key",
     "regex": "(?i)[\\w.-]{0,50}?(?:zendesk)(?:[ \\t\\w.-]{0,20})[\\s'\"]{0,3}(?:=|>|:{1,3}=|\\|\\||:|=>|\\?=|,)[\\x60'\"\\s=]{0,5}([a-z0-9]{40})(?:[\\x60'\"\\s;]|\\\\[nr]|$)"
   }
+  ,
+  {
+    "name": "anthropic-api-key",
+    "regex": "(?i)sk-ant-[a-z0-9]{20,40}"
+  },
+  {
+    "name": "perplexity-api-key",
+    "regex": "(?i)pplx_[A-Za-z0-9]{40}"
+  },
+  {
+    "name": "groq-api-key",
+    "regex": "(?i)gsk_[A-Za-z0-9]{20,40}"
+  },
+  {
+    "name": "gemini-api-key",
+    "regex": "(?i)ga1.[A-Za-z0-9_-]{20,}"
+  },
+  {
+    "name": "discord-client-secret",
+    "regex": "(?i)[a-f0-9]{32}\.[A-Za-z0-9_-]{8}\.[A-Za-z0-9_-]{8}"
+  }
 ]

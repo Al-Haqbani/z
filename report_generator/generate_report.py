@@ -18,7 +18,7 @@ def generate_html_report(results, path="report.html"):
   <div class='table-responsive'>
     <table class='table table-bordered table-striped'>
       <thead class='table-dark'>
-        <tr><th>#</th><th>Source</th><th>File</th><th>Leak Type</th><th>Value</th><th>Severity</th></tr>
+        <tr><th>#</th><th>Source</th><th>File</th><th>Leak Type</th><th>Value</th><th>Severity</th><th>Active</th></tr>
       </thead>
       <tbody>
 """
@@ -27,8 +27,13 @@ def generate_html_report(results, path="report.html"):
     for idx, item in enumerate(results, 1):
         sev = item.get("severity", "medium")
         cls = "table-danger" if sev == "high" else "table-warning" if sev == "medium" else "table-light"
+        active = item.get('active')
+        if active is None:
+            active_str = '?' 
+        else:
+            active_str = 'True' if active else 'False'
         rows.append(
-            f"        <tr class='{cls}'><td>{idx}</td><td>{item.get('source')}</td><td><a href='{item.get('file')}' target='_blank'>{item.get('file')}</a></td><td>{item.get('leak_type')}</td><td><code>{item.get('value')}</code></td><td>{sev}</td></tr>"
+            f"        <tr class='{cls}'><td>{idx}</td><td>{item.get('source')}</td><td><a href='{item.get('file')}' target='_blank'>{item.get('file')}</a></td><td>{item.get('leak_type')}</td><td><code>{item.get('value')}</code></td><td>{sev}</td><td>{active_str}</td></tr>"
         )
 
     tail = """

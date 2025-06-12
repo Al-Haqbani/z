@@ -65,9 +65,18 @@ class GitHubSearcher:
             return []
         return [item.get("login") for item in data if item.get("login")]
 
-    def search(self, keyword, scan_commits=False, employees=None, organization=None, **_):
+    def search(
+        self,
+        keyword,
+        scan_commits=False,
+        employees=None,
+        organization=None,
+        deep_scan=False,
+        **_,
+    ):
         code_endpoint = f"{self.BASE_URL}/search/code"
         commit_endpoint = f"{self.BASE_URL}/search/commits"
+        issue_endpoint = f"{self.BASE_URL}/search/issues"
         queries = [keyword]
         if organization:
             queries = [f"{keyword} org:{organization}"]
@@ -139,4 +148,25 @@ class GitHubSearcher:
                 except Exception as exc:
                     if not self.silent:
                         print(f"GitHub commit search error: {exc}")
+
+            if deep_scan:
+                try:
+                    i_resp = requests.get(issue_endpoint, headers=self._headers(), params=params)
+                    if i_resp.status_code == 200:
+                        for item in i_resp.json().get("items", []):
+                            body = item.get("body", "") or ""
+                            for name, value in detect_leaks(body):
+                                leaks.append({
+                                    "source": "GitHub",
+                                    "file": item.get("html_url", ""),
+                                    "leak_type": name,
+                                    "value": value,
+                                })
+                    elif not self.silent:
+                        print(
+                            f"GitHub issue search failed: {i_resp.status_code} {i_resp.text[:100]}"
+                        )
+                except Exception as exc:
+                    if not self.silent:
+                        print(f"GitHub issue search error: {exc}")
         return leaks

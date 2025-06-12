@@ -54,14 +54,15 @@ class SearchManager:
                 if is_valid_leak(item.get("value", "")):
                     filtered.append(item)
         else:
-            filtered = results
+            filtered = list(results)
 
-        if active_verify:
-            filtered = [
-                item
-                for item in filtered
-                if verify_token(item.get("leak_type", ""), item.get("value", ""))
-            ]
+        for item in filtered:
+            if active_verify:
+                item["active"] = verify_token(
+                    item.get("leak_type", ""), item.get("value", "")
+                )
+            else:
+                item["active"] = None
 
         return cls._dedup_results(filtered)
 

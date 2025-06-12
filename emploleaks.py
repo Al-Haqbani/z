@@ -35,6 +35,7 @@ def main():
             org = None
             if input("Scan entire GitHub org? (y/N): ").lower() == "y":
                 org = input("Organization name: ")
+            deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
@@ -47,6 +48,7 @@ def main():
                 notify=notify,
                 tokens=tokens,
                 organization=org,
+                deep_scan=deep_scan,
             )
             if results:
                 print_results(results)
@@ -64,6 +66,7 @@ def main():
             org = None
             if input("Scan entire GitHub org? (y/N): ").lower() == "y":
                 org = input("Organization name: ")
+            deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
@@ -75,6 +78,7 @@ def main():
                 notify=notify,
                 tokens=tokens,
                 organization=org,
+                deep_scan=deep_scan,
             )
             if results:
                 print_results(results)

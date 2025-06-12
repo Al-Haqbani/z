@@ -66,6 +66,10 @@ INDEX_HTML = """
             <input class=\"form-check-input\" type=\"checkbox\" name=\"scan_commits\" id=\"scan_commits\">
             <label class=\"form-check-label\" for=\"scan_commits\">Scan Commits</label>
           </div>
+            <div class="col-md-4 form-check">
+              <input class="form-check-input" type="checkbox" name="deep_scan" id="deep_scan">
+              <label class="form-check-label" for="deep_scan">Deep Scan</label>
+            </div>
           <div class=\"col-md-4 form-check\">
             <input class=\"form-check-input\" type=\"checkbox\" name=\"verify_ai\" id=\"verify_ai\">
             <label class=\"form-check-label\" for=\"verify_ai\">Verify with AI</label>
@@ -109,6 +113,7 @@ RESULTS_HTML = """
               <th>Leak Type</th>
               <th>Value</th>
               <th>Severity</th>
+              <th>Active</th>
             </tr>
           </thead>
           <tbody>
@@ -120,6 +125,7 @@ RESULTS_HTML = """
               <td>{{r.leak_type}}</td>
               <td><code>{{r.value}}</code></td>
               <td>{{r.severity}}</td>
+              <td>{% if r.active is none %}?{% elif r.active %}True{% else %}False{% endif %}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -154,6 +160,7 @@ def search():
     employees = request.form.get("employees")
     use_emp = request.form.get("use_employees") == "on"
     scan_commits = request.form.get("scan_commits") == "on"
+    deep_scan = request.form.get("deep_scan") == "on"
     verify_ai = request.form.get("verify_ai") == "on"
     silent = request.form.get("silent") == "on"
     chosen = request.form.getlist("platforms")
@@ -161,7 +168,7 @@ def search():
     if not chosen:
         chosen = list(SearchManager.PLATFORM_MAP.keys())
     tokens = {"github": gh_token, "gitlab": gl_token, "swaggerhub": swagger_token}
-    kwargs = {"tokens": tokens, "scan_commits": scan_commits, "silent": silent}
+    kwargs = {"tokens": tokens, "scan_commits": scan_commits, "silent": silent, "deep_scan": deep_scan}
     if set(chosen) == set(SearchManager.PLATFORM_MAP.keys()):
         results = SearchManager.run_full_auto_mode(
             keyword,

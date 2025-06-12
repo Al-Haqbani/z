@@ -17,6 +17,7 @@ def print_results(results):
     table.add_column("Leak Type")
     table.add_column("Value")
     table.add_column("Severity")
+    table.add_column("Active")
 
     for idx, item in enumerate(results, 1):
         sev = item.get("severity") or _assign_severity(item.get("leak_type", ""))
@@ -28,6 +29,7 @@ def print_results(results):
             item.get("leak_type", ""),
             item.get("value", ""),
             sev,
+            "True" if item.get("active") else ("False" if item.get("active") is not None else "?"),
             style=style,
         )
     console = Console()
