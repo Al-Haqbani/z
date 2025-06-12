@@ -7,7 +7,9 @@ In addition, a **Smart JS Scanner** can crawl JavaScript files from any domain (
 
 When commit scanning is enabled, GitHub results also include leaked secrets found in commit messages and diffs, allowing detection of tokens in deleted files.
 
-The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy.
+The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy. Additional generic patterns inspired by [Search for all leaked keys](https://github.com/Lu3ky13/Search-for-all-leaked-keys-secrets-using-one-regex-) help detect common password or API key assignments.
+
+To further reduce false positives, matches are filtered using a small entropy check. Short or low‑entropy strings are ignored unless they resemble real credentials.
 
 It can optionally search employees automatically by inspecting the contributors of a repository you provide. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
