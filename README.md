@@ -1,6 +1,6 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub** and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff.
 
 This project was originally created by **محمد الحقباني** to help security researchers uncover leaks and protect their organizations. The goal is to build the strongest global tool of its kind. Please use it responsibly for legitimate security testing only.
 In addition, a **Smart JS Scanner** can crawl JavaScript files from any domain (including optional subdomains and archived copies via the Wayback Machine).
@@ -10,7 +10,7 @@ An optional **Deep Scan** mode searches GitHub issues in addition to code and co
 
 The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/) and expanded with rules from [iwatchr.iscan.today](https://iwatchr.iscan.today/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy. Additional generic patterns inspired by [Search for all leaked keys](https://github.com/Lu3ky13/Search-for-all-leaked-keys-secrets-using-one-regex-) help detect common password or API key assignments.
 Recent updates also integrate private key signatures (RSA, DSA, EC and PGP) and JWT formats. All patterns are combined into a single master regex so scanning large files is much faster while still labeling each leak by type.
-Additional patterns now detect Supabase, Vercel, Railway, and Kaggle tokens for even broader coverage.
+Additional patterns now detect Supabase, Vercel, Railway, Kaggle, Asana and Bugcrowd tokens for even broader coverage.
 
 To further reduce false positives, matches are filtered using a small entropy check. Short or low‑entropy strings are ignored unless they resemble real credentials.
 
@@ -32,7 +32,7 @@ Install the dependencies first:
 pip install -r requirements.txt
 ```
 
-At startup you will be asked for API tokens for GitHub, GitLab and SwaggerHub.
+At startup you will be asked for API tokens for GitHub, GitLab, SwaggerHub and GrayHatWarfare.
 Providing these tokens greatly improves the results on those platforms. If you
 skip a token or provide an invalid one, searches on that platform may return no
 results and you may see warning messages.
@@ -59,6 +59,7 @@ verification feature from the prompts.
 
 If you set the environment variables `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` or
 `DISCORD_WEBHOOK_URL`, the tool can send alerts when leaks are discovered.
+To query GrayHatWarfare buckets you must supply a valid `GRAYHAT_TOKEN` when prompted or as an environment variable.
 
 ### Smart JS Scanner
 

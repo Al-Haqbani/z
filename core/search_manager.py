@@ -8,6 +8,7 @@ from .pastebin_scraper import PastebinSearcher
 from .gitlab_api import GitLabSearcher
 from .swaggerhub_scraper import SwaggerHubSearcher
 from .gist_searcher import GitHubGistSearcher
+from .grayhat_scraper import GrayHatSearcher
 from .ai_verifier import is_valid_leak
 from .token_verifier import verify_token
 from utils.notifications import send_telegram, send_discord
@@ -25,6 +26,7 @@ class SearchManager:
         "gitlab": GitLabSearcher,
         "swaggerhub": SwaggerHubSearcher,
         "gist": GitHubGistSearcher,
+        "grayhat": GrayHatSearcher,
     }
 
     @staticmethod

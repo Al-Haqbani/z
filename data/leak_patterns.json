@@ -888,5 +888,13 @@
   {
     "name": "kaggle-api-key",
     "regex": "(?i)kaggle[\w\s'\"=:\-]*([0-9a-f]{32})"
+  },
+  {
+    "name": "asana-personal-access-token",
+    "regex": "(?i)asana[\w\s'\"=:\-]*([0-9a-f]{32})"
+  },
+  {
+    "name": "bugcrowd-api-token",
+    "regex": "(?i)bugcrowd[\w\s'\"=:\-]*([A-Za-z0-9_-]{40,})"
   }
-]
+ ]

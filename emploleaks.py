@@ -16,16 +16,18 @@ def main():
     github_token = get_token("GitHub", "GITHUB_TOKEN")
     gitlab_token = get_token("GitLab", "GITLAB_TOKEN")
     swagger_token = get_token("SwaggerHub", "SWAGGER_TOKEN")
+    grayhat_token = get_token("GrayHatWarfare", "GRAYHAT_TOKEN")
     tokens = {
         "github": github_token,
         "gitlab": gitlab_token,
         "swaggerhub": swagger_token,
+        "grayhat": grayhat_token,
     }
     while True:
         print("\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. Web Interface\n5. Exit")
         choice = input("Select option: ")
         if choice == "1":
-            platform = input("Platform (github/gitlab/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist): ")
+            platform = input("Platform (github/gitlab/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat): ")
             keyword = input("Keyword: ")
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
@@ -38,6 +40,7 @@ def main():
             deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
             full_repo = input("Full repo scan? (y/N): ").lower() == "y"
             wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
+            include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
@@ -74,16 +77,20 @@ def main():
             deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
             full_repo = input("Full repo scan? (y/N): ").lower() == "y"
             wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
+            include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
+            temp_tokens = dict(tokens)
+            if not include_buckets:
+                temp_tokens["grayhat"] = None
             results = SearchManager.run_full_auto_mode(
                 keyword,
                 employees=employees,
                 verify_ai=verify_ai,
                 active_verify=active_verify,
                 notify=notify,
-                tokens=tokens,
+                tokens=temp_tokens,
                 organization=org,
                 deep_scan=deep_scan,
                 full_scan=full_repo,
