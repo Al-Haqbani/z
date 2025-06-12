@@ -868,4 +868,25 @@
     "name": "discord-client-secret",
     "regex": "(?i)[a-f0-9]{32}\.[A-Za-z0-9_-]{8}\.[A-Za-z0-9_-]{8}"
   }
+,
+  {
+    "name": "supabase-anon-key",
+    "regex": "(?i)supabase[_-]?anon[_-]?key[\"'=:\s]*([A-Za-z0-9._-]{40,})"
+  },
+  {
+    "name": "supabase-service-role-key",
+    "regex": "(?i)supabase[_-]?service[_-]?role[_-]?key[\"'=:\s]*([A-Za-z0-9._-]{40,})"
+  },
+  {
+    "name": "vercel-token",
+    "regex": "(?i)vercel[\w-]*token[\"'=:\s]*([A-Za-z0-9._-]{28,})"
+  },
+  {
+    "name": "railway-api-key",
+    "regex": "(?i)railway[_-]?(?:token|api[_-]?key)[\"'=:\s]*([A-Za-z0-9._-]{20,})"
+  },
+  {
+    "name": "kaggle-api-key",
+    "regex": "(?i)kaggle[\w\s'\"=:\-]*([0-9a-f]{32})"
+  }
 ]
