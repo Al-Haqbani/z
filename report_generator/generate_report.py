@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 
 def generate_html_report(results, path="report.html"):
@@ -46,4 +47,11 @@ def generate_html_report(results, path="report.html"):
 
     with open(path, "w", encoding="utf-8") as f:
         f.write(head + "\n".join(rows) + tail)
+    return path
+
+
+def save_json_report(results, path="results.json"):
+    """Write results list to a JSON file."""
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2)
     return path
