@@ -1,6 +1,7 @@
 import random
 import time
 import requests
+from utils.http_utils import request_with_backoff
 
 from .leak_detector import detect_leaks
 
@@ -29,11 +30,13 @@ class GitLabSearcher:
     def _search_scope(self, keyword, scope):
         params = {"scope": scope, "search": keyword, "per_page": 20}
         try:
-            resp = requests.get(f"{self.BASE_URL}/search", headers=self._headers(), params=params)
-            if resp.status_code == 200:
+            resp = request_with_backoff(f"{self.BASE_URL}/search", headers=self._headers(), params=params)
+            if resp and resp.status_code == 200:
                 return resp.json()
             if not self.silent:
-                print(f"GitLab API {scope} search failed: {resp.status_code} {resp.text[:100]}")
+                status = resp.status_code if resp else 'timeout'
+                text = resp.text[:100] if resp else ''
+                print(f"GitLab API {scope} search failed: {status} {text}")
         except Exception as exc:
             if not self.silent:
                 print(f"GitLab {scope} search error: {exc}")
@@ -50,8 +53,8 @@ class GitLabSearcher:
                 continue
             raw_url = f"{self.BASE_URL}/projects/{project}/repository/files/{requests.utils.quote(file_path, safe='')}/raw?ref={ref}"
             try:
-                raw_resp = requests.get(raw_url, headers=self._headers())
-                if raw_resp.status_code == 200:
+                raw_resp = request_with_backoff(raw_url, headers=self._headers())
+                if raw_resp and raw_resp.status_code == 200:
                     for leak_type, value in detect_leaks(raw_resp.text):
                         leaks.append({
                             "source": "GitLab",

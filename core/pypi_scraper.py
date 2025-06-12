@@ -1,7 +1,8 @@
-import requests
 import re
 import random
 import time
+import requests
+from utils.http_utils import request_with_backoff
 
 from .leak_detector import detect_leaks
 
@@ -22,12 +23,12 @@ class PyPiPackageSearcher:
     def search(self, keyword, **kwargs):
         leaks = []
         try:
-            resp = requests.get(self.SEARCH_URL, params={"q": keyword})
-            if resp.status_code == 200:
+            resp = request_with_backoff(self.SEARCH_URL, params={"q": keyword})
+            if resp and resp.status_code == 200:
                 names = self._extract_names(resp.text)[:5]
                 for name in names:
-                    info_resp = requests.get(self.INFO_URL.format(pkg=name))
-                    if info_resp.status_code == 200:
+                    info_resp = request_with_backoff(self.INFO_URL.format(pkg=name))
+                    if info_resp and info_resp.status_code == 200:
                         description = info_resp.json().get("info", {}).get("description", "")
                         found = detect_leaks(description)
                         for leak_type, value in found:
@@ -40,8 +41,10 @@ class PyPiPackageSearcher:
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:
+                    status = resp.status_code if resp else 'timeout'
+                    text = resp.text[:100] if resp else ''
                     print(
-                        f"PyPI search request failed: {resp.status_code} {resp.text[:100]}"
+                        f"PyPI search request failed: {status} {text}"
                     )
         except Exception as exc:
             if not self.silent:

@@ -1,6 +1,7 @@
-import requests
 import random
 import time
+import requests
+from utils.http_utils import request_with_backoff
 
 from .leak_detector import detect_leaks
 
@@ -16,15 +17,15 @@ class DockerHubSearcher:
         search_url = f"{self.BASE_URL}/search/repositories/?page_size=5&query={keyword}"
         leaks = []
         try:
-            resp = requests.get(search_url)
-            if resp.status_code == 200:
+            resp = request_with_backoff(search_url)
+            if resp and resp.status_code == 200:
                 data = resp.json()
                 for item in data.get("results", []):
                     namespace = item.get("namespace")
                     name = item.get("name")
                     readme_url = f"{self.BASE_URL}/repositories/{namespace}/{name}/readme/"
-                    readme_resp = requests.get(readme_url)
-                    if readme_resp.status_code == 200:
+                    readme_resp = request_with_backoff(readme_url)
+                    if readme_resp and readme_resp.status_code == 200:
                         content = readme_resp.json().get("content", "")
                         found = detect_leaks(content)
                         for leak_type, value in found:
@@ -37,8 +38,10 @@ class DockerHubSearcher:
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:
+                    status = resp.status_code if resp else 'timeout'
+                    text = resp.text[:100] if resp else ''
                     print(
-                        f"DockerHub API request failed: {resp.status_code} {resp.text[:100]}"
+                        f"DockerHub API request failed: {status} {text}"
                     )
         except Exception as exc:
             if not self.silent:

@@ -1,17 +1,18 @@
-import requests
 import random
 import time
+import requests
 
 from .leak_detector import detect_leaks
+from utils.http_utils import request_with_backoff
 
 
 def _fetch_json(url, headers):
-    try:
-        resp = requests.get(url, headers=headers)
-        if resp.status_code == 200:
+    resp = request_with_backoff(url, headers=headers)
+    if resp and resp.status_code == 200:
+        try:
             return resp.json()
-    except Exception:
-        pass
+        except Exception:
+            return None
     return None
 
 
@@ -93,8 +94,8 @@ class GitHubSearcher:
             path = item.get("path")
             raw_url = f"https://raw.githubusercontent.com/{repo}/{branch}/{path}"
             try:
-                resp = requests.get(raw_url, headers=headers)
-                if resp.status_code == 200:
+                resp = request_with_backoff(raw_url, headers=headers)
+                if resp and resp.status_code == 200:
                     for name, value in detect_leaks(resp.text):
                         leaks.append({
                             "source": "GitHub",
@@ -118,12 +119,12 @@ class GitHubSearcher:
         for url in get_archived_repo_files(repo)[:200]:
             wb_url = f"https://web.archive.org/web/{url}"
             try:
-                resp = requests.get(wb_url, headers=headers, timeout=10)
-                if resp.status_code == 200:
+                resp = request_with_backoff(wb_url, headers=headers)
+                if resp and resp.status_code == 200:
                     for name, value in detect_leaks(resp.text):
                         leaks.append({
-                            "source": "Wayback", 
-                            "file": wb_url, 
+                            "source": "Wayback",
+                            "file": wb_url,
                             "leak_type": name,
                             "value": value,
                         })
@@ -177,14 +178,14 @@ class GitHubSearcher:
             while True:
                 params = {"q": q, "per_page": 100, "page": page}
                 try:
-                    resp = requests.get(code_endpoint, headers=self._headers(), params=params)
-                    if resp.status_code == 200:
+                    resp = request_with_backoff(code_endpoint, headers=self._headers(), params=params)
+                    if resp and resp.status_code == 200:
                         data = resp.json()
                         items = data.get("items", [])
                         for item in items:
                             raw_url = item.get("html_url", "").replace("blob/", "raw/")
-                            file_resp = requests.get(raw_url, headers=self._headers())
-                            if file_resp.status_code == 200:
+                            file_resp = request_with_backoff(raw_url, headers=self._headers())
+                            if file_resp and file_resp.status_code == 200:
                                 for name, value in detect_leaks(file_resp.text):
                                     leaks.append({
                                         "source": "GitHub",
@@ -198,8 +199,10 @@ class GitHubSearcher:
                         page += 1
                     else:
                         if not self.silent:
+                            status = resp.status_code if resp else 'timeout'
+                            text = resp.text[:100] if resp else ''
                             print(
-                                f"GitHub API request failed: {resp.status_code} {resp.text[:100]}"
+                                f"GitHub API request failed: {status} {text}"
                             )
                         break
                 except Exception as exc:
@@ -213,12 +216,12 @@ class GitHubSearcher:
                 try:
                     c_page = 1
                     while True:
-                        c_resp = requests.get(
+                        c_resp = request_with_backoff(
                             commit_endpoint,
                             headers=headers,
                             params={"q": q, "per_page": 100, "page": c_page},
                         )
-                        if c_resp.status_code == 200:
+                        if c_resp and c_resp.status_code == 200:
                             cdata = c_resp.json()
                             items = cdata.get("items", [])
                             for item in items:
@@ -242,8 +245,10 @@ class GitHubSearcher:
                             c_page += 1
                         else:
                             if not self.silent:
+                                status = c_resp.status_code if c_resp else 'timeout'
+                                text = c_resp.text[:100] if c_resp else ''
                                 print(
-                                    f"GitHub commit search failed: {c_resp.status_code} {c_resp.text[:100]}"
+                                    f"GitHub commit search failed: {status} {text}"
                                 )
                             break
                 except Exception as exc:
@@ -252,8 +257,8 @@ class GitHubSearcher:
 
             if deep_scan:
                 try:
-                    i_resp = requests.get(issue_endpoint, headers=self._headers(), params={"q": q, "per_page": 100})
-                    if i_resp.status_code == 200:
+                    i_resp = request_with_backoff(issue_endpoint, headers=self._headers(), params={"q": q, "per_page": 100})
+                    if i_resp and i_resp.status_code == 200:
                         for item in i_resp.json().get("items", []):
                             body = item.get("body", "") or ""
                             for name, value in detect_leaks(body):
@@ -264,8 +269,10 @@ class GitHubSearcher:
                                     "value": value,
                                 })
                     elif not self.silent:
+                        status = i_resp.status_code if i_resp else 'timeout'
+                        text = i_resp.text[:100] if i_resp else ''
                         print(
-                            f"GitHub issue search failed: {i_resp.status_code} {i_resp.text[:100]}"
+                            f"GitHub issue search failed: {status} {text}"
                         )
                 except Exception as exc:
                     if not self.silent:

@@ -1,6 +1,6 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin and **SwaggerHub** by performing real HTTP requests.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub** and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff.
 
 This project was originally created by **محمد الحقباني** to help security researchers uncover leaks and protect their organizations. The goal is to build the strongest global tool of its kind. Please use it responsibly for legitimate security testing only.
 In addition, a **Smart JS Scanner** can crawl JavaScript files from any domain (including optional subdomains and archived copies via the Wayback Machine).
@@ -18,6 +18,7 @@ Full Auto Mode executes all searchers concurrently to accelerate large scans.
 Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active token verification*, which validates GitHub tokens directly via the API. Optional Telegram or Discord notifications can alert you when leaks are found.
 The CLI now highlights the severity of each finding in color for quick triage.
 When active verification is enabled, results now include an **Active** column indicating whether each token is still valid.
+Public GitHub Gists are also scanned to catch secrets that might be shared outside repositories.
 
 ## Usage
 

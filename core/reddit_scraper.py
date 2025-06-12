@@ -1,6 +1,7 @@
-import requests
 import random
 import time
+import requests
+from utils.http_utils import request_with_backoff
 
 from .leak_detector import detect_leaks
 
@@ -20,8 +21,8 @@ class RedditSearcher:
         leaks = []
         params = {"q": keyword, "limit": 5}
         try:
-            resp = requests.get(self.BASE_URL, headers=self._headers(), params=params)
-            if resp.status_code == 200:
+            resp = request_with_backoff(self.BASE_URL, headers=self._headers(), params=params)
+            if resp and resp.status_code == 200:
                 data = resp.json()
                 for child in data.get("data", {}).get("children", []):
                     post = child.get("data", {})
@@ -37,8 +38,10 @@ class RedditSearcher:
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:
+                    status = resp.status_code if resp else 'timeout'
+                    text = resp.text[:100] if resp else ''
                     print(
-                        f"Reddit API request failed: {resp.status_code} {resp.text[:100]}"
+                        f"Reddit API request failed: {status} {text}"
                     )
         except Exception as exc:
             if not self.silent:

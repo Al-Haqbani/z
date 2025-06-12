@@ -25,7 +25,7 @@ def main():
         print("\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. Web Interface\n5. Exit")
         choice = input("Select option: ")
         if choice == "1":
-            platform = input("Platform (github/gitlab/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin): ")
+            platform = input("Platform (github/gitlab/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist): ")
             keyword = input("Keyword: ")
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
