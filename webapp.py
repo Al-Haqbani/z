@@ -27,81 +27,139 @@ INDEX_HTML = """
   <head>
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-    <title>EmploLeaksGuardian</title>
+    <title>EmploLeaksGuardian – Enterprise Secret Detection Platform</title>
     <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 40px; }
+      .scan-card { cursor: pointer; }
     </style>
   </head>
   <body class=\"bg-dark text-light\">
     <div class=\"container\">
       <div class=\"text-center mb-4\">
-        <h1 class=\"display-5\">EmploLeaksGuardian</h1>
-        <p class=\"lead\">Search multiple platforms for leaked secrets</p>
+        <i class=\"fa-solid fa-shield-halved fa-3x mb-2\"></i>
+        <h1 class=\"display-5\">EmploLeaksGuardian – Enterprise Secret Detection Platform</h1>
       </div>
-      <form method=\"post\" action=\"/search\" class=\"bg-dark text-light p-4 rounded shadow-sm mb-4\">
-        <div class=\"mb-3\">
-          <label class=\"form-label\">Keyword</label>
-          <input name=\"keyword\" class=\"form-control\" required>
+      <div class=\"row row-cols-1 row-cols-md-2 g-4 mb-4\">
+        <div class=\"col\">
+          <div class=\"card h-100 text-center scan-card\" data-mode=\"full\">
+            <div class=\"card-body\">
+              <h5 class=\"card-title\">Full Scan</h5>
+              <p class=\"card-text\">Search all platforms with deep options.</p>
+            </div>
+          </div>
         </div>
-        <div class=\"mb-3\">
-          <label class=\"form-label\">Employees (comma separated usernames)</label>
-          <input name=\"employees\" class=\"form-control\">
+        <div class=\"col\">
+          <div class=\"card h-100 text-center scan-card\" data-mode=\"employees\">
+            <div class=\"card-body\">
+              <h5 class=\"card-title\">Employee Accounts</h5>
+              <p class=\"card-text\">Include contributors when searching.</p>
+            </div>
+          </div>
         </div>
-        <div class=\"mb-3\">
-          <label class=\"form-label\">GitHub Token</label>
-          <input name=\"github_token\" class=\"form-control\">
+        <div class=\"col\">
+          <div class=\"card h-100 text-center scan-card\" data-mode=\"packages\">
+            <div class=\"card-body\">
+              <h5 class=\"card-title\">Package Analysis</h5>
+              <p class=\"card-text\">Check npm and PyPi packages.</p>
+            </div>
+          </div>
         </div>
-        <div class=\"mb-3\">
-          <label class=\"form-label\">GitLab Token</label>
-          <input name=\"gitlab_token\" class=\"form-control\">
+        <div class=\"col\">
+          <div class=\"card h-100 text-center scan-card\" data-mode=\"wayback\">
+            <div class=\"card-body\">
+              <h5 class=\"card-title\">Wayback Machine</h5>
+              <p class=\"card-text\">Inspect archived repositories.</p>
+            </div>
+          </div>
         </div>
-        <div class=\"mb-3\">
-          <label class=\"form-label\">SwaggerHub Token</label>
-          <input name=\"swagger_token\" class=\"form-control\">
-        </div>
-        <div class=\"mb-3\">
-          <label class=\"form-label\">Platforms</label>
-          <div class=\"row\">
-            {% for p in platforms %}
-            <div class=\"col-6 col-md-4\">
-              <div class=\"form-check\">
-                <input class=\"form-check-input\" type=\"checkbox\" name=\"platforms\" value=\"{{p}}\" id=\"p_{{p}}\" checked>
-                <label class=\"form-check-label\" for=\"p_{{p}}\">{{p}}</label>
+      </div>
+      <form id=\"scanForm\" method=\"post\" action=\"/search\" class=\"bg-dark text-light p-4 rounded shadow-sm\">
+        <ul class=\"nav nav-tabs mb-3\" id=\"scanTabs\" role=\"tablist\">
+          <li class=\"nav-item\" role=\"presentation\">
+            <button class=\"nav-link active\" id=\"tab-basic\" data-bs-toggle=\"tab\" data-bs-target=\"#basic\" type=\"button\" role=\"tab\">Basic Settings</button>
+          </li>
+          <li class=\"nav-item\" role=\"presentation\">
+            <button class=\"nav-link\" id=\"tab-adv\" data-bs-toggle=\"tab\" data-bs-target=\"#advanced\" type=\"button\" role=\"tab\">Advanced Options</button>
+          </li>
+          <li class=\"nav-item\" role=\"presentation\">
+            <button class=\"nav-link\" id=\"tab-sec\" data-bs-toggle=\"tab\" data-bs-target=\"#security\" type=\"button\" role=\"tab\">Security & Access</button>
+          </li>
+        </ul>
+        <div class=\"tab-content\">
+          <div class=\"tab-pane fade show active\" id=\"basic\" role=\"tabpanel\">
+            <div class=\"mb-3\">
+              <label class=\"form-label\">Keyword</label>
+              <input name=\"keyword\" class=\"form-control\" required>
+            </div>
+            <div class=\"mb-3\">
+              <label class=\"form-label\">Employees (comma separated usernames)</label>
+              <input name=\"employees\" class=\"form-control\">
+            </div>
+            <div class=\"mb-3\">
+              <label class=\"form-label\">GitHub Token</label>
+              <input name=\"github_token\" class=\"form-control\">
+            </div>
+            <div class=\"mb-3\">
+              <label class=\"form-label\">GitLab Token</label>
+              <input name=\"gitlab_token\" class=\"form-control\">
+            </div>
+            <div class=\"mb-3\">
+              <label class=\"form-label\">SwaggerHub Token</label>
+              <input name=\"swagger_token\" class=\"form-control\">
+            </div>
+          </div>
+          <div class=\"tab-pane fade\" id=\"advanced\" role=\"tabpanel\">
+            <div class=\"mb-3\">
+              <label class=\"form-label\">Platforms</label>
+              <div class=\"row\">
+                {% for p in platforms %}
+                <div class=\"col-6 col-md-4\">
+                  <div class=\"form-check\">
+                    <input class=\"form-check-input\" type=\"checkbox\" name=\"platforms\" value=\"{{p}}\" id=\"p_{{p}}\" checked>
+                    <label class=\"form-check-label\" for=\"p_{{p}}\">{{p}}</label>
+                  </div>
+                </div>
+                {% endfor %}
               </div>
             </div>
-            {% endfor %}
+            <div class=\"form-check mb-2\">
+              <input class=\"form-check-input\" type=\"checkbox\" name=\"use_employees\" id=\"use_emp\">
+              <label class=\"form-check-label\" for=\"use_emp\">Search Employee Accounts</label>
+            </div>
+            <div class=\"row mb-3\">
+              <div class=\"col-md-4 form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"scan_commits\" id=\"scan_commits\">
+                <label class=\"form-check-label\" for=\"scan_commits\">Scan Commits</label>
+              </div>
+              <div class=\"col-md-4 form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"deep_scan\" id=\"deep_scan\">
+                <label class=\"form-check-label\" for=\"deep_scan\">Deep Scan</label>
+              </div>
+              <div class=\"col-md-4 form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"full_scan\" id=\"full_scan\">
+                <label class=\"form-check-label\" for=\"full_scan\">Full Repo Scan</label>
+              </div>
+              <div class=\"col-md-4 form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"scan_wayback\" id=\"scan_wayback\">
+                <label class=\"form-check-label\" for=\"scan_wayback\">Wayback Repo</label>
+              </div>
+              <div class=\"col-md-4 form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"verify_ai\" id=\"verify_ai\">
+                <label class=\"form-check-label\" for=\"verify_ai\">Verify with AI</label>
+              </div>
+              <div class=\"col-md-4 form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"silent\" id=\"silent\">
+                <label class=\"form-check-label\" for=\"silent\">Silent Mode</label>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class=\"form-check mb-2\">
-          <input class=\"form-check-input\" type=\"checkbox\" name=\"use_employees\" id=\"use_emp\">
-          <label class=\"form-check-label\" for=\"use_emp\">Search Employee Accounts</label>
-        </div>
-        <div class=\"row mb-3\">
-          <div class=\"col-md-4 form-check\">
-            <input class=\"form-check-input\" type=\"checkbox\" name=\"scan_commits\" id=\"scan_commits\">
-            <label class=\"form-check-label\" for=\"scan_commits\">Scan Commits</label>
-          </div>
-          <div class="col-md-4 form-check">
-            <input class="form-check-input" type="checkbox" name="deep_scan" id="deep_scan">
-            <label class="form-check-label" for="deep_scan">Deep Scan</label>
-          </div>
-          <div class="col-md-4 form-check">
-            <input class="form-check-input" type="checkbox" name="full_scan" id="full_scan">
-            <label class="form-check-label" for="full_scan">Full Repo Scan</label>
-          </div>
-          <div class="col-md-4 form-check">
-            <input class="form-check-input" type="checkbox" name="scan_wayback" id="scan_wayback">
-            <label class="form-check-label" for="scan_wayback">Wayback Repo</label>
-          </div>
-          <div class=\"col-md-4 form-check\">
-            <input class=\"form-check-input\" type=\"checkbox\" name=\"verify_ai\" id=\"verify_ai\">
-            <label class=\"form-check-label\" for=\"verify_ai\">Verify with AI</label>
-          </div>
-          <div class=\"col-md-4 form-check\">
-            <input class=\"form-check-input\" type=\"checkbox\" name=\"silent\" id=\"silent\">
-            <label class=\"form-check-label\" for=\"silent\">Silent Mode</label>
+          <div class=\"tab-pane fade\" id=\"security\" role=\"tabpanel\">
+            <div class=\"mb-3\">
+              <label class=\"form-label\">Access Token</label>
+              <input name=\"access_token\" class=\"form-control\">
+            </div>
           </div>
         </div>
         <button class=\"btn btn-primary\" type=\"submit\">Search</button>
@@ -123,6 +181,22 @@ INDEX_HTML = """
       <a href=\"/scans\" class=\"btn btn-link mt-2\">See all scans</a>
       {% endif %}
     </div>
+    <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js\"></script>
+    <script>
+      document.querySelectorAll('.scan-card').forEach(card=>{
+        card.addEventListener('click',()=>{
+          const mode=card.dataset.mode;
+          if(mode==='full'){document.getElementById('full_scan').checked=true;}
+          if(mode==='employees'){document.getElementById('use_emp').checked=true;}
+          if(mode==='packages'){
+             const n=document.getElementById('p_npm'); if(n) n.checked=true;
+             const p=document.getElementById('p_pypi'); if(p) p.checked=true;
+          }
+          if(mode==='wayback'){document.getElementById('scan_wayback').checked=true;}
+          document.getElementById('scanForm').scrollIntoView({behavior:'smooth'});
+        });
+      });
+    </script>
   </body>
 </html>
 """
@@ -192,6 +266,7 @@ STREAM_HTML = """
     <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>body { padding-top: 40px; }</style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body class=\"bg-dark text-light\">
     <div class=\"container\">
@@ -231,6 +306,10 @@ STREAM_HTML = """
           <tbody></tbody>
         </table>
       </div>
+      <div class="row mb-3">
+        <div class="col-md-6"><canvas id="sevChart"></canvas></div>
+        <div class="col-md-6"><canvas id="platChart"></canvas></div>
+      </div>
       <p id=\"done\" class=\"mt-3\" style=\"display:none\">Scan completed.</p>
       <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
     </div>
@@ -244,6 +323,17 @@ STREAM_HTML = """
         low: document.getElementById('count-low'),
         info: document.getElementById('count-info')
       };
+      const sevChart = new Chart(document.getElementById('sevChart'), {
+        type: 'doughnut',
+        data: { labels:['High','Medium','Low','Info'], datasets:[{ data:[0,0,0,0], backgroundColor:['#dc3545','#ffc107','#0dcaf0','#6c757d'] }] },
+        options:{ plugins:{legend:{display:false}} }
+      });
+      const platChart = new Chart(document.getElementById('platChart'), {
+        type: 'bar',
+        data: { labels:[], datasets:[{ label:'Leaks', data:[], backgroundColor:'#6610f2' }] },
+        options:{ scales:{y:{beginAtZero:true}} }
+      });
+      const platformCounts = {};
       const searchBox = document.getElementById('searchBox');
       const severityFilter = document.getElementById('severityFilter');
       const platformFilter = document.getElementById('platformFilter');
@@ -272,6 +362,13 @@ STREAM_HTML = """
         }
         counters[sev] = (counters[sev] || 0) + 1;
         if(countEls[sev]) countEls[sev].innerText = counters[sev];
+        sevChart.data.datasets[0].data = [counters.high, counters.medium, counters.low, counters.info];
+        sevChart.update();
+        const plat = data.source || 'Other';
+        platformCounts[plat] = (platformCounts[plat] || 0) + 1;
+        platChart.data.labels = Object.keys(platformCounts);
+        platChart.data.datasets[0].data = Object.values(platformCounts);
+        platChart.update();
         const row = document.createElement('tr');
         row.dataset.sev = sev;
         row.dataset.platform = data.source || '';
