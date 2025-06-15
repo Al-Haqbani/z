@@ -28,18 +28,19 @@ INDEX_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>EmploLeaksGuardian</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>
       body { padding-top: 40px; }
     </style>
   </head>
-  <body class=\"bg-light\">
+  <body class=\"bg-dark text-light\">
     <div class=\"container\">
       <div class=\"text-center mb-4\">
         <h1 class=\"display-5\">EmploLeaksGuardian</h1>
         <p class=\"lead\">Search multiple platforms for leaked secrets</p>
       </div>
-      <form method=\"post\" action=\"/search\" class=\"bg-white p-4 rounded shadow-sm mb-4\">
+      <form method=\"post\" action=\"/search\" class=\"bg-dark text-light p-4 rounded shadow-sm mb-4\">
         <div class=\"mb-3\">
           <label class=\"form-label\">Keyword</label>
           <input name=\"keyword\" class=\"form-control\" required>
@@ -133,12 +134,13 @@ RESULTS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>
       body { padding-top: 40px; }
     </style>
   </head>
-  <body class=\"bg-light\">
+  <body class=\"bg-dark text-light\">
     <div class=\"container\">
       <h1 class=\"mb-4\">Results for {{ keyword }}</h1>
       <p class=\"mb-3\"><strong>{{ results|length }} leaks found</strong></p>
@@ -187,13 +189,33 @@ STREAM_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Live Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>body { padding-top: 40px; }</style>
   </head>
-  <body class=\"bg-light\">
+  <body class=\"bg-dark text-light\">
     <div class=\"container\">
       <h1 class=\"mb-4\">Live Results for {{ keyword }}</h1>
-      <div class=\"table-responsive\">
+      <div class="mb-3">
+        <span class="badge bg-danger me-1">High <span id="count-high">0</span></span>
+        <span class="badge bg-warning text-dark me-1">Medium <span id="count-medium">0</span></span>
+        <span class="badge bg-info text-dark me-1">Low <span id="count-low">0</span></span>
+        <span class="badge bg-secondary me-1">Info <span id="count-info">0</span></span>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6"><input id="searchBox" class="form-control form-control-sm" placeholder="Filter keywords"></div>
+        <div class="col-md-3">
+          <select id="severityFilter" class="form-select form-select-sm">
+            <option value="">All Severities</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+            <option value="info">Info</option>
+          </select>
+        </div>
+        <div class="col-md-3"><input id="platformFilter" class="form-control form-control-sm" placeholder="Platform"></div>
+      </div>
+      <div class="table-responsive">
         <table id=\"results\" class=\"table table-bordered table-striped\">
           <thead class=\"table-dark\">
             <tr>
@@ -215,17 +237,60 @@ STREAM_HTML = """
     <script>
       const evt = new EventSource('/stream/{{ scan_id }}');
       const tbody = document.querySelector('#results tbody');
-      let idx = 1;
+      const counters = {high:0, medium:0, low:0, info:0};
+      const countEls = {
+        high: document.getElementById('count-high'),
+        medium: document.getElementById('count-medium'),
+        low: document.getElementById('count-low'),
+        info: document.getElementById('count-info')
+      };
+      const searchBox = document.getElementById('searchBox');
+      const severityFilter = document.getElementById('severityFilter');
+      const platformFilter = document.getElementById('platformFilter');
+
+      function applyFilters() {
+        const term = searchBox.value.toLowerCase();
+        const sev = severityFilter.value;
+        const plat = platformFilter.value.toLowerCase();
+        tbody.querySelectorAll('tr').forEach(tr => {
+          const matchesTerm = tr.textContent.toLowerCase().includes(term);
+          const matchesSev = !sev || tr.dataset.sev === sev;
+          const matchesPlat = !plat || tr.dataset.platform.toLowerCase().includes(plat);
+          tr.style.display = matchesTerm && matchesSev && matchesPlat ? '' : 'none';
+        });
+      }
+
+      searchBox.addEventListener('input', applyFilters);
+      severityFilter.addEventListener('change', applyFilters);
+      platformFilter.addEventListener('input', applyFilters);
+
       evt.addEventListener('message', ev => {
         const data = JSON.parse(ev.data);
+        let sev = (data.severity || '').toLowerCase();
+        if(!sev){
+          sev = (data.leak_type || '').toLowerCase().includes('token') || (data.leak_type || '').toLowerCase().includes('key') ? 'high' : 'medium';
+        }
+        counters[sev] = (counters[sev] || 0) + 1;
+        if(countEls[sev]) countEls[sev].innerText = counters[sev];
         const row = document.createElement('tr');
-        const sev = data.severity || (data.leak_type.toLowerCase().includes('token') || data.leak_type.toLowerCase().includes('key') ? 'high' : 'medium');
+        row.dataset.sev = sev;
+        row.dataset.platform = data.source || '';
         row.className = sev === 'high' ? 'table-danger' : (sev === 'medium' ? 'table-warning' : 'table-light');
-        row.innerHTML = `<td>${idx}</td><td>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code></td><td>${sev}</td><td>${data.active === null ? '?' : (data.active ? 'True' : 'False')}</td>`;
+        const activeVal = data.active === null ? '?' : (data.active ? 'True' : 'False');
+        row.innerHTML = `<td>${idx}</td><td>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a> <a href="${data.file}" target="_blank" class="ms-1 text-light"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td>`;
         tbody.appendChild(row);
         idx += 1;
+        applyFilters();
       });
-      evt.addEventListener('done', ev => {
+
+      tbody.addEventListener('click', e => {
+        const btn = e.target.closest('.copy-btn');
+        if (btn) {
+          navigator.clipboard.writeText(btn.dataset.val);
+        }
+      });
+
+      evt.addEventListener('done', () => {
         document.getElementById('done').style.display = 'block';
         evt.close();
       });
@@ -241,10 +306,11 @@ SCANS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Scans</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>body { padding-top: 40px; }</style>
   </head>
-  <body class=\"bg-light\">
+  <body class=\"bg-dark text-light\">
     <div class=\"container\">
       <h1 class=\"mb-4\">Scan History</h1>
       <div class=\"table-responsive\">
