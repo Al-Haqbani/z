@@ -15,7 +15,10 @@ from core.search_manager import SearchManager
 from core.token_manager import get_github_token
 
 app = Flask(__name__)
+# Tracks past and running scans keyed by an identifier.
+# Each entry stores the keyword, results and current status.
 SCAN_HISTORY = {}
+# Queues used to stream results to the browser in real time.
 SCAN_QUEUES = {}
 
 INDEX_HTML = """
@@ -103,15 +106,20 @@ INDEX_HTML = """
         <button class=\"btn btn-primary\" type=\"submit\">Search</button>
       </form>
       {% if history %}
-      <h3 class=\"mt-4\">Previous Scans</h3>
+      <h3 class=\"mt-4\">Recent Scans</h3>
       <ul class=\"list-group\">
         {% for sid, item in history.items() %}
         <li class=\"list-group-item d-flex justify-content-between align-items-center\">
           <span>{{ item.keyword }}</span>
+          {% if item.status == 'running' %}
+          <a class=\"btn btn-sm btn-outline-primary\" href=\"/live/{{sid}}\">Live</a>
+          {% else %}
           <a class=\"btn btn-sm btn-outline-primary\" href=\"/results/{{sid}}\">View</a>
+          {% endif %}
         </li>
         {% endfor %}
       </ul>
+      <a href=\"/scans\" class=\"btn btn-link mt-2\">See all scans</a>
       {% endif %}
     </div>
   </body>
@@ -226,11 +234,70 @@ STREAM_HTML = """
 </html>
 """
 
+SCANS_HTML = """
+<!doctype html>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>Scans</title>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">
+    <style>body { padding-top: 40px; }</style>
+  </head>
+  <body class=\"bg-light\">
+    <div class=\"container\">
+      <h1 class=\"mb-4\">Scan History</h1>
+      <div class=\"table-responsive\">
+        <table class=\"table table-bordered\">
+          <thead class=\"table-dark\">
+            <tr>
+              <th>Keyword</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for sid, item in history.items() %}
+            <tr>
+              <td>{{ item.keyword }}</td>
+              <td>
+                {% if item.status == 'running' %}
+                <span class=\"badge bg-warning text-dark\">Running</span>
+                {% else %}
+                <span class=\"badge bg-success\">Done</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if item.status == 'running' %}
+                <a href=\"/live/{{sid}}\" class=\"btn btn-sm btn-outline-primary\">Live</a>
+                {% else %}
+                <a href=\"/results/{{sid}}\" class=\"btn btn-sm btn-outline-primary\">View</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
+    </div>
+  </body>
+</html>
+"""
+
 @app.route("/")
 def index():
     return render_template_string(
         INDEX_HTML,
         platforms=SearchManager.PLATFORM_MAP.keys(),
+        history=SCAN_HISTORY,
+    )
+
+
+@app.route("/scans")
+def scans():
+    return render_template_string(
+        SCANS_HTML,
         history=SCAN_HISTORY,
     )
 
@@ -272,6 +339,8 @@ def search():
     results = []
     q = queue.Queue()
     SCAN_QUEUES[scan_id] = q
+    # register scan as running so it appears immediately in history
+    SCAN_HISTORY[scan_id] = {"keyword": keyword, "results": results, "status": "running"}
 
     def callback(item, idx):
         item.setdefault("severity", _assign_severity(item.get("leak_type", "")))
@@ -302,7 +371,8 @@ def search():
                     **kwargs,
                 )
         q.put(None)
-        SCAN_HISTORY[scan_id] = {"keyword": keyword, "results": results}
+        if scan_id in SCAN_HISTORY:
+            SCAN_HISTORY[scan_id]["status"] = "done"
 
     threading.Thread(target=worker, daemon=True).start()
 
@@ -314,10 +384,25 @@ def view_results(scan_id):
     scan = SCAN_HISTORY.get(scan_id)
     if not scan:
         return "Not found", 404
+    if scan.get("status") != "done":
+        # Redirect to live view if the scan is still running
+        return redirect(url_for("live_results", scan_id=scan_id))
     return render_template_string(
         RESULTS_HTML,
         results=scan["results"],
         keyword=scan["keyword"],
+    )
+
+
+@app.route("/live/<scan_id>")
+def live_results(scan_id):
+    scan = SCAN_HISTORY.get(scan_id)
+    if not scan:
+        return "Not found", 404
+    return render_template_string(
+        STREAM_HTML,
+        keyword=scan["keyword"],
+        scan_id=scan_id,
     )
 
 
@@ -331,6 +416,8 @@ def stream_results(scan_id):
         while True:
             item = q.get()
             if item is None:
+                if scan_id in SCAN_HISTORY:
+                    SCAN_HISTORY[scan_id]["status"] = "done"
                 yield "event: done\ndata: {}\n\n"
                 break
             yield f"data: {json.dumps(item)}\n\n"
