@@ -83,6 +83,7 @@ class SearchManager:
         tokens=None,
         full_scan=False,
         scan_wayback=False,
+        result_callback=None,
         **kwargs,
     ):
         tokens = tokens or {}
@@ -101,6 +102,9 @@ class SearchManager:
             **kwargs,
         )
         results = cls._verify_results(results, verify_ai, active_verify)
+        if result_callback:
+            for idx, item in enumerate(results, 1):
+                result_callback(item, idx)
         if notify:
             cls._send_notifications(results)
         return results
@@ -117,6 +121,7 @@ class SearchManager:
         tokens=None,
         full_scan=False,
         scan_wayback=False,
+        result_callback=None,
         **kwargs,
     ):
         """Run searches on all platforms concurrently."""
@@ -144,7 +149,12 @@ class SearchManager:
             }
             for fut in as_completed(future_map):
                 try:
-                    results.extend(fut.result())
+                    res = fut.result()
+                    results.extend(res)
+                    verified = cls._verify_results(res, verify_ai, active_verify)
+                    if result_callback:
+                        for idx, item in enumerate(verified, 1):
+                            result_callback(item, idx)
                 except Exception as exc:
                     if not kwargs.get("silent", False):
                         print(f"{future_map[fut]} search error: {exc}")

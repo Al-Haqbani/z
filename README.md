@@ -15,6 +15,8 @@ Additional patterns now detect Supabase, Vercel, Railway, Kaggle, Asana and Bugc
 To further reduce false positives, matches are filtered using a small entropy check. Short or low‑entropy strings are ignored unless they resemble real credentials.
 
 It can optionally search employees automatically by inspecting the contributors of a repository you provide. You can also search an entire GitHub organization in one go by supplying an org name. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser.
+The dashboard also keeps a history of your scans so you can revisit past results at any time.
+It uses a simple purple, orange, green and gray color scheme for a clean look.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
 Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active token verification*, which checks GitHub, Slack, Discord and Telegram tokens via their APIs to confirm they are still valid. Optional Telegram or Discord notifications can alert you when leaks are found.
 The CLI now highlights the severity of each finding in color for quick triage.
@@ -37,7 +39,7 @@ Providing these tokens greatly improves the results on those platforms. If you
 skip a token or provide an invalid one, searches on that platform may return no
 results and you may see warning messages.
 
-Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results are displayed in a formatted table using `rich`. After each scan an HTML report `results.html` **and** a machine-readable JSON file `results.json` are saved with the complete links and color-coded severity. You can also launch the web interface from the menu.
+Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results are streamed to the terminal as soon as each platform finishes so you don't have to wait for the entire run. After each scan an HTML report `results.html` **and** a machine-readable JSON file `results.json` are saved with the complete links and color-coded severity. You can also launch the web interface from the menu.
 
 If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history.
 

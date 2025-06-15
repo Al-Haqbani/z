@@ -1,9 +1,11 @@
 import os
-from flask import Flask, render_template_string, request
+import time
+from flask import Flask, render_template_string, request, redirect, url_for
 from core.search_manager import SearchManager
 from core.token_manager import get_github_token
 
 app = Flask(__name__)
+SCAN_HISTORY = {}
 
 INDEX_HTML = """
 <!doctype html>
@@ -23,7 +25,7 @@ INDEX_HTML = """
         <h1 class=\"display-5\">EmploLeaksGuardian</h1>
         <p class=\"lead\">Search multiple platforms for leaked secrets</p>
       </div>
-      <form method=\"post\" action=\"/search\" class=\"bg-white p-4 rounded shadow-sm\">
+      <form method=\"post\" action=\"/search\" class=\"bg-white p-4 rounded shadow-sm mb-4\">
         <div class=\"mb-3\">
           <label class=\"form-label\">Keyword</label>
           <input name=\"keyword\" class=\"form-control\" required>
@@ -89,6 +91,17 @@ INDEX_HTML = """
         </div>
         <button class=\"btn btn-primary\" type=\"submit\">Search</button>
       </form>
+      {% if history %}
+      <h3 class=\"mt-4\">Previous Scans</h3>
+      <ul class=\"list-group\">
+        {% for sid, item in history.items() %}
+        <li class=\"list-group-item d-flex justify-content-between align-items-center\">
+          <span>{{ item.keyword }}</span>
+          <a class=\"btn btn-sm btn-outline-primary\" href=\"/results/{{sid}}\">View</a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
     </div>
   </body>
 </html>
@@ -108,7 +121,7 @@ RESULTS_HTML = """
   </head>
   <body class=\"bg-light\">
     <div class=\"container\">
-      <h1 class=\"mb-4\">Results</h1>
+      <h1 class=\"mb-4\">Results for {{ keyword }}</h1>
       <p class=\"mb-3\"><strong>{{ results|length }} leaks found</strong></p>
       {% if results %}
       <div class=\"table-responsive\">
@@ -150,7 +163,11 @@ RESULTS_HTML = """
 
 @app.route("/")
 def index():
-    return render_template_string(INDEX_HTML, platforms=SearchManager.PLATFORM_MAP.keys())
+    return render_template_string(
+        INDEX_HTML,
+        platforms=SearchManager.PLATFORM_MAP.keys(),
+        history=SCAN_HISTORY,
+    )
 
 
 def _assign_severity(leak_type: str) -> str:
@@ -186,6 +203,7 @@ def search():
             verify_ai=verify_ai,
             full_scan=full_scan,
             scan_wayback=scan_wayback,
+            result_callback=None,
             **kwargs,
         )
     else:
@@ -198,12 +216,27 @@ def search():
                     verify_ai=verify_ai,
                     full_scan=full_scan,
                     scan_wayback=scan_wayback,
+                    result_callback=None,
                     **kwargs,
                 )
             )
     for r in results:
         r.setdefault("severity", _assign_severity(r.get("leak_type", "")))
-    return render_template_string(RESULTS_HTML, results=results)
+    sid = str(int(time.time()))
+    SCAN_HISTORY[sid] = {"keyword": keyword, "results": results}
+    return redirect(url_for("view_results", scan_id=sid))
+
+
+@app.route("/results/<scan_id>")
+def view_results(scan_id):
+    scan = SCAN_HISTORY.get(scan_id)
+    if not scan:
+        return "Not found", 404
+    return render_template_string(
+        RESULTS_HTML,
+        results=scan["results"],
+        keyword=scan["keyword"],
+    )
 
 
 if __name__ == "__main__":

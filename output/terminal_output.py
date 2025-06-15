@@ -34,3 +34,30 @@ def print_results(results):
         )
     console = Console()
     console.print(table)
+
+
+def print_result(item, idx=None):
+    """Print a single result immediately."""
+    idx = idx or 1
+    sev = item.get("severity") or _assign_severity(item.get("leak_type", ""))
+    style = "red" if sev == "high" else "yellow"
+    table = Table(show_header=True if idx == 1 else False)
+    table.add_column("#", style="cyan")
+    table.add_column("Source")
+    table.add_column("File", overflow="fold")
+    table.add_column("Leak Type")
+    table.add_column("Value")
+    table.add_column("Severity")
+    table.add_column("Active")
+    table.add_row(
+        str(idx),
+        item.get("source", ""),
+        item.get("file", ""),
+        item.get("leak_type", ""),
+        item.get("value", ""),
+        sev,
+        "True" if item.get("active") else ("False" if item.get("active") is not None else "?"),
+        style=style,
+    )
+    console = Console()
+    console.print(table)
