@@ -295,6 +295,7 @@ def index():
 
 
 @app.route("/scans")
+@app.route("/scans/")
 def scans():
     return render_template_string(
         SCANS_HTML,
