@@ -398,8 +398,6 @@ def search():
         "scan_commits": scan_commits,
         "silent": silent,
         "deep_scan": deep_scan,
-        "full_scan": full_scan,
-        "scan_wayback": scan_wayback,
     }
 
     scan_id = str(int(time.time()))
