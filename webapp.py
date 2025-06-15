@@ -1,11 +1,22 @@
 import os
 import time
-from flask import Flask, render_template_string, request, redirect, url_for
+import json
+import queue
+import threading
+from flask import (
+    Flask,
+    render_template_string,
+    request,
+    redirect,
+    url_for,
+    Response,
+)
 from core.search_manager import SearchManager
 from core.token_manager import get_github_token
 
 app = Flask(__name__)
 SCAN_HISTORY = {}
+SCAN_QUEUES = {}
 
 INDEX_HTML = """
 <!doctype html>
@@ -161,6 +172,60 @@ RESULTS_HTML = """
 </html>
 """
 
+STREAM_HTML = """
+<!doctype html>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>Live Results</title>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\">
+    <style>body { padding-top: 40px; }</style>
+  </head>
+  <body class=\"bg-light\">
+    <div class=\"container\">
+      <h1 class=\"mb-4\">Live Results for {{ keyword }}</h1>
+      <div class=\"table-responsive\">
+        <table id=\"results\" class=\"table table-bordered table-striped\">
+          <thead class=\"table-dark\">
+            <tr>
+              <th>#</th>
+              <th>Source</th>
+              <th>File</th>
+              <th>Leak Type</th>
+              <th>Value</th>
+              <th>Severity</th>
+              <th>Active</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p id=\"done\" class=\"mt-3\" style=\"display:none\">Scan completed.</p>
+      <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
+    </div>
+    <script>
+      const evt = new EventSource('/stream/{{ scan_id }}');
+      const tbody = document.querySelector('#results tbody');
+      let idx = 1;
+      evt.addEventListener('message', ev => {
+        const data = JSON.parse(ev.data);
+        const row = document.createElement('tr');
+        const sev = data.severity || (data.leak_type.toLowerCase().includes('token') || data.leak_type.toLowerCase().includes('key') ? 'high' : 'medium');
+        row.className = sev === 'high' ? 'table-danger' : (sev === 'medium' ? 'table-warning' : 'table-light');
+        row.innerHTML = `<td>${idx}</td><td>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code></td><td>${sev}</td><td>${data.active === null ? '?' : (data.active ? 'True' : 'False')}</td>`;
+        tbody.appendChild(row);
+        idx += 1;
+      });
+      evt.addEventListener('done', ev => {
+        document.getElementById('done').style.display = 'block';
+        evt.close();
+      });
+    </script>
+  </body>
+</html>
+"""
+
 @app.route("/")
 def index():
     return render_template_string(
@@ -191,24 +256,41 @@ def search():
     verify_ai = request.form.get("verify_ai") == "on"
     silent = request.form.get("silent") == "on"
     chosen = request.form.getlist("platforms")
-    results = []
     if not chosen:
         chosen = list(SearchManager.PLATFORM_MAP.keys())
     tokens = {"github": gh_token, "gitlab": gl_token, "swaggerhub": swagger_token}
-    kwargs = {"tokens": tokens, "scan_commits": scan_commits, "silent": silent, "deep_scan": deep_scan, "full_scan": full_scan, "scan_wayback": scan_wayback}
-    if set(chosen) == set(SearchManager.PLATFORM_MAP.keys()):
-        results = SearchManager.run_full_auto_mode(
-            keyword,
-            employees=employees if use_emp else None,
-            verify_ai=verify_ai,
-            full_scan=full_scan,
-            scan_wayback=scan_wayback,
-            result_callback=None,
-            **kwargs,
-        )
-    else:
-        for platform in chosen:
-            results.extend(
+    kwargs = {
+        "tokens": tokens,
+        "scan_commits": scan_commits,
+        "silent": silent,
+        "deep_scan": deep_scan,
+        "full_scan": full_scan,
+        "scan_wayback": scan_wayback,
+    }
+
+    scan_id = str(int(time.time()))
+    results = []
+    q = queue.Queue()
+    SCAN_QUEUES[scan_id] = q
+
+    def callback(item, idx):
+        item.setdefault("severity", _assign_severity(item.get("leak_type", "")))
+        q.put(item)
+        results.append(item)
+
+    def worker():
+        if set(chosen) == set(SearchManager.PLATFORM_MAP.keys()):
+            SearchManager.run_full_auto_mode(
+                keyword,
+                employees=employees if use_emp else None,
+                verify_ai=verify_ai,
+                full_scan=full_scan,
+                scan_wayback=scan_wayback,
+                result_callback=callback,
+                **kwargs,
+            )
+        else:
+            for platform in chosen:
                 SearchManager.start_search(
                     platform,
                     keyword,
@@ -216,15 +298,15 @@ def search():
                     verify_ai=verify_ai,
                     full_scan=full_scan,
                     scan_wayback=scan_wayback,
-                    result_callback=None,
+                    result_callback=callback,
                     **kwargs,
                 )
-            )
-    for r in results:
-        r.setdefault("severity", _assign_severity(r.get("leak_type", "")))
-    sid = str(int(time.time()))
-    SCAN_HISTORY[sid] = {"keyword": keyword, "results": results}
-    return redirect(url_for("view_results", scan_id=sid))
+        q.put(None)
+        SCAN_HISTORY[scan_id] = {"keyword": keyword, "results": results}
+
+    threading.Thread(target=worker, daemon=True).start()
+
+    return render_template_string(STREAM_HTML, keyword=keyword, scan_id=scan_id)
 
 
 @app.route("/results/<scan_id>")
@@ -237,6 +319,23 @@ def view_results(scan_id):
         results=scan["results"],
         keyword=scan["keyword"],
     )
+
+
+@app.route("/stream/<scan_id>")
+def stream_results(scan_id):
+    def event_stream():
+        q = SCAN_QUEUES.get(scan_id)
+        if not q:
+            yield "event: done\ndata: {}\n\n"
+            return
+        while True:
+            item = q.get()
+            if item is None:
+                yield "event: done\ndata: {}\n\n"
+                break
+            yield f"data: {json.dumps(item)}\n\n"
+
+    return Response(event_stream(), mimetype="text/event-stream")
 
 
 if __name__ == "__main__":

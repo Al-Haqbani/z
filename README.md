@@ -16,6 +16,7 @@ To further reduce false positives, matches are filtered using a small entropy ch
 
 It can optionally search employees automatically by inspecting the contributors of a repository you provide. You can also search an entire GitHub organization in one go by supplying an org name. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser.
 The dashboard also keeps a history of your scans so you can revisit past results at any time.
+Results appear on the page in real time thanks to streaming updates, so you can monitor a scan while it is still running.
 It uses a simple purple, orange, green and gray color scheme for a clean look.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
 Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active token verification*, which checks GitHub, Slack, Discord and Telegram tokens via their APIs to confirm they are still valid. Optional Telegram or Discord notifications can alert you when leaks are found.
@@ -48,6 +49,8 @@ To use the web interface separately, run:
 ```
 python3 webapp.py
 ```
+
+While a scan runs, results stream live to the page using server‑sent events, so you can watch leaks appear in real time without waiting for the full scan to finish.
 
 AI verification requires the optional `transformers` and `torch` packages. Install them with:
 
