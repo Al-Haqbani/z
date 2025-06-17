@@ -38,7 +38,10 @@ pip install -r requirements.txt
 At startup you will be asked for API tokens for GitHub, GitLab, SwaggerHub and GrayHatWarfare.
 Providing these tokens greatly improves the results on those platforms. If you
 skip a token or provide an invalid one, searches on that platform may return no
-results and you may see warning messages.
+results and you may see warning messages. GitHub's code search API in
+particular **requires** authentication. When no GitHub token is supplied the
+tool now prints a warning and skips GitHub results entirely instead of timing
+out.
 
 Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results are streamed to the terminal as soon as each platform finishes so you don't have to wait for the entire run. After each scan an HTML report `results.html` **and** a machine-readable JSON file `results.json` are saved with the complete links and color-coded severity. You can also launch the web interface from the menu.
 

@@ -163,6 +163,10 @@ class GitHubSearcher:
         progress_callback=None,
         **_,
     ):
+        if not self.token:
+            if not self.silent:
+                print("GitHub token required for code search. Skipping GitHub results.")
+            return []
         code_endpoint = f"{self.BASE_URL}/search/code"
         commit_endpoint = f"{self.BASE_URL}/search/commits"
         issue_endpoint = f"{self.BASE_URL}/search/issues"
