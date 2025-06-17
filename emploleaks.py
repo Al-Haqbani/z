@@ -137,9 +137,12 @@ def main():
                 print("No leaks found.")
         elif choice == "4":
             keyword = input("Company name or domain: ")
-            from core.recon_searcher import ReconSearcher
-            recon = ReconSearcher()
-            results = recon.search(keyword)
+            results = SearchManager.start_search(
+                "recon",
+                keyword,
+                tokens=tokens,
+                result_callback=print_result,
+            )
             if results:
                 print_results(results)
                 report_path = generate_html_report(results, path="results.html")

@@ -24,6 +24,9 @@ SCAN_QUEUES = {}
 # Sets controlling running scans
 PAUSED_SCANS = set()
 CANCELLED_SCANS = set()
+# Recon specific history
+RECON_HISTORY = {}
+RECON_QUEUES = {}
 
 INDEX_HTML = """
 <!doctype html>
@@ -471,6 +474,88 @@ STREAM_HTML = """
 </html>
 """
 
+RECON_INDEX_HTML = """
+<!doctype html>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>Recon Scanner</title>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+  </head>
+  <body class=\"bg-dark text-light\">
+    <div class=\"container mt-4\">
+      <h1 class=\"mb-4\">Recon Scanner</h1>
+      <form method=\"post\" action=\"/recon_search\" class=\"mb-4\">
+        <div class=\"mb-3\">
+          <label class=\"form-label\">Keyword or Domain</label>
+          <input class=\"form-control\" name=\"keyword\" required>
+        </div>
+        <button class=\"btn btn-primary\" type=\"submit\">Start Scan</button>
+      </form>
+      <h3 class=\"mt-4\">Previous Recon Scans</h3>
+      <ul class=\"list-group\">
+        {% for sid, item in history.items() %}
+        <li class=\"list-group-item d-flex justify-content-between align-items-center\">
+          <span>{{ item.keyword }}</span>
+          <a href=\"/recon_live/{{sid}}\" class=\"btn btn-sm btn-outline-primary\">View</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </body>
+</html>
+"""
+
+RECON_STREAM_HTML = """
+<!doctype html>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>Recon Results</title>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <style>body { padding-top: 20px; }</style>
+  </head>
+  <body class=\"bg-dark text-light\">
+    <div class=\"container\">
+      <h1 class=\"mb-4\">Recon Results for {{ keyword }}</h1>
+      <div class=\"mb-3\">
+        <input id=\"filter\" class=\"form-control form-control-sm\" placeholder=\"Filter\">
+      </div>
+      <div class=\"table-responsive\">
+        <table class=\"table table-bordered table-striped\">
+          <thead class=\"table-dark\"><tr><th>#</th><th>URL</th><th>Status</th><th>Source</th></tr></thead>
+          <tbody id=\"tbody\"></tbody>
+        </table>
+      </div>
+      <p id=\"done\" class=\"mt-3\" style=\"display:none\">Scan completed.</p>
+      <a href=\"/recon\" class=\"btn btn-secondary mt-3\">Back</a>
+    </div>
+    <script>
+      const tbody = document.getElementById('tbody');
+      const filter = document.getElementById('filter');
+      let idx=1;
+      function apply() {
+        const term = filter.value.toLowerCase();
+        tbody.querySelectorAll('tr').forEach(tr=>{
+          tr.style.display = tr.textContent.toLowerCase().includes(term) ? '' : 'none';
+        });
+      }
+      filter.addEventListener('input', apply);
+      const evt = new EventSource('/recon_stream/{{ scan_id }}');
+      evt.onmessage = e => {
+        const d = JSON.parse(e.data);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${idx}</td><td><a href="${d.url}" target="_blank">${d.url}</a></td><td>${d.status}</td><td>${d.discovery}</td>`;
+        tbody.appendChild(tr); idx++; apply();
+      };
+      evt.addEventListener('done', ()=>{document.getElementById('done').style.display='block';evt.close();});
+    </script>
+  </body>
+</html>
+"""
+
 SCANS_HTML = """
 <!doctype html>
 <html lang=\"en\">
@@ -542,6 +627,13 @@ def index():
         INDEX_HTML,
         platforms=SearchManager.PLATFORM_MAP.keys(),
         history=SCAN_HISTORY,
+    )
+
+@app.route("/recon")
+def recon_index():
+    return render_template_string(
+        RECON_INDEX_HTML,
+        history=RECON_HISTORY,
     )
 
 @app.route('/app/')
@@ -674,6 +766,43 @@ def search():
     return render_template_string(STREAM_HTML, keyword=keyword, scan_id=scan_id)
 
 
+@app.route("/recon_search", methods=["POST"])
+def recon_search():
+    keyword = request.form.get("keyword", "")
+    gh_token = os.environ.get("GITHUB_TOKEN")
+    gl_token = os.environ.get("GITLAB_TOKEN")
+
+    scan_id = str(int(time.time()))
+    results = []
+    q = queue.Queue()
+    RECON_QUEUES[scan_id] = q
+    RECON_HISTORY[scan_id] = {"keyword": keyword, "results": results, "status": "running"}
+
+    def callback(item, idx):
+        q.put({"url": item["file"], "status": item.get("status_code"), "discovery": item.get("discovery")})
+        results.append(item)
+
+    def worker():
+        try:
+            SearchManager.start_search(
+                "recon",
+                keyword,
+                tokens={"github": gh_token, "gitlab": gl_token},
+                result_callback=lambda item, idx: callback(item, idx),
+            )
+        finally:
+            q.put(None)
+            RECON_HISTORY[scan_id]["status"] = "done"
+            os.makedirs("reports", exist_ok=True)
+            from report_generator.generate_report import generate_html_report, save_json_report
+            generate_html_report(results, path=f"reports/{scan_id}_recon.html")
+            save_json_report(results, path=f"reports/{scan_id}_recon.json")
+
+    threading.Thread(target=worker, daemon=True).start()
+
+    return render_template_string(RECON_STREAM_HTML, keyword=keyword, scan_id=scan_id)
+
+
 @app.route("/results/<scan_id>")
 def view_results(scan_id):
     scan = SCAN_HISTORY.get(scan_id)
@@ -721,6 +850,35 @@ def stream_results(scan_id):
                 break
             event = item.pop("_event", "message")
             yield f"event: {event}\ndata: {json.dumps(item)}\n\n"
+
+    return Response(event_stream(), mimetype="text/event-stream")
+
+
+@app.route("/recon_live/<scan_id>")
+def recon_live(scan_id):
+    scan = RECON_HISTORY.get(scan_id)
+    if not scan:
+        return "Not found", 404
+    return render_template_string(
+        RECON_STREAM_HTML,
+        keyword=scan["keyword"],
+        scan_id=scan_id,
+    )
+
+
+@app.route("/recon_stream/<scan_id>")
+def recon_stream(scan_id):
+    def event_stream():
+        q = RECON_QUEUES.get(scan_id)
+        if not q:
+            yield "event: done\ndata: {}\n\n"
+            return
+        while True:
+            item = q.get()
+            if item is None:
+                yield "event: done\ndata: {}\n\n"
+                break
+            yield f"data: {json.dumps(item)}\n\n"
 
     return Response(event_stream(), mimetype="text/event-stream")
 

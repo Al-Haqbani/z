@@ -1,5 +1,8 @@
 import os
 import json
+import re
+import time
+import random
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Dict
 
@@ -17,8 +20,10 @@ class ReconSearcher:
         "drive.google.com",
     ]
 
-    def __init__(self, services=None, silent=False, **_):
+    def __init__(self, services=None, silent=False, github_token=None, gitlab_token=None, **_):
         self.silent = silent
+        self.github_token = github_token
+        self.gitlab_token = gitlab_token
         self.services = services or self._load_services()
 
     @classmethod
@@ -59,6 +64,56 @@ class ReconSearcher:
                 print(f"Wayback query failed for {domain}: {exc}")
         return urls
 
+    def _headers(self, token: str | None = None) -> Dict[str, str]:
+        headers = {"User-Agent": random.choice(["Mozilla/5.0", "Safari/537", "Chrome/97"]) }
+        if token:
+            headers["Authorization"] = f"token {token}"
+        return headers
+
+    def _query_github(self, keyword: str) -> List[Dict[str, str]]:
+        if not self.github_token:
+            return []
+        url = "https://api.github.com/search/code"
+        params = {"q": keyword, "per_page": 20}
+        urls: List[Dict[str, str]] = []
+        try:
+            resp = request_with_backoff(url, params=params, headers=self._headers(self.github_token))
+            if resp and resp.status_code == 200:
+                for item in resp.json().get("items", []):
+                    raw_url = item.get("html_url", "").replace("blob/", "raw/")
+                    f_resp = request_with_backoff(raw_url, headers=self._headers(self.github_token))
+                    if f_resp and f_resp.status_code == 200:
+                        for m in re.findall(r"https?://[^\s'\"]+", f_resp.text):
+                            if keyword.lower() in m.lower():
+                                urls.append({"url": m, "domain": "github", "source": "github"})
+        except Exception as exc:
+            if not self.silent:
+                print(f"GitHub recon error: {exc}")
+        return urls
+
+    def _query_gitlab(self, keyword: str) -> List[Dict[str, str]]:
+        if not self.gitlab_token:
+            return []
+        url = "https://gitlab.com/api/v4/search"
+        params = {"scope": "blobs", "search": keyword}
+        urls: List[Dict[str, str]] = []
+        try:
+            resp = request_with_backoff(url, params=params, headers=self._headers(self.gitlab_token))
+            if resp and resp.status_code == 200:
+                for item in resp.json():
+                    file_url = item.get("url")
+                    if not file_url:
+                        continue
+                    f_resp = request_with_backoff(file_url, headers=self._headers(self.gitlab_token))
+                    if f_resp and f_resp.status_code == 200:
+                        for m in re.findall(r"https?://[^\s'\"]+", f_resp.text):
+                            if keyword.lower() in m.lower():
+                                urls.append({"url": m, "domain": "gitlab", "source": "gitlab"})
+        except Exception as exc:
+            if not self.silent:
+                print(f"GitLab recon error: {exc}")
+        return urls
+
     def _verify_live(self, items: List[Dict[str, str]]) -> List[Dict[str, str]]:
         results = []
         with ThreadPoolExecutor(max_workers=8) as ex:
@@ -74,6 +129,7 @@ class ReconSearcher:
                 except Exception:
                     status = None
                 item["live_status"] = status
+                item["timestamp"] = int(time.time())
                 results.append(item)
         return results
 
@@ -81,6 +137,8 @@ class ReconSearcher:
         all_urls = []
         for domain in self.services:
             all_urls.extend(self._query_wayback(keyword, domain))
+        all_urls.extend(self._query_github(keyword))
+        all_urls.extend(self._query_gitlab(keyword))
         if not all_urls:
             return []
         verified = self._verify_live(all_urls)
@@ -92,6 +150,7 @@ class ReconSearcher:
                 "value": str(item.get("live_status")),
                 "status_code": item.get("live_status"),
                 "discovery": item["source"],
+                "timestamp": item.get("timestamp"),
             }
             for item in verified
         ]
