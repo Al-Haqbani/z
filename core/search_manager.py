@@ -9,6 +9,7 @@ from .gitlab_api import GitLabSearcher
 from .swaggerhub_scraper import SwaggerHubSearcher
 from .gist_searcher import GitHubGistSearcher
 from .grayhat_scraper import GrayHatSearcher
+from .recon_searcher import ReconSearcher
 from .ai_verifier import is_valid_leak
 from .leak_verifier import verify_leak
 import logging
@@ -28,6 +29,7 @@ class SearchManager:
         "swaggerhub": SwaggerHubSearcher,
         "gist": GitHubGistSearcher,
         "grayhat": GrayHatSearcher,
+        "recon": ReconSearcher,
     }
 
     @staticmethod

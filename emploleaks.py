@@ -28,7 +28,7 @@ def main():
         "grayhat": grayhat_token,
     }
     while True:
-        print("\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. Web Interface\n5. Exit")
+        print("\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. Recon Scan\n5. Web Interface\n6. Exit")
         choice = input("Select option: ")
         if choice == "1":
             platform = input("Platform (github/gitlab/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat): ")
@@ -136,11 +136,23 @@ def main():
             else:
                 print("No leaks found.")
         elif choice == "4":
+            keyword = input("Company name or domain: ")
+            from core.recon_searcher import ReconSearcher
+            recon = ReconSearcher()
+            results = recon.search(keyword)
+            if results:
+                print_results(results)
+                report_path = generate_html_report(results, path="results.html")
+                save_json_report(results, path="results.json")
+                print(f"Report saved to {report_path} and results.json")
+            else:
+                print("No URLs found.")
+        elif choice == "5":
             if web_app:
                 web_app.run(port=8000)
             else:
                 print("Web interface not available (Flask missing)")
-        elif choice == "5":
+        elif choice == "6":
             sys.exit()
         else:
             print("Invalid option")
