@@ -19,7 +19,7 @@ The dashboard keeps a history of all scans and shows whether each one is still r
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
 The web dashboard uses the dark **Cyborg** theme for a sleek, modern look.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
-Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active token verification*, which checks GitHub, Slack, Discord and Telegram tokens via their APIs to confirm they are still valid. Optional Telegram or Discord notifications can alert you when leaks are found.
+Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active verification*, which issues small HTTP requests (via `curl`) to confirm that URLs are reachable or that tokens remain valid by calling their APIs (GitHub, Slack, Discord, Telegram, etc.). Optional Telegram or Discord notifications can alert you when leaks are found. Verification runs asynchronously so scans remain fast, and the web UI includes a **Verified Only** filter to quickly review confirmed leaks.
 The CLI now highlights the severity of each finding in color for quick triage.
 When active verification is enabled, results now include an **Active** column indicating whether each token is still valid.
 Public GitHub Gists are also scanned to catch secrets that might be shared outside repositories.

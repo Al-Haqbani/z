@@ -10,7 +10,8 @@ from .swaggerhub_scraper import SwaggerHubSearcher
 from .gist_searcher import GitHubGistSearcher
 from .grayhat_scraper import GrayHatSearcher
 from .ai_verifier import is_valid_leak
-from .token_verifier import verify_token
+from .leak_verifier import verify_leak
+import logging
 from utils.notifications import send_telegram, send_discord
 
 
@@ -60,15 +61,32 @@ class SearchManager:
         else:
             filtered = list(results)
 
-        for item in filtered:
-            if active_verify:
-                item["active"] = verify_token(
-                    item.get("leak_type", ""), item.get("value", "")
-                )
-            else:
+        filtered = cls._dedup_results(filtered)
+
+        if active_verify and filtered:
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+
+            def worker(item):
+                try:
+                    return verify_leak(item.get("leak_type", ""), item.get("value", ""))
+                except Exception as exc:
+                    logging.warning("Verification error for %s: %s", item.get("value"), exc)
+                    return False
+
+            with ThreadPoolExecutor(max_workers=8) as ex:
+                future_map = {ex.submit(worker, it): it for it in filtered}
+                for fut in as_completed(future_map):
+                    item = future_map[fut]
+                    try:
+                        item["active"] = fut.result()
+                    except Exception as exc:
+                        item["active"] = False
+                        logging.warning("Verification error for %s: %s", item.get("value"), exc)
+        else:
+            for item in filtered:
                 item["active"] = None
 
-        return cls._dedup_results(filtered)
+        return filtered
 
     @classmethod
     def start_search(

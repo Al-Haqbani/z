@@ -167,6 +167,10 @@ INDEX_HTML = """
                 <label class=\"form-check-label\" for=\"verify_ai\">Verify with AI</label>
               </div>
               <div class=\"col-md-4 form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"active_verify\" id=\"active_verify\">
+                <label class=\"form-check-label\" for=\"active_verify\">Verify leaks</label>
+              </div>
+              <div class=\"col-md-4 form-check\">
                 <input class=\"form-check-input\" type=\"checkbox\" name=\"silent\" id=\"silent\">
                 <label class=\"form-check-label\" for=\"silent\">Silent Mode</label>
               </div>
@@ -248,6 +252,10 @@ RESULTS_HTML = """
       <p class=\"mb-3\"><strong>{{ results|length }} leaks found</strong></p>
       {% if results %}
       <div class=\"table-responsive\">
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="resVerifiedOnly">
+        <label class="form-check-label" for="resVerifiedOnly">Show only verified leaks</label>
+      </div>
         <table class=\"table table-bordered table-striped\">
           <thead class=\"table-dark\">
             <tr>
@@ -279,6 +287,16 @@ RESULTS_HTML = """
       <p>No leaks found.</p>
       {% endif %}
       <a href="/" class=\"btn btn-secondary mt-3\">Back</a>
+      <script>
+        const chk = document.getElementById('resVerifiedOnly');
+        chk.addEventListener('change', ()=>{
+          const showVerified = chk.checked;
+          document.querySelectorAll('tbody tr').forEach(tr=>{
+            const v = tr.children[6].textContent.trim() === 'True';
+            tr.style.display = !showVerified || v ? '' : 'none';
+          });
+        });
+      </script>
     </div>
   </body>
 </html>
@@ -331,6 +349,10 @@ STREAM_HTML = """
         </div>
         <div class="col-md-3"><input id="platformFilter" class="form-control form-control-sm" placeholder="Platform"></div>
       </div>
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="verifiedOnly">
+        <label class="form-check-label" for="verifiedOnly">Show only verified leaks</label>
+      </div>
       <div class="table-responsive">
         <table id=\"results\" class=\"table table-bordered table-striped\">
           <thead class=\"table-dark\">
@@ -379,22 +401,26 @@ STREAM_HTML = """
       const searchBox = document.getElementById('searchBox');
       const severityFilter = document.getElementById('severityFilter');
       const platformFilter = document.getElementById('platformFilter');
+      const verifiedOnly = document.getElementById('verifiedOnly');
 
       function applyFilters() {
         const term = searchBox.value.toLowerCase();
         const sev = severityFilter.value;
         const plat = platformFilter.value.toLowerCase();
+        const needVerified = verifiedOnly.checked;
         tbody.querySelectorAll('tr').forEach(tr => {
           const matchesTerm = tr.textContent.toLowerCase().includes(term);
           const matchesSev = !sev || tr.dataset.sev === sev;
           const matchesPlat = !plat || tr.dataset.platform.toLowerCase().includes(plat);
-          tr.style.display = matchesTerm && matchesSev && matchesPlat ? '' : 'none';
+          const matchesVer = !needVerified || tr.dataset.verified === 'true';
+          tr.style.display = matchesTerm && matchesSev && matchesPlat && matchesVer ? '' : 'none';
         });
       }
 
       searchBox.addEventListener('input', applyFilters);
       severityFilter.addEventListener('change', applyFilters);
       platformFilter.addEventListener('input', applyFilters);
+      verifiedOnly.addEventListener('change', applyFilters);
 
       evt.addEventListener('message', ev => {
         const data = JSON.parse(ev.data);
@@ -414,6 +440,7 @@ STREAM_HTML = """
         const row = document.createElement('tr');
         row.dataset.sev = sev;
         row.dataset.platform = data.source || '';
+        row.dataset.verified = data.active ? 'true' : 'false';
         row.className = sev === 'high' ? 'table-danger' : (sev === 'medium' ? 'table-warning' : 'table-light');
         const activeVal = data.active === null ? '?' : (data.active ? 'True' : 'False');
         row.innerHTML = `<td>${idx}</td><td>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a> <a href="${data.file}" target="_blank" class="ms-1 text-light"><i class="fa-solid fa-arrow-up-right-from-square"></i></a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td>`;
@@ -567,6 +594,7 @@ def search():
     full_scan = request.form.get("full_scan") == "on"
     scan_wayback = request.form.get("scan_wayback") == "on"
     verify_ai = request.form.get("verify_ai") == "on"
+    active_verify = request.form.get("active_verify") == "on"
     silent = request.form.get("silent") == "on"
     chosen = request.form.getlist("platforms")
     if not chosen:
@@ -606,6 +634,7 @@ def search():
                     keyword,
                     employees=employees if use_emp else None,
                     verify_ai=verify_ai,
+                    active_verify=active_verify,
                     full_scan=full_scan,
                     scan_wayback=scan_wayback,
                     result_callback=callback,
@@ -619,6 +648,7 @@ def search():
                         keyword,
                         employees=employees if use_emp else None,
                         verify_ai=verify_ai,
+                        active_verify=active_verify,
                         full_scan=full_scan,
                         scan_wayback=scan_wayback,
                         result_callback=callback,
