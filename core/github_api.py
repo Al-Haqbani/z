@@ -74,7 +74,7 @@ class GitHubSearcher:
         return repos
 
     @classmethod
-    def scan_repo(cls, repo, token=None, silent=False):
+    def scan_repo(cls, repo, token=None, silent=False, progress_callback=None):
         """Scan every file in the given repository."""
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
         if token:
@@ -88,6 +88,8 @@ class GitHubSearcher:
         if not tree:
             return []
         leaks = []
+        if progress_callback:
+            progress_callback({"repo": repo, "status": "start"})
         for item in tree.get("tree", []):
             if item.get("type") != "blob":
                 continue
@@ -107,6 +109,8 @@ class GitHubSearcher:
             except Exception:
                 if not silent:
                     print(f"GitHub file fetch error for {raw_url}")
+        if progress_callback:
+            progress_callback({"repo": repo, "status": "done"})
         return leaks
 
     @classmethod
@@ -156,6 +160,7 @@ class GitHubSearcher:
         full_scan=False,
         repo=None,
         scan_wayback=False,
+        progress_callback=None,
         **_,
     ):
         code_endpoint = f"{self.BASE_URL}/search/code"
@@ -287,8 +292,13 @@ class GitHubSearcher:
             if employees:
                 for user in employees:
                     repos.extend(self.get_user_repos(user, self.token))
-            for r in repos:
-                leaks.extend(self.scan_repo(r, token=self.token, silent=self.silent))
+            total = len(repos)
+            for i, r in enumerate(repos, 1):
+                if progress_callback:
+                    progress_callback({"repo": r, "index": i, "total": total})
+                leaks.extend(
+                    self.scan_repo(r, token=self.token, silent=self.silent, progress_callback=progress_callback)
+                )
                 if scan_wayback:
                     leaks.extend(self.scan_repo_wayback(r, silent=self.silent))
         return leaks

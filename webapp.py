@@ -28,7 +28,7 @@ INDEX_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>EmploLeaksGuardian – Enterprise Secret Detection Platform</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/solar/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 40px; }
@@ -208,7 +208,7 @@ RESULTS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/solar/bootstrap.min.css\" rel=\"stylesheet\">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>
       body { padding-top: 40px; }
@@ -263,7 +263,7 @@ STREAM_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Live Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/solar/bootstrap.min.css\" rel=\"stylesheet\">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>body { padding-top: 40px; }</style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -310,7 +310,8 @@ STREAM_HTML = """
         <div class="col-md-6"><canvas id="sevChart"></canvas></div>
         <div class="col-md-6"><canvas id="platChart"></canvas></div>
       </div>
-      <p id=\"done\" class=\"mt-3\" style=\"display:none\">Scan completed.</p>
+      <p id="progress" class="mt-3"></p>
+      <p id="done" class="mt-3" style="display:none">Scan completed.</p>
       <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
     </div>
     <script>
@@ -380,6 +381,12 @@ STREAM_HTML = """
         applyFilters();
       });
 
+      evt.addEventListener('progress', ev => {
+        const info = JSON.parse(ev.data);
+        const msg = `Scanning ${info.repo} (${info.index}/${info.total})`;
+        document.getElementById('progress').innerText = msg;
+      });
+
       tbody.addEventListener('click', e => {
         const btn = e.target.closest('.copy-btn');
         if (btn) {
@@ -403,7 +410,7 @@ SCANS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Scans</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/solar/bootstrap.min.css\" rel=\"stylesheet\">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <style>body { padding-top: 40px; }</style>
   </head>
@@ -509,6 +516,10 @@ def search():
         q.put(item)
         results.append(item)
 
+    def progress(info):
+        info["_event"] = "progress"
+        q.put(info)
+
     def worker():
         if set(chosen) == set(SearchManager.PLATFORM_MAP.keys()):
             SearchManager.run_full_auto_mode(
@@ -518,6 +529,7 @@ def search():
                 full_scan=full_scan,
                 scan_wayback=scan_wayback,
                 result_callback=callback,
+                progress_callback=progress,
                 **kwargs,
             )
         else:
@@ -530,6 +542,7 @@ def search():
                     full_scan=full_scan,
                     scan_wayback=scan_wayback,
                     result_callback=callback,
+                    progress_callback=progress,
                     **kwargs,
                 )
         q.put(None)
@@ -582,7 +595,8 @@ def stream_results(scan_id):
                     SCAN_HISTORY[scan_id]["status"] = "done"
                 yield "event: done\ndata: {}\n\n"
                 break
-            yield f"data: {json.dumps(item)}\n\n"
+            event = item.pop("_event", "message")
+            yield f"event: {event}\ndata: {json.dumps(item)}\n\n"
 
     return Response(event_stream(), mimetype="text/event-stream")
 
