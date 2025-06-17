@@ -2,7 +2,11 @@ import sys
 from core.token_manager import get_token, get_github_token
 from core.search_manager import SearchManager
 from core.github_api import GitHubSearcher
-from output.terminal_output import print_results, print_result
+from output.terminal_output import (
+    print_results,
+    print_result,
+    print_progress,
+)
 from report_generator.generate_report import generate_html_report, save_json_report
 
 try:
@@ -57,6 +61,7 @@ def main():
                 full_scan=full_repo,
                 scan_wayback=wayback,
                 result_callback=print_result,
+                progress_callback=print_progress,
             )
             if results:
                 print_results(results)
@@ -97,6 +102,7 @@ def main():
                 full_scan=full_repo,
                 scan_wayback=wayback,
                 result_callback=print_result,
+                progress_callback=print_progress,
             )
             if results:
                 print_results(results)

@@ -28,7 +28,7 @@ INDEX_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>EmploLeaksGuardian – Enterprise Secret Detection Platform</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; }
@@ -221,7 +221,7 @@ RESULTS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>body { padding-top: 70px; }</style>
   </head>
@@ -287,7 +287,7 @@ STREAM_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Live Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>body { padding-top: 70px; }</style>
     <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
@@ -447,7 +447,7 @@ SCANS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Scans</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>body { padding-top: 70px; }</style>
   </head>

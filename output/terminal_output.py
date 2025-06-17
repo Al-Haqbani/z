@@ -61,3 +61,18 @@ def print_result(item, idx=None):
     )
     console = Console()
     console.print(table)
+
+
+def print_progress(info: dict):
+    """Show progress information for repository scanning."""
+    repo = info.get("repo", "")
+    total = info.get("total")
+    index = info.get("index")
+    if repo and total and index:
+        msg = f"Scanning {repo} ({index}/{total})"
+    elif repo:
+        status = info.get("status", "")
+        msg = f"{status.capitalize()} {repo}"
+    else:
+        msg = str(info)
+    print(msg)

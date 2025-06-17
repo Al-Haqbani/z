@@ -17,7 +17,7 @@ To further reduce false positives, matches are filtered using a small entropy ch
 It can optionally search employees automatically by inspecting the contributors of a repository you provide. You can also search an entire GitHub organization in one go by supplying an org name. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser. A dedicated `/scans` page lists all scans with their status.
 The dashboard keeps a history of all scans and shows whether each one is still running or finished. You can open a **Live** view to watch results stream in as they are discovered, or view the final report once the scan is done.
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
-It uses a simple purple, orange, green and gray color scheme for a clean look.
+The web dashboard uses the dark **Cyborg** theme for a sleek, modern look.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
 Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active token verification*, which checks GitHub, Slack, Discord and Telegram tokens via their APIs to confirm they are still valid. Optional Telegram or Discord notifications can alert you when leaks are found.
 The CLI now highlights the severity of each finding in color for quick triage.
@@ -55,7 +55,7 @@ python3 webapp.py
 
 While a scan runs, results stream live to the page using server‑sent events, so you can watch leaks appear in real time without waiting for the full scan to finish.
 
-The refreshed dark interface shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. It mimics the modern style of GrayHatWarfare's shorteners dashboard. You can filter by platform, severity or keyword while the scan runs.
+The refreshed dark interface (now using the **Cyborg** Bootswatch theme) shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. You can filter by platform, severity or keyword while the scan runs. The CLI also prints progress messages such as `Scanning owner/repo (3/10)` so you know which repository is being processed.
 AI verification requires the optional `transformers` and `torch` packages. Install them with:
 
 ```
