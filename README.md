@@ -52,7 +52,7 @@ python3 webapp.py
 
 While a scan runs, results stream live to the page using server‑sent events, so you can watch leaks appear in real time without waiting for the full scan to finish.
 
-The refreshed dark interface shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. You can filter by platform, severity or keyword while the scan runs.
+The refreshed dark interface shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. It mimics the modern style of GrayHatWarfare's shorteners dashboard. You can filter by platform, severity or keyword while the scan runs.
 AI verification requires the optional `transformers` and `torch` packages. Install them with:
 
 ```

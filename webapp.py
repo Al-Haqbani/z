@@ -28,14 +28,27 @@ INDEX_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>EmploLeaksGuardian – Enterprise Secret Detection Platform</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/solar/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
-      body { padding-top: 40px; }
+      body { padding-top: 70px; }
       .scan-card { cursor: pointer; }
     </style>
   </head>
   <body class=\"bg-dark text-light\">
+    <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
+      <div class=\"container\">
+        <a class=\"navbar-brand fw-bold\" href=\"/\">EmploLeaksGuardian</a>
+        <button class=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#nav\">
+          <span class=\"navbar-toggler-icon\"></span>
+        </button>
+        <div id=\"nav\" class=\"collapse navbar-collapse\">
+          <ul class=\"navbar-nav ms-auto\">
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <div class=\"container\">
       <div class=\"text-center mb-4\">
         <i class=\"fa-solid fa-shield-halved fa-3x mb-2\"></i>
@@ -208,13 +221,24 @@ RESULTS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/solar/bootstrap.min.css\" rel=\"stylesheet\">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <style>
-      body { padding-top: 40px; }
-    </style>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
+    <style>body { padding-top: 70px; }</style>
   </head>
   <body class=\"bg-dark text-light\">
+    <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
+      <div class=\"container\">
+        <a class=\"navbar-brand\" href=\"/\">EmploLeaksGuardian</a>
+        <button class=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#nav2\">
+          <span class=\"navbar-toggler-icon\"></span>
+        </button>
+        <div class=\"collapse navbar-collapse\" id=\"nav2\">
+          <ul class=\"navbar-nav ms-auto\">
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <div class=\"container\">
       <h1 class=\"mb-4\">Results for {{ keyword }}</h1>
       <p class=\"mb-3\"><strong>{{ results|length }} leaks found</strong></p>
@@ -263,12 +287,25 @@ STREAM_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Live Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/solar/bootstrap.min.css\" rel=\"stylesheet\">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <style>body { padding-top: 40px; }</style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
+    <style>body { padding-top: 70px; }</style>
+    <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
   </head>
   <body class=\"bg-dark text-light\">
+    <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
+      <div class=\"container\">
+        <a class=\"navbar-brand\" href=\"/\">EmploLeaksGuardian</a>
+        <button class=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#nav3\">
+          <span class=\"navbar-toggler-icon\"></span>
+        </button>
+        <div class=\"collapse navbar-collapse\" id=\"nav3\">
+          <ul class=\"navbar-nav ms-auto\">
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <div class=\"container\">
       <h1 class=\"mb-4\">Live Results for {{ keyword }}</h1>
       <div class="mb-3">
@@ -410,11 +447,24 @@ SCANS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Scans</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/solar/bootstrap.min.css\" rel=\"stylesheet\">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <style>body { padding-top: 40px; }</style>
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
+    <style>body { padding-top: 70px; }</style>
   </head>
   <body class=\"bg-dark text-light\">
+    <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
+      <div class=\"container\">
+        <a class=\"navbar-brand\" href=\"/\">EmploLeaksGuardian</a>
+        <button class=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#nav4\">
+          <span class=\"navbar-toggler-icon\"></span>
+        </button>
+        <div class=\"collapse navbar-collapse\" id=\"nav4\">
+          <ul class=\"navbar-nav ms-auto\">
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <div class=\"container\">
       <h1 class=\"mb-4\">Scan History</h1>
       <div class=\"table-responsive\">
