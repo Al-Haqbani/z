@@ -1,0 +1,2 @@
+body { font-family: Arial, sans-serif; padding: 10px; width: 300px; }
+#log { margin-top: 10px; max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 5px; }

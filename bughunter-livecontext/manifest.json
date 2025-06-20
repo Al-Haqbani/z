@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "BugHunter LiveContext",
+  "version": "0.1",
+  "description": "Security research helper that monitors network, inspects DOM, and suggests vulnerabilities using AI.",
+  "permissions": ["storage", "activeTab", "scripting", "webRequest", "webRequestBlocking"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "ui.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ]
+}
