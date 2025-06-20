@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "BugHunter LiveContext",
+  "version": "0.2",
+  "description": "AI-powered vulnerability discovery tool for bug bounty hunters.",
+  "permissions": ["storage", "activeTab", "scripting", "webRequest", "webRequestBlocking"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "ui.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "type": "module",
+      "run_at": "document_end"
+    }
+  ]
+}

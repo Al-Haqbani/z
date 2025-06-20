@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>BugHunter LiveContext</title>
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body>
+  <h1>BugHunter LiveContext</h1>
+  <label>OpenAI API Key: <input type="password" id="apiKey"></label>
+  <button id="saveKey">Save</button>
+  <div>
+    <label>Blind XSS Payload: <input type="text" id="payload"></label>
+    <button id="savePayload">Save Payload</button>
+  </div>
+  <div id="log"></div>
+  <script type="module" src="ui.js"></script>
+</body>
+</html>
