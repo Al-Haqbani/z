@@ -1,5 +1,6 @@
 import random
 import time
+import os
 import requests
 
 from .leak_detector import detect_leaks
@@ -23,6 +24,13 @@ class GitHubSearcher:
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
         "Mozilla/5.0 (X11; Linux x86_64)"
     ]
+
+    DORKS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "github_dorks.txt")
+    try:
+        with open(DORKS_FILE, "r", encoding="utf-8") as f:
+            DORKS = [line.strip() for line in f if line.strip()]
+    except Exception:
+        DORKS = []
 
     def __init__(self, token=None, silent=False, **_):
         self.token = token
@@ -181,6 +189,12 @@ class GitHubSearcher:
                 if organization:
                     q += f" org:{organization}"
                 queries.append(q)
+        # Add GitDorker dorks combined with the keyword
+        for d in self.DORKS:
+            base = f"{keyword} {d}".strip()
+            if organization:
+                base += f" org:{organization}"
+            queries.append(base)
         leaks = []
         for q in queries:
             page = 1
