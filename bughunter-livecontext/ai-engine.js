@@ -5,6 +5,9 @@ export async function analyze(prompt) {
   if (!openaiKey) {
     return { error: 'No API key' };
   }
+  const { reqLog = [] } = await chrome.storage.local.get('reqLog');
+  const recent = reqLog.slice(-5).map(r => `${r.method} ${r.url}`).join('\n');
+  const fullPrompt = `${prompt}\nRecent requests:\n${recent}`;
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -14,7 +17,7 @@ export async function analyze(prompt) {
     body: JSON.stringify({
       model: 'gpt-4',
       temperature: 0.2,
-      messages: [{ role: 'user', content: prompt }]
+      messages: [{ role: 'user', content: fullPrompt }]
     })
   });
   return res.json();

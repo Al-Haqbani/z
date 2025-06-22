@@ -13,9 +13,18 @@ document.getElementById('savePayload').addEventListener('click', async () => {
   appendLog('Payload saved');
 });
 
+document.getElementById('startScan').addEventListener('click', async () => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (tab && tab.id) {
+    chrome.tabs.sendMessage(tab.id, { type: 'start-scan' });
+    appendLog('Started scan...');
+  }
+});
+
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.type === 'network') {
     appendLog(`Network: ${msg.details.method} ${msg.details.url}`);
+    appendRequest(msg.details.method, msg.details.url);
   } else if (msg.type === 'dom') {
     appendLog(`DOM: ${msg.forms.length} forms, ${msg.inputs.length} inputs`);
   } else if (msg.type === 'svgUpload') {
@@ -45,6 +54,20 @@ function appendLog(text) {
   const div = document.createElement('div');
   div.textContent = text;
   log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+
+function appendRequest(method, url) {
+  const tbody = document.querySelector('#requestTable tbody');
+  if (!tbody) return;
+  const row = document.createElement('tr');
+  const methodCell = document.createElement('td');
+  methodCell.textContent = method;
+  const urlCell = document.createElement('td');
+  urlCell.textContent = url;
+  row.appendChild(methodCell);
+  row.appendChild(urlCell);
+  tbody.appendChild(row);
 }
 
 init();

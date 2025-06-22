@@ -3,7 +3,8 @@
 export function inspectDOM() {
   const forms = Array.from(document.querySelectorAll('form')).map(f => ({
     action: f.action,
-    method: f.method || 'get'
+    method: f.method || 'get',
+    hasTextarea: f.querySelector('textarea') !== null
   }));
   const inputs = Array.from(document.querySelectorAll('input, textarea, select, button')).map(el => ({
     tag: el.tagName.toLowerCase(),

@@ -5,7 +5,8 @@ import { detectBlindXSS } from './xss-detector.js';
 import { autoInject } from './injector.js';
 import { analyze } from './ai-engine.js';
 
-(async () => {
+
+async function runScan() {
   const { forms, inputs } = inspectDOM();
   detectSvgUploads(inputs);
   detectBlindXSS(forms);
@@ -18,4 +19,10 @@ import { analyze } from './ai-engine.js';
   if (!ai.error) {
     chrome.runtime.sendMessage({ type: 'ai', result: ai });
   }
-})();
+}
+
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.type === 'start-scan') {
+    runScan();
+  }
+});

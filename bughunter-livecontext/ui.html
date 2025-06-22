@@ -13,6 +13,16 @@
     <label>Blind XSS Payload: <input type="text" id="payload"></label>
     <button id="savePayload">Save Payload</button>
   </div>
+  <div>
+    <button id="startScan">Start Scan</button>
+  </div>
+  <table id="requestTable">
+    <thead>
+      <tr><th>Method</th><th>URL</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <h2>Activity Log</h2>
   <div id="log"></div>
   <script type="module" src="ui.js"></script>
 </body>
