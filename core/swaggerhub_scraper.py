@@ -19,7 +19,7 @@ class SwaggerHubSearcher:
             headers["Authorization"] = f"Bearer {self.token}"
         return headers
 
-    def search(self, keyword, **_):
+    def search(self, keyword, result_callback=None, **_):
         leaks = []
         params = {"specType": "API", "query": keyword, "limit": 5}
         try:
@@ -38,12 +38,15 @@ class SwaggerHubSearcher:
                     spec_resp = requests.get(spec_url)
                     if spec_resp.status_code == 200:
                         for leak_type, value in detect_leaks(spec_resp.text):
-                            leaks.append({
+                            item = {
                                 "source": "SwaggerHub",
                                 "file": name or spec_url,
                                 "leak_type": leak_type,
                                 "value": value,
-                            })
+                            }
+                            leaks.append(item)
+                            if result_callback:
+                                result_callback(item, len(leaks))
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:

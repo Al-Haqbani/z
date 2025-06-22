@@ -133,7 +133,7 @@ class ReconSearcher:
                 results.append(item)
         return results
 
-    def search(self, keyword: str, **kwargs) -> List[Dict[str, str]]:
+    def search(self, keyword: str, result_callback=None, **kwargs) -> List[Dict[str, str]]:
         all_urls = []
         for domain in self.services:
             all_urls.extend(self._query_wayback(keyword, domain))
@@ -142,8 +142,9 @@ class ReconSearcher:
         if not all_urls:
             return []
         verified = self._verify_live(all_urls)
-        results = [
-            {
+        results = []
+        for item in verified:
+            res_item = {
                 "source": "Recon",
                 "file": item["url"],
                 "leak_type": f"URL ({item['domain']})",
@@ -152,6 +153,7 @@ class ReconSearcher:
                 "discovery": item["source"],
                 "timestamp": item.get("timestamp"),
             }
-            for item in verified
-        ]
+            results.append(res_item)
+            if result_callback:
+                result_callback(res_item, len(results))
         return results

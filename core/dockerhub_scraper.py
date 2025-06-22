@@ -13,7 +13,7 @@ class DockerHubSearcher:
     def __init__(self, silent=False, **_):
         self.silent = silent
 
-    def search(self, keyword, **kwargs):
+    def search(self, keyword, result_callback=None, **kwargs):
         search_url = f"{self.BASE_URL}/search/repositories/?page_size=5&query={keyword}"
         leaks = []
         try:
@@ -29,12 +29,15 @@ class DockerHubSearcher:
                         content = readme_resp.json().get("content", "")
                         found = detect_leaks(content)
                         for leak_type, value in found:
-                            leaks.append({
+                            item = {
                                 "source": "DockerHub",
                                 "file": f"{namespace}/{name}",
                                 "leak_type": leak_type,
                                 "value": value,
-                            })
+                            }
+                            leaks.append(item)
+                            if result_callback:
+                                result_callback(item, len(leaks))
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:

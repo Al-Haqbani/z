@@ -16,7 +16,7 @@ class GrayHatSearcher:
         self.token = token
         self.silent = silent
 
-    def search(self, keyword, **kwargs) -> List[Dict[str, str]]:
+    def search(self, keyword, result_callback=None, **kwargs) -> List[Dict[str, str]]:
         if not self.token:
             if not self.silent:
                 print("GrayHatWarfare token required for bucket search")
@@ -32,22 +32,28 @@ class GrayHatSearcher:
                     url = item.get("url")
                     bucket = item.get("bucket")
                     path = item.get("fullPath")
-                    leaks.append({
+                    item_dict = {
                         "source": "GrayHatWarfare",
                         "file": url,
                         "leak_type": "Open Bucket File",
                         "value": f"{bucket}/{path}" if bucket and path else bucket or path,
-                    })
+                    }
+                    leaks.append(item_dict)
+                    if result_callback:
+                        result_callback(item_dict, len(leaks))
                     if url and url.endswith(('.txt', '.log', '.json', '.env')):
                         f_resp = request_with_backoff(url)
                         if f_resp and f_resp.status_code == 200 and len(f_resp.text) < 20000:
                             for name, val in detect_leaks(f_resp.text):
-                                leaks.append({
+                                item2 = {
                                     "source": "GrayHatWarfare",
                                     "file": url,
                                     "leak_type": name,
                                     "value": val,
-                                })
+                                }
+                                leaks.append(item2)
+                                if result_callback:
+                                    result_callback(item2, len(leaks))
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:

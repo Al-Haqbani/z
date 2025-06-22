@@ -42,7 +42,7 @@ class GitLabSearcher:
                 print(f"GitLab {scope} search error: {exc}")
         return []
 
-    def search(self, keyword, scan_commits=False, **_):
+    def search(self, keyword, scan_commits=False, result_callback=None, **_):
         leaks = []
         blob_results = self._search_scope(keyword, "blobs")
         for item in blob_results:
@@ -56,12 +56,15 @@ class GitLabSearcher:
                 raw_resp = request_with_backoff(raw_url, headers=self._headers())
                 if raw_resp and raw_resp.status_code == 200:
                     for leak_type, value in detect_leaks(raw_resp.text):
-                        leaks.append({
+                        item_dict = {
                             "source": "GitLab",
                             "file": raw_url,
                             "leak_type": leak_type,
                             "value": value,
-                        })
+                        }
+                        leaks.append(item_dict)
+                        if result_callback:
+                            result_callback(item_dict, len(leaks))
             except Exception as exc:
                 if not self.silent:
                     print(f"GitLab raw fetch error: {exc}")
@@ -72,10 +75,13 @@ class GitLabSearcher:
             for item in commit_results:
                 msg = item.get("message", "")
                 for leak_type, value in detect_leaks(msg):
-                    leaks.append({
+                    item_dict = {
                         "source": "GitLab",
                         "file": item.get("web_url", ""),
                         "leak_type": leak_type,
                         "value": value,
-                    })
+                    }
+                    leaks.append(item_dict)
+                    if result_callback:
+                        result_callback(item_dict, len(leaks))
         return leaks

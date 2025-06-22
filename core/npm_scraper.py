@@ -14,7 +14,7 @@ class NPMPackageSearcher:
     def __init__(self, silent=False, **_):
         self.silent = silent
 
-    def search(self, keyword, **kwargs):
+    def search(self, keyword, result_callback=None, **kwargs):
         leaks = []
         search_url = f"{self.BASE_URL}/-/v1/search"
         params = {"text": keyword, "size": 5}
@@ -29,12 +29,15 @@ class NPMPackageSearcher:
                         readme = details_resp.json().get("readme", "")
                         found = detect_leaks(readme)
                         for leak_type, value in found:
-                            leaks.append({
+                            item = {
                                 "source": "NPM",
                                 "file": pkg_name,
                                 "leak_type": leak_type,
                                 "value": value,
-                            })
+                            }
+                            leaks.append(item)
+                            if result_callback:
+                                result_callback(item, len(leaks))
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:

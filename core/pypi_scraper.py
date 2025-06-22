@@ -20,7 +20,7 @@ class PyPiPackageSearcher:
         pattern = r"/project/([^/]+)/"
         return re.findall(pattern, html)
 
-    def search(self, keyword, **kwargs):
+    def search(self, keyword, result_callback=None, **kwargs):
         leaks = []
         try:
             resp = request_with_backoff(self.SEARCH_URL, params={"q": keyword})
@@ -32,12 +32,15 @@ class PyPiPackageSearcher:
                         description = info_resp.json().get("info", {}).get("description", "")
                         found = detect_leaks(description)
                         for leak_type, value in found:
-                            leaks.append({
+                            item = {
                                 "source": "PyPI",
                                 "file": name,
                                 "leak_type": leak_type,
                                 "value": value,
-                            })
+                            }
+                            leaks.append(item)
+                            if result_callback:
+                                result_callback(item, len(leaks))
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:

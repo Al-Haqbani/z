@@ -17,7 +17,7 @@ class RedditSearcher:
     def _headers(self):
         return {"User-Agent": "EmploLeaksGuardian/0.1"}
 
-    def search(self, keyword, **kwargs):
+    def search(self, keyword, result_callback=None, **kwargs):
         leaks = []
         params = {"q": keyword, "limit": 5}
         try:
@@ -29,12 +29,15 @@ class RedditSearcher:
                     text = f"{post.get('title', '')}\n{post.get('selftext', '')}"
                     found = detect_leaks(text)
                     for leak_type, value in found:
-                        leaks.append({
+                        item = {
                             "source": "Reddit",
                             "file": post.get("permalink"),
                             "leak_type": leak_type,
                             "value": value,
-                        })
+                        }
+                        leaks.append(item)
+                        if result_callback:
+                            result_callback(item, len(leaks))
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:

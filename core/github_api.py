@@ -82,7 +82,7 @@ class GitHubSearcher:
         return repos
 
     @classmethod
-    def scan_repo(cls, repo, token=None, silent=False, progress_callback=None):
+    def scan_repo(cls, repo, token=None, silent=False, progress_callback=None, result_callback=None):
         """Scan every file in the given repository."""
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
         if token:
@@ -107,12 +107,15 @@ class GitHubSearcher:
                 resp = request_with_backoff(raw_url, headers=headers)
                 if resp and resp.status_code == 200:
                     for name, value in detect_leaks(resp.text):
-                        leaks.append({
+                        item = {
                             "source": "GitHub",
                             "file": raw_url,
                             "leak_type": name,
                             "value": value,
-                        })
+                        }
+                        leaks.append(item)
+                        if result_callback:
+                            result_callback(item, len(leaks))
                 time.sleep(random.uniform(0.5, 1.5))
             except Exception:
                 if not silent:
@@ -122,7 +125,7 @@ class GitHubSearcher:
         return leaks
 
     @classmethod
-    def scan_repo_wayback(cls, repo, silent=False):
+    def scan_repo_wayback(cls, repo, silent=False, result_callback=None):
         """Scan archived versions of repo files via the Wayback Machine."""
         from utils.wayback_scraper import get_archived_repo_files
 
@@ -134,12 +137,15 @@ class GitHubSearcher:
                 resp = request_with_backoff(wb_url, headers=headers)
                 if resp and resp.status_code == 200:
                     for name, value in detect_leaks(resp.text):
-                        leaks.append({
+                        item = {
                             "source": "Wayback",
                             "file": wb_url,
                             "leak_type": name,
                             "value": value,
-                        })
+                        }
+                        leaks.append(item)
+                        if result_callback:
+                            result_callback(item, len(leaks))
                 time.sleep(random.uniform(0.5, 1.5))
             except Exception:
                 if not silent:
@@ -169,6 +175,7 @@ class GitHubSearcher:
         repo=None,
         scan_wayback=False,
         progress_callback=None,
+        result_callback=None,
         **_,
     ):
         if not self.token:
@@ -210,12 +217,15 @@ class GitHubSearcher:
                             file_resp = request_with_backoff(raw_url, headers=self._headers())
                             if file_resp and file_resp.status_code == 200:
                                 for name, value in detect_leaks(file_resp.text):
-                                    leaks.append({
+                                    item = {
                                         "source": "GitHub",
                                         "file": raw_url,
                                         "leak_type": name,
                                         "value": value,
-                                    })
+                                    }
+                                    leaks.append(item)
+                                    if result_callback:
+                                        result_callback(item, len(leaks))
                             time.sleep(random.uniform(1, 3))
                         if len(items) < 100:
                             break
@@ -256,12 +266,15 @@ class GitHubSearcher:
                                 patch = "\n".join(f.get("patch", "") for f in details.get("files", []))
                                 content = msg + "\n" + patch
                                 for name, value in detect_leaks(content):
-                                    leaks.append({
+                                    item = {
                                         "source": "GitHub",
                                         "file": item.get("html_url", commit_url),
                                         "leak_type": name,
                                         "value": value,
-                                    })
+                                    }
+                                    leaks.append(item)
+                                    if result_callback:
+                                        result_callback(item, len(leaks))
                                 time.sleep(random.uniform(1, 2))
                             if len(items) < 100:
                                 break
@@ -285,12 +298,15 @@ class GitHubSearcher:
                         for item in i_resp.json().get("items", []):
                             body = item.get("body", "") or ""
                             for name, value in detect_leaks(body):
-                                leaks.append({
+                                leak_item = {
                                     "source": "GitHub",
                                     "file": item.get("html_url", ""),
                                     "leak_type": name,
                                     "value": value,
-                                })
+                                }
+                                leaks.append(leak_item)
+                                if result_callback:
+                                    result_callback(leak_item, len(leaks))
                     elif not self.silent:
                         status = i_resp.status_code if i_resp else 'timeout'
                         text = i_resp.text[:100] if i_resp else ''
@@ -315,8 +331,18 @@ class GitHubSearcher:
                 if progress_callback:
                     progress_callback({"repo": r, "index": i, "total": total})
                 leaks.extend(
-                    self.scan_repo(r, token=self.token, silent=self.silent, progress_callback=progress_callback)
+                    self.scan_repo(
+                        r,
+                        token=self.token,
+                        silent=self.silent,
+                        progress_callback=progress_callback,
+                        result_callback=result_callback,
+                    )
                 )
                 if scan_wayback:
-                    leaks.extend(self.scan_repo_wayback(r, silent=self.silent))
+                    leaks.extend(
+                        self.scan_repo_wayback(
+                            r, silent=self.silent, result_callback=result_callback
+                        )
+                    )
         return leaks

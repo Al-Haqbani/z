@@ -121,12 +121,10 @@ class SearchManager:
             full_scan=full_scan,
             scan_wayback=scan_wayback,
             progress_callback=progress_callback,
+            result_callback=result_callback,
             **kwargs,
         )
         results = cls._verify_results(results, verify_ai, active_verify)
-        if result_callback:
-            for idx, item in enumerate(results, 1):
-                result_callback(item, idx)
         if notify:
             cls._send_notifications(results)
         return results
@@ -163,6 +161,7 @@ class SearchManager:
                 full_scan=full_scan,
                 scan_wayback=scan_wayback,
                 progress_callback=progress_callback,
+                result_callback=result_callback,
                 **kwargs,
             )
 
@@ -176,9 +175,6 @@ class SearchManager:
                     res = fut.result()
                     results.extend(res)
                     verified = cls._verify_results(res, verify_ai, active_verify)
-                    if result_callback:
-                        for idx, item in enumerate(verified, 1):
-                            result_callback(item, idx)
                 except Exception as exc:
                     if not kwargs.get("silent", False):
                         print(f"{future_map[fut]} search error: {exc}")

@@ -21,7 +21,7 @@ class GitHubGistSearcher:
             headers["Authorization"] = f"token {self.token}"
         return headers
 
-    def search(self, keyword: str, limit: int = 2, **_):
+    def search(self, keyword: str, limit: int = 2, result_callback=None, **_):
         leaks: List[dict] = []
         page = 1
         fetched = 0
@@ -53,14 +53,15 @@ class GitHubGistSearcher:
                         text = f_resp.text
                         if keyword.lower() in text.lower():
                             for lt, val in detect_leaks(text):
-                                leaks.append(
-                                    {
-                                        "source": "Gist",
-                                        "file": raw_url,
-                                        "leak_type": lt,
-                                        "value": val,
-                                    }
-                                )
+                                item = {
+                                    "source": "Gist",
+                                    "file": raw_url,
+                                    "leak_type": lt,
+                                    "value": val,
+                                }
+                                leaks.append(item)
+                                if result_callback:
+                                    result_callback(item, len(leaks))
                 time.sleep(random.uniform(1, 2))
             page += 1
         return leaks

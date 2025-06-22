@@ -14,7 +14,7 @@ class HuggingFaceSearcher:
     def __init__(self, silent=False, **_):
         self.silent = silent
 
-    def search(self, keyword, **kwargs):
+    def search(self, keyword, result_callback=None, **kwargs):
         leaks = []
         params = {"search": keyword, "limit": 5}
         try:
@@ -27,12 +27,15 @@ class HuggingFaceSearcher:
                     if card_resp and card_resp.status_code == 200:
                         found = detect_leaks(card_resp.text)
                         for leak_type, value in found:
-                            leaks.append({
+                            item = {
                                 "source": "HuggingFace",
                                 "file": model_id,
                                 "leak_type": leak_type,
                                 "value": value,
-                            })
+                            }
+                            leaks.append(item)
+                            if result_callback:
+                                result_callback(item, len(leaks))
                     time.sleep(random.uniform(1, 2))
             else:
                 if not self.silent:
