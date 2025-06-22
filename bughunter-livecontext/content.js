@@ -3,7 +3,6 @@ import { inspectDOM } from './dom-inspector.js';
 import { detectSvgUploads } from './svg-watcher.js';
 import { detectBlindXSS } from './xss-detector.js';
 import { autoInject } from './injector.js';
-import { analyze } from './ai-engine.js';
 
 
 async function runScan() {
@@ -14,11 +13,11 @@ async function runScan() {
   if (blindPayload) {
     await autoInject(blindPayload);
   }
-  const contextPrompt = `Forms: ${forms.length}, Inputs: ${inputs.length}`;
-  const ai = await analyze(contextPrompt);
-  if (!ai.error) {
-    chrome.runtime.sendMessage({ type: 'ai', result: ai });
-  }
+  chrome.runtime.sendMessage({
+    type: 'scan-complete',
+    forms: forms.length,
+    inputs: inputs.length
+  });
 }
 
 chrome.runtime.onMessage.addListener((msg) => {

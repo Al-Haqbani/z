@@ -6,7 +6,7 @@ export function inspectDOM() {
     method: f.method || 'get',
     hasTextarea: f.querySelector('textarea') !== null
   }));
-  const inputs = Array.from(document.querySelectorAll('input, textarea, select, button')).map(el => ({
+  const inputs = Array.from(document.querySelectorAll('input, textarea, select, button, [contenteditable="true"]')).map(el => ({
     tag: el.tagName.toLowerCase(),
     type: el.type || '',
     name: el.name || el.id || ''

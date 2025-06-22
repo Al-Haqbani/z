@@ -1,11 +1,5 @@
 // ui.js
-import { saveKey, loadKey } from './storage.js';
 
-document.getElementById('saveKey').addEventListener('click', async () => {
-  const key = document.getElementById('apiKey').value;
-  await saveKey(key);
-  appendLog('API key saved');
-});
 
 document.getElementById('savePayload').addEventListener('click', async () => {
   const payload = document.getElementById('payload').value;
@@ -33,16 +27,12 @@ chrome.runtime.onMessage.addListener((msg) => {
     appendLog(`⚠️ Potential Blind XSS point (${msg.count} forms)`);
   } else if (msg.type === 'injection') {
     appendLog(`Injected payload into ${msg.count} fields`);
-  } else if (msg.type === 'ai') {
-    appendLog(`AI: ${msg.result.choices?.[0]?.message?.content || ''}`);
+  } else if (msg.type === 'scan-complete') {
+    appendLog(`Scan complete: ${msg.forms} forms, ${msg.inputs} inputs`);
   }
 });
 
 async function init() {
-  const { openaiKey } = await loadKey();
-  if (openaiKey) {
-    document.getElementById('apiKey').value = openaiKey;
-  }
   const { blindPayload } = await chrome.storage.local.get('blindPayload');
   if (blindPayload) {
     document.getElementById('payload').value = blindPayload;
