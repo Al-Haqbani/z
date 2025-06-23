@@ -34,6 +34,9 @@ def print_results(results):
         )
     console = Console()
     console.print(table)
+    # Ensure output appears immediately
+    import sys
+    sys.stdout.flush()
 
 
 def print_result(item, idx=None):
@@ -61,6 +64,8 @@ def print_result(item, idx=None):
     )
     console = Console()
     console.print(table)
+    import sys
+    sys.stdout.flush()
 
 
 def print_progress(info: dict):
