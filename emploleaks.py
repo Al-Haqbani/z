@@ -76,9 +76,12 @@ def main():
             keyword = input("Keyword: ")
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
+            repo = None
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 employees = GitHubSearcher.get_repo_contributors(repo, github_token)
+            elif platform == "github" and input("Scan specific repository? (y/N): ").lower() == "y":
+                repo = input("Repository (owner/repo): ")
             org = None
             if input("Scan entire GitHub org? (y/N): ").lower() == "y":
                 org = input("Organization name: ")
@@ -116,6 +119,7 @@ def main():
                 organization=org,
                 deep_scan=deep_scan,
                 full_scan=full_repo,
+                repo=repo,
                 scan_history=history,
                 scan_prs=prs,
                 top_common=top_leaks,
@@ -136,9 +140,12 @@ def main():
             keyword = input("Keyword: ")
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
+            repo = None
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 employees = GitHubSearcher.get_repo_contributors(repo, github_token)
+            elif input("Scan specific repository? (y/N): ").lower() == "y":
+                repo = input("Repository (owner/repo): ")
             org = None
             if input("Scan entire GitHub org? (y/N): ").lower() == "y":
                 org = input("Organization name: ")
@@ -178,6 +185,7 @@ def main():
                 organization=org,
                 deep_scan=deep_scan,
                 full_scan=full_repo,
+                repo=repo,
                 scan_history=history,
                 scan_prs=prs,
                 top_common=top_leaks,
