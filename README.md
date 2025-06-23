@@ -1,6 +1,6 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff. HTTP requests now use a 20-second timeout and retry up to five times to avoid API timeouts.
 It can also run **TruffleHog** scans on repositories to leverage their advanced secret hunting heuristics.
 
 It also includes a **Recon module** that discovers references to your company across third‑party services like Slack or Google Docs. These URLs are gathered from live queries and the Wayback Machine, then verified asynchronously so you know whether each link is still reachable.
@@ -22,7 +22,7 @@ To further reduce false positives, matches are filtered using a small entropy ch
 It can optionally search employees automatically by inspecting the contributors of a repository you provide. You can also search an entire GitHub organization in one go by supplying an org name. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser. A dedicated `/scans` page lists all scans with their status.
 The dashboard keeps a history of all scans and shows whether each one is still running or finished. You can open a **Live** view to watch results stream in as they are discovered, or view the final report once the scan is done.
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
-The web dashboard uses the dark **Cyborg** theme for a sleek, modern look.
+The web dashboard uses the dark **Darkly** theme for a sleek, modern look. Rows fade in as leaks appear for a smoother experience.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
 Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active verification*, which issues small HTTP requests (via `curl`) to confirm that URLs are reachable or that tokens remain valid by calling their APIs (GitHub, Slack, Discord, Telegram, etc.). Optional Telegram or Discord notifications can alert you when leaks are found. Verification runs asynchronously so scans remain fast, and the web UI includes a **Verified Only** filter to quickly review confirmed leaks.
 The CLI now highlights the severity of each finding in color for quick triage.
@@ -61,7 +61,7 @@ python3 webapp.py
 
 While a scan runs, results stream live to the page using server‑sent events, so you can watch leaks appear in real time without waiting for the full scan to finish.
 
-The refreshed dark interface (now using the **Cyborg** Bootswatch theme) shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. You can filter by platform, severity or keyword while the scan runs. The CLI also prints progress messages such as `Scanning owner/repo (3/10)` so you know which repository is being processed.
+The refreshed dark interface (now using the **Darkly** Bootswatch theme) shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. Rows fade in smoothly and you can filter by platform, severity or keyword while the scan runs. The CLI also prints progress messages such as `Scanning owner/repo (3/10)` so you know which repository is being processed.
 
 For a richer experience, a React.js dashboard powered by **Material‑UI** lives under the `frontend` directory. After building it with `npm run build`, browse to `/app/` on the Flask server. This single‑page app connects to the `/stream/<scan_id>` endpoint via **EventSource** to show which repository is being scanned right now. It features pause, resume and cancel buttons, animated progress indicators and a summary of repositories scanned and leak counts. Completed scans automatically generate downloadable HTML and JSON reports.
 AI verification requires the optional `transformers` and `torch` packages. Install them with:

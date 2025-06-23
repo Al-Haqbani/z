@@ -9,7 +9,7 @@ USER_AGENTS = [
 ]
 
 
-def request_with_backoff(url, *, headers=None, params=None, timeout=10, retries=3, silent=True):
+def request_with_backoff(url, *, headers=None, params=None, timeout=20, retries=5, silent=True):
     """Perform GET request with exponential backoff and UA rotation."""
     headers = headers or {}
     if "User-Agent" not in headers:

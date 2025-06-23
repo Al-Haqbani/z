@@ -35,7 +35,7 @@ INDEX_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>EmploLeaksGuardian – Enterprise Secret Detection Platform</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; }
@@ -232,7 +232,7 @@ RESULTS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>body { padding-top: 70px; }</style>
   </head>
@@ -312,11 +312,13 @@ STREAM_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Live Dashboard</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; }
       .sidebar { max-width: 260px; }
+      @keyframes fadein { from {opacity:0;} to {opacity:1;} }
+      tr.fade { animation: fadein 0.5s; }
     </style>
     <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
   </head>
@@ -458,7 +460,7 @@ STREAM_HTML = """
         platChart.update();
         const row=document.createElement('tr');
         row.dataset.sev=sev; row.dataset.platform=plat; row.dataset.verified=data.active?'true':'false';
-        row.className=sev==='high'?'table-danger':(sev==='medium'?'table-warning':'table-light');
+        row.className=(sev==='high'?'table-danger':(sev==='medium'?'table-warning':'table-light'))+' fade';
         const activeVal=data.active===null?'?':(data.active?'True':'False');
         row.innerHTML=`<td>${idx}</td><td>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td>`;
         tbody.appendChild(row); idx++; applyFilters();
@@ -482,7 +484,7 @@ RECON_INDEX_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Recon Scanner</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
   </head>
   <body class=\"bg-dark text-light\">
     <div class=\"container mt-4\">
@@ -515,7 +517,7 @@ RECON_STREAM_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Recon Results</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
     <style>body { padding-top: 20px; }</style>
   </head>
   <body class=\"bg-dark text-light\">
@@ -564,7 +566,7 @@ SCANS_HTML = """
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Scans</title>
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>body { padding-top: 70px; }</style>
   </head>
