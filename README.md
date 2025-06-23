@@ -1,6 +1,7 @@
 # EmploLeaksGuardian
 
 EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff.
+It can also run **TruffleHog** scans on repositories to leverage their advanced secret hunting heuristics.
 
 It also includes a **Recon module** that discovers references to your company across third‑party services like Slack or Google Docs. These URLs are gathered from live queries and the Wayback Machine, then verified asynchronously so you know whether each link is still reachable.
 
@@ -26,6 +27,7 @@ Leak results may also be verified by a free AI classifier. When enabled from the
 The CLI now highlights the severity of each finding in color for quick triage.
 When active verification is enabled, results now include an **Active** column indicating whether each token is still valid.
 Public GitHub Gists are also scanned to catch secrets that might be shared outside repositories.
+For deeper analysis you can enable the **TruffleHog** searcher, which runs the open source tool over selected repositories to analyze their full commit history.
 
 ## Usage
 

@@ -3,3 +3,4 @@ rich
 flask
 transformers
 torch
+trufflehog

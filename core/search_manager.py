@@ -10,6 +10,7 @@ from .swaggerhub_scraper import SwaggerHubSearcher
 from .gist_searcher import GitHubGistSearcher
 from .grayhat_scraper import GrayHatSearcher
 from .recon_searcher import ReconSearcher
+from .trufflehog_searcher import TruffleHogSearcher
 from .ai_verifier import is_valid_leak
 from .leak_verifier import verify_leak
 import logging
@@ -30,6 +31,7 @@ class SearchManager:
         "gist": GitHubGistSearcher,
         "grayhat": GrayHatSearcher,
         "recon": ReconSearcher,
+        "trufflehog": TruffleHogSearcher,
     }
 
     @staticmethod
