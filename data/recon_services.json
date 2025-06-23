@@ -1,0 +1,8 @@
+{
+  "services": [
+    "slack.com",
+    "docs.google.com",
+    "groups.google.com",
+    "drive.google.com"
+  ]
+}
