@@ -9,12 +9,12 @@ This project was originally created by **محمد الحقباني** to help sec
 In addition, a **Smart JS Scanner** can crawl JavaScript files from any domain (including optional subdomains and archived copies via the Wayback Machine).
 
 When commit scanning is enabled, GitHub results also include leaked secrets found in commit messages and diffs, allowing detection of tokens in deleted files.
-An optional **Deep Scan** mode searches GitHub issues in addition to code and commits for more thorough coverage. You can also enable **Full Repo Scan** to crawl every file in selected repositories or entire organizations, ensuring nothing is missed. A new **Wayback Repo** option downloads archived versions of repository files from the Wayback Machine so even deleted content is inspected.
+An optional **Deep Scan** mode searches GitHub issues in addition to code and commits for more thorough coverage. You can also enable **Full Repo Scan** to crawl every file in selected repositories or entire organizations, ensuring nothing is missed. A new **Wayback Repo** option downloads archived versions of repository files from the Wayback Machine so even deleted content is inspected. You can further enable **commit history** and **pull request** scanning so diffs and deleted files are inspected for secrets as well.
 GitHub searches leverage a curated list of "dorks" sourced from the public [GitDorker](https://github.com/obheda12/GitDorker/) project. These prebuilt queries combine with your keyword to uncover common secret patterns across GitHub.
 
 The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/) and expanded with rules from [iwatchr.iscan.today](https://iwatchr.iscan.today/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy. Additional generic patterns inspired by [Search for all leaked keys](https://github.com/Lu3ky13/Search-for-all-leaked-keys-secrets-using-one-regex-) help detect common password or API key assignments.
 Recent updates also integrate private key signatures (RSA, DSA, EC and PGP) and JWT formats. All patterns are combined into a single master regex so scanning large files is much faster while still labeling each leak by type.
-Additional patterns now detect Supabase, Vercel, Railway, Kaggle, Asana and Bugcrowd tokens for even broader coverage.
+Additional patterns now detect Supabase, Vercel, Railway, Kaggle, Asana and Bugcrowd tokens for even broader coverage. Slack bot tokens, HuggingFace access tokens and Zendesk secrets are also included so leaks from those services are flagged.
 New patterns also detect GitHub app secrets, GitHub Enterprise PATs, Telegram API credentials and ChatGPT API keys.
 
 To further reduce false positives, matches are filtered using a small entropy check. Short or low‑entropy strings are ignored unless they resemble real credentials. Generic patterns also require at least one digit so ordinary words like `generator-app` aren't flagged.
@@ -24,6 +24,7 @@ The dashboard keeps a history of all scans and shows whether each one is still r
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
 The web dashboard uses the dark **Darkly** theme for a sleek, modern look. Rows fade in as leaks appear for a smoother experience.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
+For quick checks you can enable the **Top Leaks** option, which searches GitHub for ten of the most commonly leaked API tokens such as AWS, Slack and HuggingFace keys.
 Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active verification*, which issues small HTTP requests (via `curl`) to confirm that URLs are reachable or that tokens remain valid by calling their APIs (GitHub, Slack, Discord, Telegram, etc.). Optional Telegram or Discord notifications can alert you when leaks are found. Verification runs asynchronously so scans remain fast, and the web UI includes a **Verified Only** filter to quickly review confirmed leaks.
 The CLI now highlights the severity of each finding in color for quick triage.
 When active verification is enabled, results now include an **Active** column indicating whether each token is still valid.
@@ -51,7 +52,7 @@ and skips GitHub results instead of timing out.
 
 Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. Results now stream to the terminal immediately whenever a leak is found, and the same events are forwarded to the web UI if it is running. This lets you monitor progress in both places at once. After each scan an HTML report `results.html` **and** a machine-readable JSON file `results.json` are saved with the complete links and color-coded severity. You can also launch the web interface from the menu, which mirrors CLI scans automatically.
 
-If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history.
+If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history. Optional switches allow scanning commit history and pull requests too, and a **Top Leaks** mode queries GitHub for the most common API keywords like AWS, Slack, HuggingFace and Zendesk keys.
 
 To use the web interface separately, run:
 

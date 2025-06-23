@@ -84,6 +84,9 @@ def main():
                 org = input("Organization name: ")
             deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
             full_repo = input("Full repo scan? (y/N): ").lower() == "y"
+            history = input("Scan commit history? (y/N): ").lower() == "y"
+            prs = input("Scan pull requests? (y/N): ").lower() == "y"
+            top_leaks = input("Search top leaks? (y/N): ").lower() == "y"
             wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
             include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
@@ -113,6 +116,9 @@ def main():
                 organization=org,
                 deep_scan=deep_scan,
                 full_scan=full_repo,
+                scan_history=history,
+                scan_prs=prs,
+                top_common=top_leaks,
                 scan_wayback=wayback,
                 result_callback=cb,
                 progress_callback=prog,
@@ -138,6 +144,9 @@ def main():
                 org = input("Organization name: ")
             deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
             full_repo = input("Full repo scan? (y/N): ").lower() == "y"
+            history = input("Scan commit history? (y/N): ").lower() == "y"
+            prs = input("Scan pull requests? (y/N): ").lower() == "y"
+            top_leaks = input("Search top leaks? (y/N): ").lower() == "y"
             wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
             include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
@@ -169,6 +178,9 @@ def main():
                 organization=org,
                 deep_scan=deep_scan,
                 full_scan=full_repo,
+                scan_history=history,
+                scan_prs=prs,
+                top_common=top_leaks,
                 scan_wayback=wayback,
                 result_callback=cb,
                 progress_callback=prog,

@@ -22,6 +22,19 @@ class GitHubSearcher:
     except Exception:
         DORKS = []
 
+    TOP_COMMON_QUERIES = [
+        "AWS_ACCESS_KEY_ID",
+        "xoxb-",
+        "hf_",
+        "api_org_",
+        "slack_bot_token",
+        "zendesk.com",
+        "supabaseUrl",
+        "vercel\.com", 
+        "PRIVATE_KEY",
+        "refreshToken"
+    ]
+
     def __init__(self, token=None, silent=False, **_):
         self.tokens = []
         if token:
@@ -173,6 +186,84 @@ class GitHubSearcher:
         return leaks
 
     @classmethod
+    def scan_repo_commits(cls, repo, token=None, silent=False, result_callback=None):
+        """Scan commit history of a repository for leaked secrets."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        leaks = []
+        page = 1
+        while True:
+            url = f"{cls.BASE_URL}/repos/{repo}/commits?per_page=100&page={page}"
+            commits = cls(token=token)._fetch_json(url)
+            if not commits:
+                break
+            for c in commits:
+                sha = c.get("sha")
+                detail = cls(token=token)._fetch_json(f"{cls.BASE_URL}/repos/{repo}/commits/{sha}")
+                if not detail:
+                    continue
+                msg = detail.get("commit", {}).get("message", "")
+                patch = "\n".join(f.get("patch", "") for f in detail.get("files", []))
+                content = msg + "\n" + patch
+                for name, value in detect_leaks(content):
+                    item = {
+                        "source": "GitHub",
+                        "file": detail.get("html_url", ""),
+                        "leak_type": name,
+                        "value": value,
+                    }
+                    leaks.append(item)
+                    if result_callback:
+                        result_callback(item, len(leaks))
+                time.sleep(random.uniform(0.5, 1.0))
+            if len(commits) < 100:
+                break
+            page += 1
+        return leaks
+
+    @classmethod
+    def scan_pull_requests(cls, repo, token=None, silent=False, result_callback=None):
+        """Scan pull request diffs for secrets (including deleted files)."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        leaks = []
+        page = 1
+        while True:
+            url = f"{cls.BASE_URL}/repos/{repo}/pulls?state=all&per_page=100&page={page}"
+            prs = cls(token=token)._fetch_json(url)
+            if not prs:
+                break
+            for pr in prs:
+                num = pr.get("number")
+                fpage = 1
+                while True:
+                    f_url = f"{cls.BASE_URL}/repos/{repo}/pulls/{num}/files?per_page=100&page={fpage}"
+                    files = cls(token=token)._fetch_json(f_url)
+                    if not files:
+                        break
+                    for f in files:
+                        patch = f.get("patch", "")
+                        for name, value in detect_leaks(patch):
+                            item = {
+                                "source": "GitHub",
+                                "file": pr.get("html_url", ""),
+                                "leak_type": name,
+                                "value": value,
+                            }
+                            leaks.append(item)
+                            if result_callback:
+                                result_callback(item, len(leaks))
+                    if len(files) < 100:
+                        break
+                    fpage += 1
+            if len(prs) < 100:
+                break
+            page += 1
+        return leaks
+
+    @classmethod
     def get_repo_contributors(cls, repo, token=None):
         """Return a list of usernames contributing to the given repo."""
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
@@ -192,6 +283,9 @@ class GitHubSearcher:
         organization=None,
         deep_scan=False,
         full_scan=False,
+        scan_history=False,
+        scan_prs=False,
+        top_common=False,
         repo=None,
         scan_wayback=False,
         progress_callback=None,
@@ -222,6 +316,12 @@ class GitHubSearcher:
             if organization:
                 base += f" org:{organization}"
             queries.append(base)
+        if top_common:
+            for pat in self.TOP_COMMON_QUERIES:
+                q = f"{pat} {keyword}" if keyword else pat
+                if organization:
+                    q += f" org:{organization}"
+                queries.append(q)
         leaks = []
         for q in queries:
             page = 1
@@ -359,6 +459,24 @@ class GitHubSearcher:
                         result_callback=result_callback,
                     )
                 )
+                if scan_history:
+                    leaks.extend(
+                        self.scan_repo_commits(
+                            r,
+                            token=self.tokens[0] if self.tokens else None,
+                            silent=self.silent,
+                            result_callback=result_callback,
+                        )
+                    )
+                if scan_prs:
+                    leaks.extend(
+                        self.scan_pull_requests(
+                            r,
+                            token=self.tokens[0] if self.tokens else None,
+                            silent=self.silent,
+                            result_callback=result_callback,
+                        )
+                    )
                 if scan_wayback:
                     leaks.extend(
                         self.scan_repo_wayback(

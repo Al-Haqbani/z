@@ -41,6 +41,8 @@ def _load_patterns() -> List[Dict[str, str]]:
         {"name": "Slack Token", "regex": r"xox[baprs]-[A-Za-z0-9-]{10,48}"},
         {"name": "AWS Access Key", "regex": r"AKIA[0-9A-Z]{16}"},
         {"name": "Bearer Token", "regex": r"Bearer [A-Za-z0-9\-_]{20,}"},
+        {"name": "HuggingFace Token", "regex": r"hf_[A-Za-z0-9]{34}"},
+        {"name": "Zendesk Secret", "regex": r"(?i)zendesk[\w\s]{0,20}['\"]([a-z0-9]{40})"},
         {"name": "Generic API Key", "regex": r"(?i)(?:api[_-]?key|access[_-]?token)[=:\s]*['\"]?([A-Za-z0-9_\-]{20,})"},
         {"name": "Generic Password", "regex": r"(?i)(?:password|secret|token)[=:\s]*['\"]?([A-Za-z0-9_\-]{8,})"},
         {"name": "RSA Private Key", "regex": r"-----BEGIN RSA PRIVATE KEY-----"},
