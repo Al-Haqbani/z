@@ -1,6 +1,8 @@
 import sys
 import threading
 import webbrowser
+import time
+import queue
 from core.token_manager import get_token, get_github_token
 from core.search_manager import SearchManager
 from core.github_api import GitHubSearcher
@@ -12,12 +14,31 @@ from output.terminal_output import (
 from report_generator.generate_report import generate_html_report, save_json_report
 
 try:
-    from webapp import app as web_app
+    from webapp import app as web_app, SCAN_HISTORY, SCAN_QUEUES
 except Exception:
     web_app = None
+    SCAN_HISTORY = {}
+    SCAN_QUEUES = {}
 
 
 _web_thread = None
+
+def _create_cli_scan(keyword):
+    """Create a scan entry so the web UI can display CLI scans."""
+    if not web_app:
+        return None, None
+    scan_id = str(int(time.time()))
+    q = queue.Queue()
+    SCAN_QUEUES[scan_id] = q
+    SCAN_HISTORY[scan_id] = {"keyword": keyword, "results": [], "status": "running"}
+    return scan_id, q
+
+def _finalize_cli_scan(scan_id, results):
+    if not web_app or scan_id is None:
+        return
+    SCAN_HISTORY[scan_id]["results"] = results
+    SCAN_HISTORY[scan_id]["status"] = "done"
+    SCAN_QUEUES.get(scan_id, queue.Queue()).put(None)
 
 def start_web_ui():
     """Launch the Flask web interface in a background thread"""
@@ -68,6 +89,19 @@ def main():
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
+            scan_id, q = _create_cli_scan(keyword)
+
+            def cb(item, idx):
+                if q:
+                    q.put(item)
+                print_result(item, idx)
+
+            def prog(info):
+                if q:
+                    info["_event"] = "progress"
+                    q.put(info)
+                print_progress(info)
+
             results = SearchManager.start_search(
                 platform,
                 keyword,
@@ -80,9 +114,10 @@ def main():
                 deep_scan=deep_scan,
                 full_scan=full_repo,
                 scan_wayback=wayback,
-                result_callback=print_result,
-                progress_callback=print_progress,
+                result_callback=cb,
+                progress_callback=prog,
             )
+            _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
                 report_path = generate_html_report(results, path="results.html")
@@ -111,6 +146,19 @@ def main():
             temp_tokens = dict(tokens)
             if not include_buckets:
                 temp_tokens["grayhat"] = None
+            scan_id, q = _create_cli_scan(keyword)
+
+            def cb(item, idx):
+                if q:
+                    q.put(item)
+                print_result(item, idx)
+
+            def prog(info):
+                if q:
+                    info["_event"] = "progress"
+                    q.put(info)
+                print_progress(info)
+
             results = SearchManager.run_full_auto_mode(
                 keyword,
                 employees=employees,
@@ -122,9 +170,10 @@ def main():
                 deep_scan=deep_scan,
                 full_scan=full_repo,
                 scan_wayback=wayback,
-                result_callback=print_result,
-                progress_callback=print_progress,
+                result_callback=cb,
+                progress_callback=prog,
             )
+            _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
                 report_path = generate_html_report(results, path="results.html")
@@ -140,16 +189,20 @@ def main():
             sub = input("Enumerate subdomains? (y/N): ").lower() == "y"
             use_wb = input("Use Wayback? (Y/n): ").lower() != "n"
             use_lf = input("Run LinkFinder? (y/N): ").lower() == "y"
+            scan_id, q = _create_cli_scan(domain)
             found = run_smart_scan(domain, include_subdomains=sub, use_wayback=use_wb, use_linkfinder=use_lf)
-            results = [
-                {
+            results = []
+            for item in found:
+                res = {
                     "source": "JavaScript",
                     "file": item["url"],
                     "leak_type": item["leak_type"],
                     "value": item["value"],
                 }
-                for item in found
-            ]
+                results.append(res)
+                if q:
+                    q.put(res)
+            _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
                 report_path = generate_html_report(results, path="results.html")
@@ -160,12 +213,20 @@ def main():
         elif choice == "4":
             start_web_ui()
             keyword = input("Company name or domain: ")
+            scan_id, q = _create_cli_scan(keyword)
+
+            def cb(item, idx):
+                if q:
+                    q.put(item)
+                print_result(item, idx)
+
             results = SearchManager.start_search(
                 "recon",
                 keyword,
                 tokens=tokens,
-                result_callback=print_result,
+                result_callback=cb,
             )
+            _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
                 report_path = generate_html_report(results, path="results.html")
