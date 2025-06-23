@@ -86,6 +86,9 @@ class SearchManager:
                     except Exception as exc:
                         item["active"] = False
                         logging.warning("Verification error for %s: %s", item.get("value"), exc)
+
+            # keep only verified results
+            filtered = [it for it in filtered if it.get("active")]
         else:
             for item in filtered:
                 item["active"] = None
