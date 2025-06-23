@@ -119,6 +119,21 @@ class SearchManager:
             return []
         token = tokens.get(platform)
         searcher = searcher_cls(token=token, **kwargs)
+
+        def wrapped_cb(item, idx):
+            if active_verify:
+                try:
+                    item["active"] = verify_leak(
+                        item.get("leak_type", ""), item.get("value", "")
+                    )
+                    if not item["active"]:
+                        return
+                except Exception as exc:  # pragma: no cover - best effort
+                    item["active"] = False
+            if result_callback:
+                result_callback(item, idx)
+
+        cb = wrapped_cb if result_callback else None
         results = searcher.search(
             keyword,
             employees=employees,
@@ -126,7 +141,7 @@ class SearchManager:
             full_scan=full_scan,
             scan_wayback=scan_wayback,
             progress_callback=progress_callback,
-            result_callback=result_callback,
+            result_callback=cb,
             **kwargs,
         )
         results = cls._verify_results(results, verify_ai, active_verify)
@@ -159,6 +174,21 @@ class SearchManager:
         def _worker(name, searcher_cls):
             token = tokens.get(name)
             searcher = searcher_cls(token=token, **kwargs)
+
+            def wrapped_cb(item, idx):
+                if active_verify:
+                    try:
+                        item["active"] = verify_leak(
+                            item.get("leak_type", ""), item.get("value", "")
+                        )
+                        if not item["active"]:
+                            return
+                    except Exception:
+                        item["active"] = False
+                if result_callback:
+                    result_callback(item, idx)
+
+            cb = wrapped_cb if result_callback else None
             return searcher.search(
                 keyword,
                 employees=employees,
@@ -166,7 +196,7 @@ class SearchManager:
                 full_scan=full_scan,
                 scan_wayback=scan_wayback,
                 progress_callback=progress_callback,
-                result_callback=result_callback,
+                result_callback=cb,
                 **kwargs,
             )
 

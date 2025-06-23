@@ -80,8 +80,8 @@ def main():
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 employees = GitHubSearcher.get_repo_contributors(repo, github_token)
-            elif platform == "github" and input("Scan specific repository? (y/N): ").lower() == "y":
-                repo = input("Repository (owner/repo): ")
+            elif platform == "github":
+                repo = input("Repository to scan (owner/repo, blank to skip): ").strip() or None
             org = None
             if input("Scan entire GitHub org? (y/N): ").lower() == "y":
                 org = input("Organization name: ")
@@ -144,8 +144,8 @@ def main():
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 employees = GitHubSearcher.get_repo_contributors(repo, github_token)
-            elif input("Scan specific repository? (y/N): ").lower() == "y":
-                repo = input("Repository (owner/repo): ")
+            else:
+                repo = input("Repository to scan (owner/repo, blank to skip): ").strip() or None
             org = None
             if input("Scan entire GitHub org? (y/N): ").lower() == "y":
                 org = input("Organization name: ")
