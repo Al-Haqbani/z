@@ -7,16 +7,6 @@ from .leak_detector import detect_leaks
 from utils.http_utils import request_with_backoff
 
 
-def _fetch_json(url, headers):
-    resp = request_with_backoff(url, headers=headers)
-    if resp and resp.status_code == 200:
-        try:
-            return resp.json()
-        except Exception:
-            return None
-    return None
-
-
 class GitHubSearcher:
     BASE_URL = "https://api.github.com"
     USER_AGENTS = [
@@ -33,15 +23,45 @@ class GitHubSearcher:
         DORKS = []
 
     def __init__(self, token=None, silent=False, **_):
-        self.token = token
+        self.tokens = []
+        if token:
+            if isinstance(token, list):
+                self.tokens = [t for t in token if t]
+            elif "," in str(token):
+                self.tokens = [t.strip() for t in str(token).split(",") if t.strip()]
+            else:
+                self.tokens = [str(token).strip()]
+        self.token_idx = 0
         self.silent = silent
 
-    def _headers(self):
+    def _next_token(self):
+        if not self.tokens:
+            return None
+        token = self.tokens[self.token_idx % len(self.tokens)]
+        self.token_idx += 1
+        return token
+
+    def _headers(self, rotate=False):
         ua = random.choice(self.USER_AGENTS)
         headers = {"User-Agent": ua}
-        if self.token:
-            headers["Authorization"] = f"token {self.token}"
+        if self.tokens:
+            tok = self._next_token() if rotate else self.tokens[self.token_idx % len(self.tokens)]
+            headers["Authorization"] = f"token {tok}"
         return headers
+
+    def _fetch_json(self, url, *, params=None):
+        attempts = len(self.tokens) if self.tokens else 1
+        for _ in range(attempts):
+            resp = request_with_backoff(url, headers=self._headers(rotate=True), params=params)
+            if resp and resp.status_code == 200:
+                try:
+                    return resp.json()
+                except Exception:
+                    return None
+            if resp and resp.status_code in (401, 403, 429):
+                continue
+            break
+        return None
 
     @classmethod
     def get_org_repos(cls, org, token=None):
@@ -53,7 +73,7 @@ class GitHubSearcher:
         page = 1
         while True:
             url = f"{cls.BASE_URL}/orgs/{org}/repos?per_page=100&page={page}"
-            data = _fetch_json(url, headers)
+            data = cls(token=token)._fetch_json(url)
             if not data:
                 break
             repos.extend([r.get("full_name") for r in data if r.get("full_name")])
@@ -72,7 +92,7 @@ class GitHubSearcher:
         page = 1
         while True:
             url = f"{cls.BASE_URL}/users/{username}/repos?per_page=100&page={page}"
-            data = _fetch_json(url, headers)
+            data = cls(token=token)._fetch_json(url)
             if not data:
                 break
             repos.extend([r.get("full_name") for r in data if r.get("full_name")])
@@ -87,12 +107,12 @@ class GitHubSearcher:
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
         if token:
             headers["Authorization"] = f"token {token}"
-        info = _fetch_json(f"{cls.BASE_URL}/repos/{repo}", headers)
+        info = cls(token=token)._fetch_json(f"{cls.BASE_URL}/repos/{repo}")
         if not info:
             return []
         branch = info.get("default_branch", "master")
         tree_url = f"{cls.BASE_URL}/repos/{repo}/git/trees/{branch}?recursive=1"
-        tree = _fetch_json(tree_url, headers)
+        tree = cls(token=token)._fetch_json(tree_url)
         if not tree:
             return []
         leaks = []
@@ -159,7 +179,7 @@ class GitHubSearcher:
         if token:
             headers["Authorization"] = f"token {token}"
         url = f"{cls.BASE_URL}/repos/{repo}/contributors"
-        data = _fetch_json(url, headers)
+        data = cls(token=token)._fetch_json(url)
         if not data:
             return []
         return [item.get("login") for item in data if item.get("login")]
@@ -178,7 +198,7 @@ class GitHubSearcher:
         result_callback=None,
         **_,
     ):
-        if not self.token:
+        if not self.tokens:
             if not self.silent:
                 print("GitHub token required for code search. Skipping GitHub results.")
             return []
@@ -259,7 +279,7 @@ class GitHubSearcher:
                             items = cdata.get("items", [])
                             for item in items:
                                 commit_url = item.get("url")
-                                details = _fetch_json(commit_url, headers)
+                                details = self._fetch_json(commit_url)
                                 if not details:
                                     continue
                                 msg = details.get("commit", {}).get("message", "")
@@ -322,10 +342,10 @@ class GitHubSearcher:
             if repo:
                 repos.append(repo)
             if organization:
-                repos.extend(self.get_org_repos(organization, self.token))
+                repos.extend(self.get_org_repos(organization, self.tokens[0] if self.tokens else None))
             if employees:
                 for user in employees:
-                    repos.extend(self.get_user_repos(user, self.token))
+                    repos.extend(self.get_user_repos(user, self.tokens[0] if self.tokens else None))
             total = len(repos)
             for i, r in enumerate(repos, 1):
                 if progress_callback:
@@ -333,7 +353,7 @@ class GitHubSearcher:
                 leaks.extend(
                     self.scan_repo(
                         r,
-                        token=self.token,
+                        token=self.tokens[0] if self.tokens else None,
                         silent=self.silent,
                         progress_callback=progress_callback,
                         result_callback=result_callback,
