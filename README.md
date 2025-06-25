@@ -29,7 +29,19 @@ Leak results may also be verified by a free AI classifier. When enabled from the
 The CLI now highlights the severity of each finding in color for quick triage.
 When active verification is enabled, each leak is tested with a tiny HTTP request. Unverified results are discarded so the report only lists tokens that still work.
 Public GitHub Gists are also scanned to catch secrets that might be shared outside repositories, including gists owned by employees when that option is selected.
+
 For deeper analysis you can enable the **TruffleHog** searcher, which runs the open source tool over selected repositories to analyze their full commit history.
+
+## Installation
+
+Clone the repository and install the dependencies:
+
+```bash
+git clone https://github.com/Al-Haqbani/EmploLeaksGuardian.git
+cd EmploLeaksGuardian
+pip install -r requirements.txt
+```
+
 
 ## Usage
 
