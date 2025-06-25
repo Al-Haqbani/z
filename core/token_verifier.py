@@ -60,6 +60,21 @@ def verify_telegram_token(token: str) -> bool:
         return False
 
 
+def verify_huggingface_token(token: str) -> bool:
+    """Check HuggingFace token via whoami-v2 endpoint."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://huggingface.co/api/whoami-v2",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
 def verify_token(leak_type: str, value: str) -> bool:
     """Return True if the token looks valid via online checks."""
     lt = leak_type.lower()
@@ -72,4 +87,6 @@ def verify_token(leak_type: str, value: str) -> bool:
     if "telegram" in lt or value.count(":") == 1:
         # Telegram bot tokens contain a single ':'
         return verify_telegram_token(value)
-    return True
+    if "huggingface" in lt or value.startswith("hf_"):
+        return verify_huggingface_token(value)
+    return False
