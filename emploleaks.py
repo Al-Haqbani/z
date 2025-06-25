@@ -50,6 +50,7 @@ def parse_args():
     parser.add_argument("--notify", action="store_true", help="Send Telegram/Discord alerts")
     parser.add_argument("--web", action="store_true", help="Launch web interface")
     parser.add_argument("--config", help="Path to JSON config file")
+    parser.add_argument("--list-patterns", action="store_true", help="List available leak patterns")
     return parser.parse_args()
 
 def _create_cli_scan(keyword):
@@ -90,6 +91,11 @@ def start_web_ui():
 
 def main():
     args = parse_args()
+    if args.list_patterns:
+        from core.regex_patterns import get_pattern_names
+        for name in get_pattern_names():
+            print(name)
+        return
     config = load_config(args.config)
     print("EmploLeaksGuardian - Simple Leak Scanner")
     logger.info("Startup with args: %s", sys.argv[1:])

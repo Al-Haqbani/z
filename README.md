@@ -85,6 +85,7 @@ python3 emploleaks.py -p github -k acme --full-auto --full-repo --commits --veri
 ```
 
 Use `python3 emploleaks.py --help` to see every available flag.
+Run `python3 emploleaks.py --list-patterns` to display the names of all built-in leak patterns.
 
 If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history. Optional switches allow scanning commit history and pull requests too, and a **Top Leaks** mode queries GitHub for the most common API keywords like AWS, Slack, HuggingFace and Zendesk keys.
 

@@ -57,3 +57,8 @@ def _load_patterns() -> List[Dict[str, str]]:
 
 LEAK_PATTERNS: List[Dict[str, str]] = _load_patterns()
 
+
+def get_pattern_names() -> List[str]:
+    """Return the names of all available leak patterns."""
+    return [p["name"] for p in LEAK_PATTERNS]
+
