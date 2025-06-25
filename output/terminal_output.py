@@ -81,3 +81,5 @@ def print_progress(info: dict):
     else:
         msg = str(info)
     print(msg)
+    import sys
+    sys.stdout.flush()
