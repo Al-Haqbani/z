@@ -48,6 +48,7 @@ def parse_args():
     parser.add_argument("--wayback", action="store_true", help="Scan Wayback snapshots")
     parser.add_argument("--wiki", action="store_true", help="Scan repository wiki pages")
     parser.add_argument("--releases", action="store_true", help="Scan repository releases")
+    parser.add_argument("--actions", action="store_true", help="Scan GitHub Actions logs")
     parser.add_argument("--gists", action="store_true", help="Scan employee gists")
     parser.add_argument("--docker", action="store_true", help="Also scan DockerHub")
     parser.add_argument("--docker", action="store_true", help="Also scan DockerHub")
@@ -162,12 +163,14 @@ def main():
                 "recon",
                 keyword,
                 tokens=tokens,
+                scan_actions=args.actions,
                 include_docker=args.docker or employees is not None,
             )
             if results:
                 print_results(results)
             return
 
+                scan_actions=args.actions,
                 include_docker=args.docker or args.employees,
             if args.platform == "github" and (args.docker or args.employees):
                 docker_res = SearchManager.start_search(
@@ -177,7 +180,9 @@ def main():
                     tokens=tokens,
                 )
                 results.extend(docker_res)
+            actions = input("Scan actions logs? (y/N): ").lower() == "y"
             docker_flag = input("Scan DockerHub too? (y/N): ").lower() == "y"
+                scan_actions=actions,
                 include_docker=docker_flag or employees is not None,
             if platform == "github" and (docker_flag or employees):
                 docker_results = SearchManager.start_search(
@@ -348,6 +353,7 @@ def main():
             else:
                 repo = input("Repository to scan (owner/repo, blank to skip): ").strip() or None
             org = None
+                scan_actions=actions,
             if input("Scan entire GitHub org? (y/N): ").lower() == "y":
                 org = input("Organization name: ")
             deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"

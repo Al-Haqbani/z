@@ -114,6 +114,7 @@ class SearchManager:
         scan_wayback=False,
         scan_wiki=False,
         scan_releases=False,
+        scan_actions=False,
         scan_gists=False,
         result_callback=None,
         progress_callback=None,
@@ -155,6 +156,7 @@ class SearchManager:
             full_scan=full_scan,
             scan_wayback=scan_wayback,
             scan_wiki=scan_wiki,
+            scan_actions=scan_actions,
             scan_gists=scan_gists,
             progress_callback=progress_callback,
             result_callback=cb,
@@ -181,8 +183,10 @@ class SearchManager:
         scan_wayback=False,
         scan_wiki=False,
         scan_releases=False,
+        scan_actions=False,
         scan_gists=False,
         include_docker=True,
+                scan_actions=scan_actions,
         platform_items = list(cls.PLATFORM_MAP.items())
         if not include_docker:
             platform_items = [p for p in platform_items if p[0] != "dockerhub"]

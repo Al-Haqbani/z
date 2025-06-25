@@ -81,6 +81,7 @@ Any value left blank will still prompt at runtime. Using a config file lets you
 avoid retyping tokens for every scan.
 
 At startup you will be asked for API tokens for GitHub, GitLab, **Bitbucket**, SwaggerHub and GrayHatWarfare.
+The **Scan actions logs** option downloads GitHub Actions logs and inspects them for secrets leaked during CI runs.
 You can provide **multiple GitHub tokens** separated by commas to avoid rate limits—the
 tool will rotate between them automatically. If all tokens hit the limit the
 searcher sleeps until the earliest reset time and then resumes from where it

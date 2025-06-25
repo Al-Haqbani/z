@@ -278,6 +278,55 @@ class GitHubSearcher:
         return leaks
 
     @classmethod
+    def scan_actions_logs(cls, repo, token=None, silent=False, result_callback=None):
+        """Download GitHub Actions logs and scan them for secrets."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        leaks = []
+        page = 1
+        while True:
+            url = f"{cls.BASE_URL}/repos/{repo}/actions/runs?per_page=100&page={page}"
+            data = cls(token=token)._fetch_json(url)
+            if not data:
+                break
+            runs = data.get("workflow_runs", [])
+            for run in runs:
+                log_url = run.get("logs_url")
+                if not log_url:
+                    continue
+                try:
+                    resp = request_with_backoff(log_url, headers=headers)
+                    if resp and resp.status_code == 200:
+                        import zipfile
+                        from io import BytesIO
+                        try:
+                            z = zipfile.ZipFile(BytesIO(resp.content))
+                            for name in z.namelist():
+                                text = z.read(name).decode(errors="ignore")
+                                for lt, val in detect_leaks(text):
+                                    item = {
+                                        "source": "GitHub Actions",
+                                        "file": log_url,
+                                        "leak_type": lt,
+                                        "value": val,
+                                    }
+                                    leaks.append(item)
+                                    if result_callback:
+                                        result_callback(item, len(leaks))
+                        except Exception:
+                            if not silent:
+                                print(f"Log parse error for {log_url}")
+                    time.sleep(random.uniform(0.5, 1.5))
+                except Exception:
+                    if not silent:
+                        print(f"GitHub actions log fetch error for {log_url}")
+            if len(runs) < 100:
+                break
+            page += 1
+        return leaks
+
+    @classmethod
     def scan_repo_commits(cls, repo, token=None, silent=False, result_callback=None):
         """Scan commit history of a repository for leaked secrets."""
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
@@ -452,6 +501,7 @@ class GitHubSearcher:
         scan_wayback=False,
         scan_wiki=False,
         scan_releases=False,
+        scan_actions=False,
         progress_callback=None,
         result_callback=None,
         **_,
@@ -659,6 +709,15 @@ class GitHubSearcher:
                 if scan_releases:
                     leaks.extend(
                         self.scan_repo_releases(
+                            r,
+                            token=self.tokens[0] if self.tokens else None,
+                            silent=self.silent,
+                            result_callback=result_callback,
+                        )
+                    )
+                if scan_actions:
+                    leaks.extend(
+                        self.scan_actions_logs(
                             r,
                             token=self.tokens[0] if self.tokens else None,
                             silent=self.silent,
