@@ -15,7 +15,7 @@ from .recon_searcher import ReconSearcher
 from .trufflehog_searcher import TruffleHogSearcher
 from .ai_verifier import is_valid_leak
 from .leak_verifier import verify_leak
-import logging
+from utils.logger import logger
 from utils.notifications import send_telegram, send_discord
 
 
@@ -78,7 +78,7 @@ class SearchManager:
                 try:
                     return verify_leak(item.get("leak_type", ""), item.get("value", ""))
                 except Exception as exc:
-                    logging.warning("Verification error for %s: %s", item.get("value"), exc)
+                    logger.warning("Verification error for %s: %s", item.get("value"), exc)
                     return False
 
             with ThreadPoolExecutor(max_workers=8) as ex:
@@ -89,7 +89,7 @@ class SearchManager:
                         item["active"] = fut.result()
                     except Exception as exc:
                         item["active"] = False
-                        logging.warning("Verification error for %s: %s", item.get("value"), exc)
+                        logger.warning("Verification error for %s: %s", item.get("value"), exc)
 
             # keep only verified results
             filtered = [it for it in filtered if it.get("active")]
@@ -117,6 +117,7 @@ class SearchManager:
         **kwargs,
     ):
         tokens = tokens or {}
+        logger.info("Starting search on %s for '%s'", platform, keyword)
         searcher_cls = cls.PLATFORM_MAP.get(platform)
         if not searcher_cls:
             print(f"Unsupported platform: {platform}")
@@ -151,6 +152,7 @@ class SearchManager:
         results = cls._verify_results(results, verify_ai, active_verify)
         if notify:
             cls._send_notifications(results)
+        logger.info("Finished search on %s with %d results", platform, len(results))
         return results
 
     @classmethod
@@ -171,7 +173,7 @@ class SearchManager:
     ):
         """Run searches on all platforms concurrently."""
         from concurrent.futures import ThreadPoolExecutor, as_completed
-
+        logger.info("Starting full auto mode for '%s'", keyword)
         results = []
         tokens = tokens or {}
 
@@ -221,4 +223,5 @@ class SearchManager:
         results = cls._verify_results(results, verify_ai, active_verify)
         if notify:
             cls._send_notifications(results)
+        logger.info("Full auto mode finished with %d results", len(results))
         return results

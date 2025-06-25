@@ -4,6 +4,7 @@ import webbrowser
 import time
 import queue
 import argparse
+from utils.logger import logger
 from core.token_manager import get_token, get_github_token
 from utils.config import load_config
 from core.search_manager import SearchManager
@@ -67,6 +68,7 @@ def _finalize_cli_scan(scan_id, results):
         return
     finish_scan(scan_id, time.strftime("%Y-%m-%d %H:%M:%S"))
     insert_leaks(scan_id, results)
+    logger.info("Scan %s completed with %d results", scan_id, len(results))
     if web_app:
         SCAN_HISTORY[scan_id]["results"] = results
         SCAN_HISTORY[scan_id]["status"] = "done"
@@ -90,6 +92,7 @@ def main():
     args = parse_args()
     config = load_config(args.config)
     print("EmploLeaksGuardian - Simple Leak Scanner")
+    logger.info("Startup with args: %s", sys.argv[1:])
     init_db()
     github_token = get_token("GitHub", "GITHUB_TOKEN", config.get("github_token"))
     gitlab_token = get_token("GitLab", "GITLAB_TOKEN", config.get("gitlab_token"))

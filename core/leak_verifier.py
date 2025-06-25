@@ -1,4 +1,4 @@
-import logging
+from utils.logger import logger
 import requests
 from .token_verifier import verify_token
 
@@ -11,7 +11,7 @@ def verify_url(url: str) -> bool:
             resp = requests.get(url, allow_redirects=True, timeout=5)
         return resp.status_code < 400
     except Exception as exc:
-        logging.warning("URL verify error for %s: %s", url, exc)
+        logger.warning("URL verify error for %s: %s", url, exc)
         return False
 
 
