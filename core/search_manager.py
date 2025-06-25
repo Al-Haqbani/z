@@ -183,7 +183,12 @@ class SearchManager:
         scan_releases=False,
         scan_gists=False,
         include_docker=True,
-        result_callback=None,
+        platform_items = list(cls.PLATFORM_MAP.items())
+        if not include_docker:
+            platform_items = [p for p in platform_items if p[0] != "dockerhub"]
+
+        with ThreadPoolExecutor(max_workers=len(platform_items)) as ex:
+                for name, scls in platform_items
         progress_callback=None,
         **kwargs,
     ):

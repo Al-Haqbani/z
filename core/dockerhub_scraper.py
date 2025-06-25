@@ -18,7 +18,6 @@ class DockerHubSearcher:
         if employees:
             queries.extend(employees)
 
-        leaks = []
         for query in queries:
             search_url = f"{self.BASE_URL}/search/repositories/?page_size={limit}&query={query}"
             try:
@@ -53,6 +52,10 @@ class DockerHubSearcher:
                 else:
                     if not self.silent:
                         status = resp.status_code if resp else 'timeout'
+                        text = resp.text[:100] if resp else ''
+                        print(f"DockerHub API request failed: {status} {text}")
+            except Exception as exc:
+                    print(f"DockerHub search error: {exc}")
                         text = resp.text[:100] if resp else ''
                         print(f"DockerHub API request failed: {status} {text}")
             except Exception as exc:

@@ -50,6 +50,7 @@ def parse_args():
     parser.add_argument("--releases", action="store_true", help="Scan repository releases")
     parser.add_argument("--gists", action="store_true", help="Scan employee gists")
     parser.add_argument("--docker", action="store_true", help="Also scan DockerHub")
+    parser.add_argument("--docker", action="store_true", help="Also scan DockerHub")
     parser.add_argument("--verify-ai", action="store_true", help="Verify leaks with AI")
     parser.add_argument("--active-verify", action="store_true", help="Verify tokens via HTTP")
     parser.add_argument("--notify", action="store_true", help="Send Telegram/Discord alerts")
@@ -161,11 +162,35 @@ def main():
                 "recon",
                 keyword,
                 tokens=tokens,
+                include_docker=args.docker or employees is not None,
             )
             if results:
                 print_results(results)
             return
 
+                include_docker=args.docker or args.employees,
+            if args.platform == "github" and (args.docker or args.employees):
+                docker_res = SearchManager.start_search(
+                    "dockerhub",
+                    keyword,
+                    employees=employees,
+                    tokens=tokens,
+                )
+                results.extend(docker_res)
+            docker_flag = input("Scan DockerHub too? (y/N): ").lower() == "y"
+                include_docker=docker_flag or employees is not None,
+            if platform == "github" and (docker_flag or employees):
+                docker_results = SearchManager.start_search(
+                    "dockerhub",
+                    keyword,
+                    employees=employees,
+                    tokens=tokens,
+                    result_callback=cb,
+                    progress_callback=prog,
+                )
+                results.extend(docker_results)
+            docker_flag = input("Scan DockerHub too? (y/N): ").lower() == "y"
+                include_docker=docker_flag or employees is not None,
         if args.full_auto:
             results = SearchManager.run_full_auto_mode(
                 keyword,

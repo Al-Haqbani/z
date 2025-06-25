@@ -21,6 +21,7 @@ To further reduce false positives, matches are filtered using a small entropy ch
 
 It can optionally search employees automatically by inspecting both the contributors and commit authors of a repository you provide. Their public gists can be scanned as well when the **scan gists** option is enabled. You can also search an entire GitHub organization in one go by supplying an org name. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser. A dedicated `/scans` page lists all scans with their status.
 When employee scanning is enabled, DockerHub is also queried for repositories owned by those usernames.
+When employee scanning is enabled, DockerHub is also queried for repositories owned by those usernames.
 The dashboard keeps a history of all scans and shows whether each one is still running or finished. You can open a **Live** view to watch results stream in as they are discovered, or view the final report once the scan is done.
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
 The web dashboard uses the dark **Darkly** theme for a sleek, modern look. Rows fade in as leaks appear for a smoother experience.
@@ -75,6 +76,7 @@ Example `config.json`:
 }
 ```
 
+Passing `--docker` will include DockerHub searches alongside GitHub results.
 Any value left blank will still prompt at runtime. Using a config file lets you
 avoid retyping tokens for every scan.
 
