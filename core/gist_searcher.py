@@ -21,7 +21,14 @@ class GitHubGistSearcher:
             headers["Authorization"] = f"token {self.token}"
         return headers
 
-    def search(self, keyword: str, limit: int = 2, result_callback=None, **_):
+    def search(
+        self,
+        keyword: str,
+        limit: int = 2,
+        result_callback=None,
+        progress_callback=None,
+        **_,
+    ):
         leaks: List[dict] = []
         page = 1
         fetched = 0
@@ -40,10 +47,13 @@ class GitHubGistSearcher:
             data = resp.json()
             if not data:
                 break
-            for gist in data:
+            total = len(data)
+            for idx, gist in enumerate(data, 1):
                 if fetched >= limit:
                     break
                 fetched += 1
+                if progress_callback:
+                    progress_callback({"gist": gist.get("html_url"), "index": idx, "total": total})
                 for file_info in gist.get("files", {}).values():
                     raw_url = file_info.get("raw_url")
                     if not raw_url:
@@ -63,5 +73,7 @@ class GitHubGistSearcher:
                                 if result_callback:
                                     result_callback(item, len(leaks))
                 time.sleep(random.uniform(1, 2))
+                if progress_callback:
+                    progress_callback({"gist": gist.get("html_url"), "status": "done"})
             page += 1
         return leaks

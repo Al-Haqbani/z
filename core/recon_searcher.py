@@ -114,14 +114,15 @@ class ReconSearcher:
                 print(f"GitLab recon error: {exc}")
         return urls
 
-    def _verify_live(self, items: List[Dict[str, str]]) -> List[Dict[str, str]]:
+    def _verify_live(self, items: List[Dict[str, str]], progress_callback=None) -> List[Dict[str, str]]:
         results = []
         with ThreadPoolExecutor(max_workers=8) as ex:
             future_map = {
                 ex.submit(request_with_backoff, it["url"], timeout=5, retries=1): it
                 for it in items
             }
-            for fut in as_completed(future_map):
+            total = len(future_map)
+            for idx, fut in enumerate(as_completed(future_map), 1):
                 item = future_map[fut]
                 try:
                     resp = fut.result()
@@ -131,17 +132,27 @@ class ReconSearcher:
                 item["live_status"] = status
                 item["timestamp"] = int(time.time())
                 results.append(item)
+                if progress_callback:
+                    progress_callback({"verify_index": idx, "verify_total": total})
         return results
 
-    def search(self, keyword: str, result_callback=None, **kwargs) -> List[Dict[str, str]]:
+    def search(
+        self,
+        keyword: str,
+        result_callback=None,
+        progress_callback=None,
+        **kwargs,
+    ) -> List[Dict[str, str]]:
         all_urls = []
-        for domain in self.services:
+        for idx, domain in enumerate(self.services, 1):
+            if progress_callback:
+                progress_callback({"domain": domain, "index": idx, "total": len(self.services)})
             all_urls.extend(self._query_wayback(keyword, domain))
         all_urls.extend(self._query_github(keyword))
         all_urls.extend(self._query_gitlab(keyword))
         if not all_urls:
             return []
-        verified = self._verify_live(all_urls)
+        verified = self._verify_live(all_urls, progress_callback=progress_callback)
         results = []
         for item in verified:
             res_item = {
