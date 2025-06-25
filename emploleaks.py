@@ -4,6 +4,7 @@ import webbrowser
 import time
 import queue
 import argparse
+import os
 from utils.logger import logger
 from core.token_manager import get_token, get_github_token
 from utils.config import load_config
@@ -53,6 +54,7 @@ def parse_args():
     parser.add_argument("--notify", action="store_true", help="Send Telegram/Discord alerts")
     parser.add_argument("--web", action="store_true", help="Launch web interface")
     parser.add_argument("--config", help="Path to JSON config file")
+    parser.add_argument("--proxy", help="HTTP proxy URL for all requests")
     parser.add_argument("--list-patterns", action="store_true", help="List available leak patterns")
     return parser.parse_args()
 
@@ -100,6 +102,8 @@ def main():
             print(name)
         return
     config = load_config(args.config)
+    if args.proxy:
+        os.environ["EMPLOLEAKS_PROXY"] = args.proxy
     print("EmploLeaksGuardian - Simple Leak Scanner")
     logger.info("Startup with args: %s", sys.argv[1:])
     init_db()

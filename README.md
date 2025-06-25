@@ -125,6 +125,10 @@ If you set the environment variables `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` or
 To query GrayHatWarfare buckets you must supply a valid `GRAYHAT_TOKEN` when prompted or as an environment variable.
 To scan private Gitea servers set `GITEA_URL` to the instance's API base URL and supply an access token when prompted.
 
+If your network requires a proxy, set the `EMPLOLEAKS_PROXY` environment variable
+to the proxy URL. All HTTP requests will then use this proxy, which can help
+avoid blocks and provide extra anonymity.
+
 ### Smart JS Scanner
 
 The third menu option lets you scan a website's JavaScript files. You can choose

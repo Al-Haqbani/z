@@ -1,5 +1,6 @@
 import random
 import time
+import os
 import requests
 
 USER_AGENTS = [
@@ -8,16 +9,30 @@ USER_AGENTS = [
     "Mozilla/5.0 (X11; Linux x86_64)"
 ]
 
+# Optional proxy support via EMPLOLEAKS_PROXY
+PROXY_URL = os.environ.get("EMPLOLEAKS_PROXY")
+PROXIES = {"http": PROXY_URL, "https": PROXY_URL} if PROXY_URL else None
 
-def request_with_backoff(url, *, headers=None, params=None, timeout=30, retries=8, silent=True):
-    """Perform GET request with exponential backoff and UA rotation."""
+
+def request_with_backoff(url, *, headers=None, params=None, timeout=30, retries=8, silent=True, proxies=None):
+    """Perform GET request with exponential backoff and UA rotation.
+
+    A proxy can be provided via the ``proxies`` argument or the ``EMPLOLEAKS_PROXY``
+    environment variable.
+    """
     headers = headers or {}
     if "User-Agent" not in headers:
         headers["User-Agent"] = random.choice(USER_AGENTS)
     backoff = 1.0
     for _ in range(retries):
         try:
-            resp = requests.get(url, headers=headers, params=params, timeout=timeout)
+            resp = requests.get(
+                url,
+                headers=headers,
+                params=params,
+                timeout=timeout,
+                proxies=proxies or PROXIES,
+            )
             if resp.status_code == 429:
                 time.sleep(backoff)
                 backoff *= 2
