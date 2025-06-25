@@ -32,31 +32,63 @@ _web_thread = None
 def parse_args():
     """Parse command line arguments if provided."""
     parser = argparse.ArgumentParser(description="EmploLeaksGuardian CLI")
-    parser.add_argument("-p", "--platform", help="Platform to scan (e.g. github, gitlab, gitea)")
+    parser.add_argument(
+        "-p", "--platform", help="Platform to scan (e.g. github, gitlab, gitea)"
+    )
     parser.add_argument("-k", "--keyword", help="Search keyword")
     parser.add_argument("--full-auto", action="store_true", help="Run full auto mode")
     parser.add_argument("--smart-js", action="store_true", help="Run Smart JS scanner")
     parser.add_argument("--recon", action="store_true", help="Run recon scan")
     parser.add_argument("--org", help="GitHub organization to scan")
     parser.add_argument("--repo", help="Specific repository to scan")
-    parser.add_argument("--employees", action="store_true", help="Search employee accounts")
+    parser.add_argument(
+        "--employees", action="store_true", help="Search employee accounts"
+    )
     parser.add_argument("--deep", action="store_true", help="Enable deep GitHub scan")
     parser.add_argument("--full-repo", action="store_true", help="Full repository scan")
     parser.add_argument("--commits", action="store_true", help="Scan commit history")
     parser.add_argument("--prs", action="store_true", help="Scan pull requests")
-    parser.add_argument("--top-leaks", action="store_true", help="Use common leak queries")
+    parser.add_argument(
+        "--top-leaks", action="store_true", help="Use common leak queries"
+    )
     parser.add_argument("--wayback", action="store_true", help="Scan Wayback snapshots")
-    parser.add_argument("--wiki", action="store_true", help="Scan repository wiki pages")
-    parser.add_argument("--releases", action="store_true", help="Scan repository releases")
-    parser.add_argument("--actions", action="store_true", help="Scan GitHub Actions logs")
+    parser.add_argument(
+        "--wiki", action="store_true", help="Scan repository wiki pages"
+    )
+    parser.add_argument(
+        "--releases", action="store_true", help="Scan repository releases"
+    )
+    parser.add_argument(
+        "--actions", action="store_true", help="Scan GitHub Actions logs"
+    )
     parser.add_argument("--gists", action="store_true", help="Scan employee gists")
     parser.add_argument("--docker", action="store_true", help="Also scan DockerHub")
-    parser.add_argument("--docker", action="store_true", help="Also scan DockerHub")
-    parser.add_argument("--verify-ai", action="store_true", help="Verify leaks with AI")
-    parser.add_argument("--active-verify", action="store_true", help="Verify tokens via HTTP")
-    parser.add_argument("--notify", action="store_true", help="Send Telegram/Discord alerts")
-    parser.add_argument("--web", action="store_true", help="Launch web interface")
-    parser.add_argument("--config", help="Path to JSON config file")
+    parser.add_argument(
+        "--active-verify", action="store_true", help="Verify tokens via HTTP"
+    )
+    parser.add_argument(
+        "--notify", action="store_true", help="Send Telegram/Discord alerts"
+    )
+    parser.add_argument(
+        "--list-patterns", action="store_true", help="List available leak patterns"
+    )
+
+
+
+
+
+
+
+    swagger_token = get_token(
+        "SwaggerHub", "SWAGGER_TOKEN", config.get("swaggerhub_token")
+    )
+    bitbucket_token = get_token(
+        "Bitbucket", "BITBUCKET_TOKEN", config.get("bitbucket_token")
+    )
+    grayhat_token = get_token(
+        "GrayHatWarfare", "GRAYHAT_TOKEN", config.get("grayhat_token")
+    )
+
     parser.add_argument("--proxy", help="HTTP proxy URL for all requests")
     parser.add_argument("--list-patterns", action="store_true", help="List available leak patterns")
     return parser.parse_args()
@@ -204,9 +236,16 @@ def main():
                 verify_ai=args.verify_ai,
                 active_verify=args.active_verify,
                 notify=args.notify,
-                tokens=tokens,
-                deep_scan=args.deep,
-                full_scan=args.full_repo,
+        print(
+            "\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. Recon Scan\n5. Web Interface\n6. Exit"
+        )
+            platform = input(
+                "Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog/gitea): "
+            )
+                repo = (
+                    input("Repository to scan (owner/repo, blank to skip): ").strip()
+                    or None
+                )
                 repo=repo,
                 scan_history=args.commits,
                 scan_prs=args.prs,
@@ -301,7 +340,10 @@ def main():
                 print_progress(info)
 
             results = SearchManager.start_search(
-                platform,
+                repo = (
+                    input("Repository to scan (owner/repo, blank to skip): ").strip()
+                    or None
+                )
                 keyword,
                 employees=employees,
                 verify_ai=verify_ai,
@@ -375,7 +417,12 @@ def main():
                 temp_tokens["grayhat"] = None
             scan_id, q = _create_cli_scan(keyword)
 
-            def cb(item, idx):
+            found = run_smart_scan(
+                domain,
+                include_subdomains=sub,
+                use_wayback=use_wb,
+                use_linkfinder=use_lf,
+            )
                 if q:
                     q.put(item)
                 print_result(item, idx)
