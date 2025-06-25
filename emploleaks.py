@@ -30,7 +30,7 @@ _web_thread = None
 def parse_args():
     """Parse command line arguments if provided."""
     parser = argparse.ArgumentParser(description="EmploLeaksGuardian CLI")
-    parser.add_argument("-p", "--platform", help="Platform to scan")
+    parser.add_argument("-p", "--platform", help="Platform to scan (e.g. github, gitlab, gitea)")
     parser.add_argument("-k", "--keyword", help="Search keyword")
     parser.add_argument("--full-auto", action="store_true", help="Run full auto mode")
     parser.add_argument("--smart-js", action="store_true", help="Run Smart JS scanner")
@@ -96,6 +96,7 @@ def main():
     swagger_token = get_token("SwaggerHub", "SWAGGER_TOKEN", config.get("swaggerhub_token"))
     bitbucket_token = get_token("Bitbucket", "BITBUCKET_TOKEN", config.get("bitbucket_token"))
     grayhat_token = get_token("GrayHatWarfare", "GRAYHAT_TOKEN", config.get("grayhat_token"))
+    gitea_token = get_token("Gitea", "GITEA_TOKEN", config.get("gitea_token"))
     tokens = {
         "github": github_token,
         "gitlab": gitlab_token,
@@ -103,6 +104,7 @@ def main():
         "swaggerhub": swagger_token,
         "grayhat": grayhat_token,
         "trufflehog": github_token,
+        "gitea": gitea_token,
     }
 
     # Non-interactive mode via arguments
@@ -196,7 +198,7 @@ def main():
         choice = input("Select option: ")
         if choice == "1":
             start_web_ui()
-            platform = input("Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog): ")
+            platform = input("Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog/gitea): ")
             keyword = input("Keyword: ")
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None

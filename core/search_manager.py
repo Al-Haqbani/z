@@ -10,6 +10,7 @@ from .swaggerhub_scraper import SwaggerHubSearcher
 from .gist_searcher import GitHubGistSearcher
 from .bitbucket_scraper import BitbucketSearcher
 from .grayhat_scraper import GrayHatSearcher
+from .gitea_api import GiteaSearcher
 from .recon_searcher import ReconSearcher
 from .trufflehog_searcher import TruffleHogSearcher
 from .ai_verifier import is_valid_leak
@@ -32,6 +33,7 @@ class SearchManager:
         "swaggerhub": SwaggerHubSearcher,
         "gist": GitHubGistSearcher,
         "grayhat": GrayHatSearcher,
+        "gitea": GiteaSearcher,
         "recon": ReconSearcher,
         "trufflehog": TruffleHogSearcher,
     }

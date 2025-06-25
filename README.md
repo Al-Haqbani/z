@@ -1,6 +1,6 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, **Bitbucket**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff. HTTP requests now use a 20-second timeout and retry up to five times to avoid API timeouts.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, **Bitbucket**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, **Gitea instances**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff. HTTP requests now use a 20-second timeout and retry up to five times to avoid API timeouts.
 It can also run **TruffleHog** scans on repositories to leverage their advanced secret hunting heuristics.
 
 It also includes a **Recon module** that discovers references to your company across third‑party services like Slack or Google Docs. These URLs are gathered from live queries and the Wayback Machine, then verified asynchronously so you know whether each link is still reachable.
@@ -57,7 +57,8 @@ Example `config.json`:
   "gitlab_token": "",
   "swaggerhub_token": "",
   "bitbucket_token": "",
-  "grayhat_token": ""
+  "grayhat_token": "",
+  "gitea_token": ""
 }
 ```
 
@@ -110,6 +111,7 @@ verification feature from the prompts.
 If you set the environment variables `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` or
 `DISCORD_WEBHOOK_URL`, the tool can send alerts when leaks are discovered.
 To query GrayHatWarfare buckets you must supply a valid `GRAYHAT_TOKEN` when prompted or as an environment variable.
+To scan private Gitea servers set `GITEA_URL` to the instance's API base URL and supply an access token when prompted.
 
 ### Smart JS Scanner
 
