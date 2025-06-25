@@ -81,14 +81,20 @@ class GitHubSearcher:
         for _ in range(retries):
             for _ in range(attempts):
                 resp = request_with_backoff(
-                    url, headers=self._headers(rotate=True), params=params
+                    url,
+                    headers=self._headers(rotate=True),
+                    params=params,
+                    silent=self.silent,
                 )
                 if resp and resp.status_code == 200:
                     try:
                         return resp.json()
                     except Exception:
                         return None
-                if resp and resp.status_code in (401, 403, 429):
+                if not resp:
+                    # timeout or connection issue, rotate token and retry
+                    continue
+                if resp.status_code in (401, 403, 429):
                     remaining = int(resp.headers.get("X-RateLimit-Remaining", "1"))
                     reset = int(resp.headers.get("X-RateLimit-Reset", "0"))
                     if remaining == 0 and reset and self.last_token:
