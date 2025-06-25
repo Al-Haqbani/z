@@ -135,6 +135,66 @@ def verify_zoom_jwt(token: str) -> bool:
         return False
 
 
+def verify_vercel_token(token: str) -> bool:
+    """Check Vercel token via the users API."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://api.vercel.com/v2/user",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
+def verify_railway_token(token: str) -> bool:
+    """Check Railway token using the user endpoint."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://backboard.railway.app/v2/user",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
+def verify_asana_token(token: str) -> bool:
+    """Validate Asana personal access token."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://app.asana.com/api/1.0/users/me",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
+def verify_bugcrowd_token(token: str) -> bool:
+    """Check Bugcrowd API token."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://api.bugcrowd.com/user",
+            headers={"Authorization": f"Token {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
 def verify_token(leak_type: str, value: str) -> bool:
     """Return True if the token looks valid via online checks."""
     lt = leak_type.lower()
@@ -157,4 +217,12 @@ def verify_token(leak_type: str, value: str) -> bool:
         return verify_mistral_key(value)
     if "zoom" in lt:
         return verify_zoom_jwt(value)
+    if "vercel" in lt:
+        return verify_vercel_token(value)
+    if "railway" in lt:
+        return verify_railway_token(value)
+    if "asana" in lt:
+        return verify_asana_token(value)
+    if "bugcrowd" in lt:
+        return verify_bugcrowd_token(value)
     return False
