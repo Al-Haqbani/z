@@ -3,6 +3,7 @@ import threading
 import webbrowser
 import time
 import queue
+import argparse
 from core.token_manager import get_token, get_github_token
 from core.search_manager import SearchManager
 from core.github_api import GitHubSearcher
@@ -22,6 +23,30 @@ except Exception:
 
 
 _web_thread = None
+
+
+def parse_args():
+    """Parse command line arguments if provided."""
+    parser = argparse.ArgumentParser(description="EmploLeaksGuardian CLI")
+    parser.add_argument("-p", "--platform", help="Platform to scan")
+    parser.add_argument("-k", "--keyword", help="Search keyword")
+    parser.add_argument("--full-auto", action="store_true", help="Run full auto mode")
+    parser.add_argument("--smart-js", action="store_true", help="Run Smart JS scanner")
+    parser.add_argument("--recon", action="store_true", help="Run recon scan")
+    parser.add_argument("--org", help="GitHub organization to scan")
+    parser.add_argument("--repo", help="Specific repository to scan")
+    parser.add_argument("--employees", action="store_true", help="Search employee accounts")
+    parser.add_argument("--deep", action="store_true", help="Enable deep GitHub scan")
+    parser.add_argument("--full-repo", action="store_true", help="Full repository scan")
+    parser.add_argument("--commits", action="store_true", help="Scan commit history")
+    parser.add_argument("--prs", action="store_true", help="Scan pull requests")
+    parser.add_argument("--top-leaks", action="store_true", help="Use common leak queries")
+    parser.add_argument("--wayback", action="store_true", help="Scan Wayback snapshots")
+    parser.add_argument("--verify-ai", action="store_true", help="Verify leaks with AI")
+    parser.add_argument("--active-verify", action="store_true", help="Verify tokens via HTTP")
+    parser.add_argument("--notify", action="store_true", help="Send Telegram/Discord alerts")
+    parser.add_argument("--web", action="store_true", help="Launch web interface")
+    return parser.parse_args()
 
 def _create_cli_scan(keyword):
     """Create a scan entry so the web UI can display CLI scans."""
@@ -55,6 +80,7 @@ def start_web_ui():
         pass
 
 def main():
+    args = parse_args()
     print("EmploLeaksGuardian - Simple Leak Scanner")
     github_token = get_token("GitHub", "GITHUB_TOKEN")
     gitlab_token = get_token("GitLab", "GITLAB_TOKEN")
@@ -69,6 +95,93 @@ def main():
         "grayhat": grayhat_token,
         "trufflehog": github_token,
     }
+
+    # Non-interactive mode via arguments
+    if any([args.platform, args.full_auto, args.smart_js, args.recon, args.web]):
+        if args.web:
+            start_web_ui()
+        keyword = args.keyword or ""
+        employees = None
+        repo = args.repo
+        if args.employees and repo:
+            employees = GitHubSearcher.get_repo_contributors(repo, github_token)
+
+        if args.smart_js:
+            from is_scanner.js_scanner import run_smart_scan
+            results = []
+            found = run_smart_scan(
+                keyword,
+                include_subdomains=False,
+                use_wayback=args.wayback,
+                use_linkfinder=args.deep,
+            )
+            for item in found:
+                results.append(
+                    {
+                        "source": "JavaScript",
+                        "file": item["url"],
+                        "leak_type": item["leak_type"],
+                        "value": item["value"],
+                    }
+                )
+            if results:
+                print_results(results)
+            return
+
+        if args.recon:
+            results = SearchManager.start_search(
+                "recon",
+                keyword,
+                tokens=tokens,
+            )
+            if results:
+                print_results(results)
+            return
+
+        if args.full_auto:
+            results = SearchManager.run_full_auto_mode(
+                keyword,
+                employees=employees,
+                organization=args.org,
+                verify_ai=args.verify_ai,
+                active_verify=args.active_verify,
+                notify=args.notify,
+                tokens=tokens,
+                deep_scan=args.deep,
+                full_scan=args.full_repo,
+                repo=repo,
+                scan_history=args.commits,
+                scan_prs=args.prs,
+                top_common=args.top_leaks,
+                scan_wayback=args.wayback,
+            )
+            if results:
+                print_results(results)
+            return
+
+        if args.platform and args.keyword:
+            results = SearchManager.start_search(
+                args.platform,
+                keyword,
+                employees=employees,
+                organization=args.org,
+                verify_ai=args.verify_ai,
+                active_verify=args.active_verify,
+                notify=args.notify,
+                tokens=tokens,
+                deep_scan=args.deep,
+                full_scan=args.full_repo,
+                repo=repo,
+                scan_history=args.commits,
+                scan_prs=args.prs,
+                top_common=args.top_leaks,
+                scan_wayback=args.wayback,
+            )
+            if results:
+                print_results(results)
+            return
+
+    # Interactive menu fallback
     while True:
         print("\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. Recon Scan\n5. Web Interface\n6. Exit")
         choice = input("Select option: ")

@@ -52,6 +52,16 @@ and skips GitHub results instead of timing out.
 
 Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. If you disable employee scanning you may still provide a repository path so only that repo is searched. Results now stream to the terminal immediately whenever a leak is found, and the same events are forwarded to the web UI if it is running. This lets you monitor progress in both places at once. After each scan a timestamped HTML report and JSON file are saved under the directory specified by the `EMPLOLEAKS_OUTPUT` environment variable (default `reports`). You can also launch the web interface from the menu, which mirrors CLI scans automatically.
 
+### Command line options
+
+You can also run scans non-interactively:
+
+```bash
+python3 emploleaks.py -p github -k acme --full-auto --full-repo --commits --verify-ai
+```
+
+Use `python3 emploleaks.py --help` to see every available flag.
+
 If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history. Optional switches allow scanning commit history and pull requests too, and a **Top Leaks** mode queries GitHub for the most common API keywords like AWS, Slack, HuggingFace and Zendesk keys.
 
 To use the web interface separately, run:
