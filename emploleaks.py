@@ -6,6 +6,7 @@ import queue
 import argparse
 from core.token_manager import get_token, get_github_token
 from core.search_manager import SearchManager
+from utils.database import init_db, record_scan, finish_scan, insert_leaks
 from core.github_api import GitHubSearcher
 from output.terminal_output import (
     print_results,
@@ -56,14 +57,18 @@ def _create_cli_scan(keyword):
     q = queue.Queue()
     SCAN_QUEUES[scan_id] = q
     SCAN_HISTORY[scan_id] = {"keyword": keyword, "results": [], "status": "running"}
+    record_scan(scan_id, keyword, time.strftime("%Y-%m-%d %H:%M:%S"))
     return scan_id, q
 
 def _finalize_cli_scan(scan_id, results):
-    if not web_app or scan_id is None:
+    if scan_id is None:
         return
-    SCAN_HISTORY[scan_id]["results"] = results
-    SCAN_HISTORY[scan_id]["status"] = "done"
-    SCAN_QUEUES.get(scan_id, queue.Queue()).put(None)
+    finish_scan(scan_id, time.strftime("%Y-%m-%d %H:%M:%S"))
+    insert_leaks(scan_id, results)
+    if web_app:
+        SCAN_HISTORY[scan_id]["results"] = results
+        SCAN_HISTORY[scan_id]["status"] = "done"
+        SCAN_QUEUES.get(scan_id, queue.Queue()).put(None)
 
 def start_web_ui():
     """Launch the Flask web interface in a background thread"""
@@ -82,6 +87,7 @@ def start_web_ui():
 def main():
     args = parse_args()
     print("EmploLeaksGuardian - Simple Leak Scanner")
+    init_db()
     github_token = get_token("GitHub", "GITHUB_TOKEN")
     gitlab_token = get_token("GitLab", "GITLAB_TOKEN")
     swagger_token = get_token("SwaggerHub", "SWAGGER_TOKEN")
