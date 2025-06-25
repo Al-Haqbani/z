@@ -9,7 +9,7 @@ This project was originally created by **محمد الحقباني** to help sec
 In addition, a **Smart JS Scanner** can crawl JavaScript files from any domain (including optional subdomains and archived copies via the Wayback Machine).
 
 When commit scanning is enabled, GitHub results also include leaked secrets found in commit messages and diffs, allowing detection of tokens in deleted files.
-An optional **Deep Scan** mode searches GitHub issues in addition to code and commits for more thorough coverage. You can also enable **Full Repo Scan** to crawl every file in selected repositories or entire organizations, ensuring nothing is missed. A new **Wayback Repo** option downloads archived versions of repository files from the Wayback Machine so even deleted content is inspected. You can further enable **commit history** and **pull request** scanning so diffs and deleted files are inspected for secrets as well.
+An optional **Deep Scan** mode searches GitHub issues in addition to code and commits for more thorough coverage. You can also enable **Full Repo Scan** to crawl every file in selected repositories or entire organizations, ensuring nothing is missed. A new **Wayback Repo** option downloads archived versions of repository files from the Wayback Machine so even deleted content is inspected. You can further enable **commit history**, **pull request** and **release** scanning so diffs, changelogs and deleted files are inspected for secrets as well.
 GitHub searches leverage a curated list of "dorks" sourced from the public [GitDorker](https://github.com/obheda12/GitDorker/) project. These prebuilt queries combine with your keyword to uncover common secret patterns across GitHub.
 
 The tool ships with a list of over 200 regex patterns derived from the public database at [secrets.ninja](https://secrets.ninja/) and expanded with rules from [iwatchr.iscan.today](https://iwatchr.iscan.today/). These patterns cover a wide variety of API keys and tokens to improve detection accuracy. Additional generic patterns inspired by [Search for all leaked keys](https://github.com/Lu3ky13/Search-for-all-leaked-keys-secrets-using-one-regex-) help detect common password or API key assignments.
@@ -91,6 +91,7 @@ Run `python3 emploleaks.py --list-patterns` to display the names of all built-in
 
 If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history. Optional switches allow scanning commit history, pull requests and employee gists too, and a **Top Leaks** mode queries GitHub for the most common API keywords like AWS, Slack, HuggingFace and Zendesk keys.
 You can also enable **Scan repository wiki** to inspect the project's wiki pages for leaks.
+The new **Scan releases** option analyzes release descriptions so tokens leaked in changelogs are not missed.
 
 To use the web interface separately, run:
 

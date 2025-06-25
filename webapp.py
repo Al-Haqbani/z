@@ -174,6 +174,10 @@ INDEX_HTML = """
                 <label class=\"form-check-label\" for=\"scan_wayback\">Wayback Repo</label>
               </div>
               <div class=\"col-md-4 form-check\">
+                <input class=\"form-check-input\" type=\"checkbox\" name=\"scan_releases\" id=\"scan_releases\">
+                <label class=\"form-check-label\" for=\"scan_releases\">Scan Releases</label>
+              </div>
+              <div class=\"col-md-4 form-check\">
                 <input class=\"form-check-input\" type=\"checkbox\" name=\"verify_ai\" id=\"verify_ai\">
                 <label class=\"form-check-label\" for=\"verify_ai\">Verify with AI</label>
               </div>
@@ -731,6 +735,7 @@ def search():
     deep_scan = request.form.get("deep_scan") == "on"
     full_scan = request.form.get("full_scan") == "on"
     scan_wayback = request.form.get("scan_wayback") == "on"
+    scan_releases = request.form.get("scan_releases") == "on"
     verify_ai = request.form.get("verify_ai") == "on"
     active_verify = request.form.get("active_verify") == "on"
     silent = request.form.get("silent") == "on"
@@ -744,6 +749,7 @@ def search():
         "scan_gists": scan_gists,
         "silent": silent,
         "deep_scan": deep_scan,
+        "scan_releases": scan_releases,
     }
 
     scan_id = str(int(time.time()))
@@ -777,6 +783,7 @@ def search():
                     full_scan=full_scan,
                     scan_wayback=scan_wayback,
                     scan_gists=scan_gists,
+                    scan_releases=scan_releases,
                     result_callback=callback,
                     progress_callback=progress,
                     **kwargs,
@@ -792,6 +799,7 @@ def search():
                         full_scan=full_scan,
                         scan_wayback=scan_wayback,
                         scan_gists=scan_gists,
+                        scan_releases=scan_releases,
                         result_callback=callback,
                         progress_callback=progress,
                         **kwargs,

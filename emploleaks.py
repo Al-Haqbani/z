@@ -46,6 +46,7 @@ def parse_args():
     parser.add_argument("--top-leaks", action="store_true", help="Use common leak queries")
     parser.add_argument("--wayback", action="store_true", help="Scan Wayback snapshots")
     parser.add_argument("--wiki", action="store_true", help="Scan repository wiki pages")
+    parser.add_argument("--releases", action="store_true", help="Scan repository releases")
     parser.add_argument("--gists", action="store_true", help="Scan employee gists")
     parser.add_argument("--verify-ai", action="store_true", help="Verify leaks with AI")
     parser.add_argument("--active-verify", action="store_true", help="Verify tokens via HTTP")
@@ -178,6 +179,7 @@ def main():
                 top_common=args.top_leaks,
                 scan_wayback=args.wayback,
                 scan_wiki=args.wiki,
+                scan_releases=args.releases,
             )
             if results:
                 print_results(results)
@@ -234,6 +236,7 @@ def main():
             top_leaks = input("Search top leaks? (y/N): ").lower() == "y"
             wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
             wiki = input("Scan repository wiki? (y/N): ").lower() == "y"
+            releases = input("Scan releases? (y/N): ").lower() == "y"
             include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
@@ -269,6 +272,7 @@ def main():
                 top_common=top_leaks,
                 scan_wayback=wayback,
                 scan_wiki=wiki,
+                scan_releases=releases,
                 result_callback=cb,
                 progress_callback=prog,
             )
@@ -302,6 +306,7 @@ def main():
             top_leaks = input("Search top leaks? (y/N): ").lower() == "y"
             wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
             wiki = input("Scan repository wiki? (y/N): ").lower() == "y"
+            releases = input("Scan releases? (y/N): ").lower() == "y"
             include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
@@ -339,6 +344,7 @@ def main():
                 top_common=top_leaks,
                 scan_wayback=wayback,
                 scan_wiki=wiki,
+                scan_releases=releases,
                 result_callback=cb,
                 progress_callback=prog,
             )

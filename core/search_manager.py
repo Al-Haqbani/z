@@ -113,6 +113,7 @@ class SearchManager:
         full_scan=False,
         scan_wayback=False,
         scan_wiki=False,
+        scan_releases=False,
         scan_gists=False,
         result_callback=None,
         progress_callback=None,
@@ -157,6 +158,7 @@ class SearchManager:
             scan_gists=scan_gists,
             progress_callback=progress_callback,
             result_callback=cb,
+            scan_releases=scan_releases,
             **kwargs,
         )
         results = cls._verify_results(results, verify_ai, active_verify)
@@ -178,6 +180,7 @@ class SearchManager:
         full_scan=False,
         scan_wayback=False,
         scan_wiki=False,
+        scan_releases=False,
         scan_gists=False,
         result_callback=None,
         progress_callback=None,
@@ -222,6 +225,7 @@ class SearchManager:
                 scan_gists=scan_gists,
                 progress_callback=progress_callback,
                 result_callback=cb,
+                scan_releases=scan_releases,
                 **kwargs,
             )
 

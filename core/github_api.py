@@ -242,6 +242,36 @@ class GitHubSearcher:
         return leaks
 
     @classmethod
+    def scan_repo_releases(cls, repo, token=None, silent=False, result_callback=None):
+        """Scan release descriptions of a repo for leaked secrets."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        leaks = []
+        page = 1
+        while True:
+            url = f"{cls.BASE_URL}/repos/{repo}/releases?per_page=100&page={page}"
+            releases = cls(token=token)._fetch_json(url)
+            if not releases:
+                break
+            for rel in releases:
+                body = rel.get("body") or ""
+                for name, value in detect_leaks(body):
+                    item = {
+                        "source": "GitHub Release",
+                        "file": rel.get("html_url", ""),
+                        "leak_type": name,
+                        "value": value,
+                    }
+                    leaks.append(item)
+                    if result_callback:
+                        result_callback(item, len(leaks))
+            if len(releases) < 100:
+                break
+            page += 1
+        return leaks
+
+    @classmethod
     def scan_repo_commits(cls, repo, token=None, silent=False, result_callback=None):
         """Scan commit history of a repository for leaked secrets."""
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
@@ -415,6 +445,7 @@ class GitHubSearcher:
         repo=None,
         scan_wayback=False,
         scan_wiki=False,
+        scan_releases=False,
         progress_callback=None,
         result_callback=None,
         **_,
@@ -613,6 +644,15 @@ class GitHubSearcher:
                 if scan_wiki:
                     leaks.extend(
                         self.scan_repo_wiki(
+                            r,
+                            token=self.tokens[0] if self.tokens else None,
+                            silent=self.silent,
+                            result_callback=result_callback,
+                        )
+                    )
+                if scan_releases:
+                    leaks.extend(
+                        self.scan_repo_releases(
                             r,
                             token=self.tokens[0] if self.tokens else None,
                             silent=self.silent,
