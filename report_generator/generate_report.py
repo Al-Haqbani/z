@@ -1,9 +1,22 @@
 from datetime import datetime
 import json
+import os
 
 
-def generate_html_report(results, path="report.html"):
+def _ensure_path(ext: str, path: str | None = None) -> str:
+    """Return an output path using a timestamp if none is provided."""
+    if path:
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        return path
+    out_dir = os.environ.get("EMPLOLEAKS_OUTPUT", "reports")
+    os.makedirs(out_dir, exist_ok=True)
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    return os.path.join(out_dir, f"results_{timestamp}.{ext}")
+
+
+def generate_html_report(results, path: str | None = None) -> str:
     """Write an HTML report with full links and severity color."""
+    path = _ensure_path("html", path)
 
     head = f"""
 <!doctype html>
@@ -50,8 +63,9 @@ def generate_html_report(results, path="report.html"):
     return path
 
 
-def save_json_report(results, path="results.json"):
+def save_json_report(results, path: str | None = None) -> str:
     """Write results list to a JSON file."""
+    path = _ensure_path("json", path)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
     return path

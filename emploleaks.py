@@ -130,9 +130,9 @@ def main():
             _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
-                report_path = generate_html_report(results, path="results.html")
-                save_json_report(results, path="results.json")
-                print(f"Report saved to {report_path} and results.json")
+                report_path = generate_html_report(results)
+                json_path = save_json_report(results)
+                print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No leaks found.")
         elif choice == "2":
@@ -196,9 +196,9 @@ def main():
             _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
-                report_path = generate_html_report(results, path="results.html")
-                save_json_report(results, path="results.json")
-                print(f"Report saved to {report_path} and results.json")
+                report_path = generate_html_report(results)
+                json_path = save_json_report(results)
+                print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No leaks found.")
         elif choice == "3":
@@ -225,9 +225,9 @@ def main():
             _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
-                report_path = generate_html_report(results, path="results.html")
-                save_json_report(results, path="results.json")
-                print(f"Report saved to {report_path} and results.json")
+                report_path = generate_html_report(results)
+                json_path = save_json_report(results)
+                print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No leaks found.")
         elif choice == "4":
@@ -249,9 +249,9 @@ def main():
             _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
-                report_path = generate_html_report(results, path="results.html")
-                save_json_report(results, path="results.json")
-                print(f"Report saved to {report_path} and results.json")
+                report_path = generate_html_report(results)
+                json_path = save_json_report(results)
+                print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No URLs found.")
         elif choice == "5":
