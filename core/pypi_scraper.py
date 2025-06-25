@@ -20,13 +20,16 @@ class PyPiPackageSearcher:
         pattern = r"/project/([^/]+)/"
         return re.findall(pattern, html)
 
-    def search(self, keyword, result_callback=None, **kwargs):
+    def search(self, keyword, result_callback=None, progress_callback=None, limit=20, **kwargs):
         leaks = []
         try:
             resp = request_with_backoff(self.SEARCH_URL, params={"q": keyword})
             if resp and resp.status_code == 200:
-                names = self._extract_names(resp.text)[:5]
-                for name in names:
+                names = self._extract_names(resp.text)[:limit]
+                total = len(names)
+                for idx, name in enumerate(names, 1):
+                    if progress_callback:
+                        progress_callback({"repo": name, "index": idx, "total": total})
                     info_resp = request_with_backoff(self.INFO_URL.format(pkg=name))
                     if info_resp and info_resp.status_code == 200:
                         description = info_resp.json().get("info", {}).get("description", "")
@@ -42,6 +45,8 @@ class PyPiPackageSearcher:
                             if result_callback:
                                 result_callback(item, len(leaks))
                     time.sleep(random.uniform(1, 2))
+                    if progress_callback:
+                        progress_callback({"repo": name, "status": "done"})
             else:
                 if not self.silent:
                     status = resp.status_code if resp else 'timeout'

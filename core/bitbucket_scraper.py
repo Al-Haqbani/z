@@ -60,10 +60,13 @@ class BitbucketSearcher:
             page += 1
         return repos[:limit]
 
-    def search(self, keyword, full_scan=False, result_callback=None, **_):
+    def search(self, keyword, full_scan=False, result_callback=None, progress_callback=None, limit=10, **_):
         leaks = []
-        repos = self._list_repos(keyword, limit=3 if not full_scan else 10)
-        for repo in repos:
+        repos = self._list_repos(keyword, limit=limit)
+        total = len(repos)
+        for idx, repo in enumerate(repos, 1):
+            if progress_callback:
+                progress_callback({"repo": repo.get("full_name"), "index": idx, "total": total})
             full_name = repo.get("full_name")
             if not full_name:
                 continue
@@ -94,4 +97,6 @@ class BitbucketSearcher:
                 except Exception:
                     if not self.silent:
                         print(f"Bitbucket fetch error for {raw_url}")
+                if progress_callback:
+                    progress_callback({"repo": repo.get("full_name"), "status": "done"})
         return leaks

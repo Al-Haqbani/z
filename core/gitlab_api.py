@@ -42,10 +42,13 @@ class GitLabSearcher:
                 print(f"GitLab {scope} search error: {exc}")
         return []
 
-    def search(self, keyword, scan_commits=False, result_callback=None, **_):
+    def search(self, keyword, scan_commits=False, result_callback=None, progress_callback=None, limit=20, **_):
         leaks = []
-        blob_results = self._search_scope(keyword, "blobs")
-        for item in blob_results:
+        blob_results = self._search_scope(keyword, "blobs")[:limit]
+        total = len(blob_results)
+        for idx, item in enumerate(blob_results, 1):
+            if progress_callback:
+                progress_callback({"repo": item.get("project_id"), "index": idx, "total": total})
             project = item.get("project_id")
             file_path = item.get("filename")
             ref = item.get("ref") or "master"
@@ -69,6 +72,8 @@ class GitLabSearcher:
                 if not self.silent:
                     print(f"GitLab raw fetch error: {exc}")
             time.sleep(random.uniform(1, 2))
+            if progress_callback:
+                progress_callback({"repo": item.get("project_id"), "status": "done"})
 
         if scan_commits:
             commit_results = self._search_scope(keyword, "commits")

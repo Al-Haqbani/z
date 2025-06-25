@@ -105,6 +105,7 @@ The refreshed dark interface (now using the **Darkly** Bootswatch theme) shows l
 Progress events now also include the total number of leaks found so far, letting
 you watch the count rise in real time both in the terminal and the web
 dashboard.
+Other platforms such as DockerHub, PyPI and NPM now emit similar progress updates so you can see which repository or package is being scanned at any moment.
 
 For a richer experience, a React.js dashboard powered by **Material‑UI** lives under the `frontend` directory. After building it with `npm run build`, browse to `/app/` on the Flask server. This single‑page app connects to the `/stream/<scan_id>` endpoint via **EventSource** to show which repository is being scanned right now. It features pause, resume and cancel buttons, animated progress indicators and a summary of repositories scanned and leak counts. Completed scans automatically generate downloadable HTML and JSON reports.
 AI verification requires the optional `transformers` and `torch` packages. Install them with:
