@@ -24,5 +24,26 @@ class TestTokenVerifier(unittest.TestCase):
         mock_post.return_value = self.mock_response(200, {'ok': False})
         self.assertFalse(token_verifier.verify_slack_token('xoxb-invalid'))
 
+    @patch('core.token_verifier.requests.get')
+    def test_verify_kaggle_key(self, mock_get):
+        mock_get.return_value = self.mock_response(200)
+        self.assertTrue(token_verifier.verify_kaggle_key('kaggle_token'))
+        mock_get.return_value = self.mock_response(403)
+        self.assertFalse(token_verifier.verify_kaggle_key('bad'))
+
+    @patch('core.token_verifier.requests.get')
+    def test_verify_anthropic_key(self, mock_get):
+        mock_get.return_value = self.mock_response(200)
+        self.assertTrue(token_verifier.verify_anthropic_key('anthropic'))
+        mock_get.return_value = self.mock_response(401)
+        self.assertFalse(token_verifier.verify_anthropic_key('bad'))
+
+    @patch('core.token_verifier.requests.get')
+    def test_verify_gemini_key(self, mock_get):
+        mock_get.return_value = self.mock_response(200, {'models': []})
+        self.assertTrue(token_verifier.verify_gemini_key('gemini'))
+        mock_get.return_value = self.mock_response(403)
+        self.assertFalse(token_verifier.verify_gemini_key('bad'))
+
 if __name__ == '__main__':
     unittest.main()

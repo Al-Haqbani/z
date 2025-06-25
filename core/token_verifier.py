@@ -260,6 +260,12 @@ def verify_token(leak_type: str, value: str) -> bool:
         return verify_bugcrowd_token(value)
     if "supabase" in lt:
         return verify_supabase_token(value)
+    if "kaggle" in lt:
+        return verify_kaggle_key(value)
+    if "anthropic" in lt:
+        return verify_anthropic_key(value)
+    if "gemini" in lt:
+        return verify_gemini_key(value)
     if "notion" in lt or value.startswith("ntn_"):
         return verify_notion_token(value)
     if "digitalocean" in lt:
@@ -330,5 +336,50 @@ def verify_stripe_key(token: str) -> bool:
             timeout=5,
         )
         return resp.status_code == 200
+    except Exception:
+        return False
+
+
+def verify_kaggle_key(token: str) -> bool:
+    """Check Kaggle API key using the datasets API."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://www.kaggle.com/api/v1/datasets/list",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
+def verify_anthropic_key(token: str) -> bool:
+    """Validate Anthropic API key using the models endpoint."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://api.anthropic.com/v1/models",
+            headers={"x-api-key": token},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
+def verify_gemini_key(token: str) -> bool:
+    """Check Google Gemini API key via the models endpoint."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://generativelanguage.googleapis.com/v1/models",
+            params={"key": token},
+            timeout=5,
+        )
+        return resp.status_code == 200 and "models" in resp.json()
     except Exception:
         return False
