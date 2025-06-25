@@ -8,6 +8,7 @@ from .pastebin_scraper import PastebinSearcher
 from .gitlab_api import GitLabSearcher
 from .swaggerhub_scraper import SwaggerHubSearcher
 from .gist_searcher import GitHubGistSearcher
+from .bitbucket_scraper import BitbucketSearcher
 from .grayhat_scraper import GrayHatSearcher
 from .recon_searcher import ReconSearcher
 from .trufflehog_searcher import TruffleHogSearcher
@@ -27,6 +28,7 @@ class SearchManager:
         "reddit": RedditSearcher,
         "pastebin": PastebinSearcher,
         "gitlab": GitLabSearcher,
+        "bitbucket": BitbucketSearcher,
         "swaggerhub": SwaggerHubSearcher,
         "gist": GitHubGistSearcher,
         "grayhat": GrayHatSearcher,

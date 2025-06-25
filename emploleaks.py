@@ -59,10 +59,12 @@ def main():
     github_token = get_token("GitHub", "GITHUB_TOKEN")
     gitlab_token = get_token("GitLab", "GITLAB_TOKEN")
     swagger_token = get_token("SwaggerHub", "SWAGGER_TOKEN")
+    bitbucket_token = get_token("Bitbucket", "BITBUCKET_TOKEN")
     grayhat_token = get_token("GrayHatWarfare", "GRAYHAT_TOKEN")
     tokens = {
         "github": github_token,
         "gitlab": gitlab_token,
+        "bitbucket": bitbucket_token,
         "swaggerhub": swagger_token,
         "grayhat": grayhat_token,
         "trufflehog": github_token,
@@ -72,7 +74,7 @@ def main():
         choice = input("Select option: ")
         if choice == "1":
             start_web_ui()
-            platform = input("Platform (github/gitlab/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog): ")
+            platform = input("Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog): ")
             keyword = input("Keyword: ")
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None

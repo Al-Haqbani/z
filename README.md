@@ -1,6 +1,6 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff. HTTP requests now use a 20-second timeout and retry up to five times to avoid API timeouts.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, **Bitbucket**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff. HTTP requests now use a 20-second timeout and retry up to five times to avoid API timeouts.
 It can also run **TruffleHog** scans on repositories to leverage their advanced secret hunting heuristics.
 
 It also includes a **Recon module** that discovers references to your company across third‑party services like Slack or Google Docs. These URLs are gathered from live queries and the Wayback Machine, then verified asynchronously so you know whether each link is still reachable.
@@ -42,7 +42,7 @@ Install the dependencies first:
 pip install -r requirements.txt
 ```
 
-At startup you will be asked for API tokens for GitHub, GitLab, SwaggerHub and GrayHatWarfare.
+At startup you will be asked for API tokens for GitHub, GitLab, **Bitbucket**, SwaggerHub and GrayHatWarfare.
 You can provide **multiple GitHub tokens** separated by commas to avoid rate limits—the
 tool will rotate between them automatically. Providing tokens greatly improves results on
 those platforms. If you skip a token or provide an invalid one, searches on that platform
