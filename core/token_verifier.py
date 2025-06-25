@@ -262,6 +262,10 @@ def verify_token(leak_type: str, value: str) -> bool:
         return verify_supabase_token(value)
     if "notion" in lt or value.startswith("ntn_"):
         return verify_notion_token(value)
+    if "digitalocean" in lt:
+        return verify_digitalocean_token(value)
+    if "stripe" in lt or value.startswith("sk_live_"):
+        return verify_stripe_key(value)
     if "google" in lt or value.startswith("AIza"):
         return verify_google_api_key(value)
     if value.startswith("ya29."):
@@ -295,5 +299,36 @@ def verify_google_oauth_token(token: str) -> bool:
             timeout=5,
         )
         return resp.status_code == 200 and "expires_in" in resp.json()
+    except Exception:
+        return False
+
+
+def verify_digitalocean_token(token: str) -> bool:
+    """Check DigitalOcean API token using the account endpoint."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://api.digitalocean.com/v2/account",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
+def verify_stripe_key(token: str) -> bool:
+    """Check Stripe secret key using a minimal API request."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://api.stripe.com/v1/charges",
+            headers={"Authorization": f"Bearer {token}"},
+            params={"limit": 1},
+            timeout=5,
+        )
+        return resp.status_code == 200
     except Exception:
         return False
