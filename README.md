@@ -20,6 +20,7 @@ New patterns also detect GitHub app secrets, GitHub Enterprise PATs, Telegram AP
 To further reduce false positives, matches are filtered using a small entropy check. Short or low‑entropy strings are ignored unless they resemble real credentials. Generic patterns also require at least one digit so ordinary words like `generator-app` aren't flagged.
 
 It can optionally search employees automatically by inspecting both the contributors and commit authors of a repository you provide. Their public gists can be scanned as well when the **scan gists** option is enabled. You can also search an entire GitHub organization in one go by supplying an org name. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser. A dedicated `/scans` page lists all scans with their status.
+When employee scanning is enabled, DockerHub is also queried for repositories owned by those usernames.
 The dashboard keeps a history of all scans and shows whether each one is still running or finished. You can open a **Live** view to watch results stream in as they are discovered, or view the final report once the scan is done.
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
 The web dashboard uses the dark **Darkly** theme for a sleek, modern look. Rows fade in as leaks appear for a smoother experience.
@@ -99,6 +100,7 @@ python3 emploleaks.py -p github -k acme --full-auto --full-repo --commits --veri
 ```
 
 Use `python3 emploleaks.py --help` to see every available flag.
+Passing `--docker` will include DockerHub searches alongside GitHub results.
 Run `python3 emploleaks.py --list-patterns` to display the names of all built-in leak patterns.
 
 If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history. Optional switches allow scanning commit history, pull requests and employee gists too, and a **Top Leaks** mode queries GitHub for the most common API keywords like AWS, Slack, HuggingFace and Zendesk keys.

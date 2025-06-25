@@ -182,6 +182,7 @@ class SearchManager:
         scan_wiki=False,
         scan_releases=False,
         scan_gists=False,
+        include_docker=True,
         result_callback=None,
         progress_callback=None,
         **kwargs,
@@ -229,10 +230,14 @@ class SearchManager:
                 **kwargs,
             )
 
-        with ThreadPoolExecutor(max_workers=len(cls.PLATFORM_MAP)) as ex:
+        platform_items = list(cls.PLATFORM_MAP.items())
+        if not include_docker:
+            platform_items = [p for p in platform_items if p[0] != "dockerhub"]
+
+        with ThreadPoolExecutor(max_workers=len(platform_items)) as ex:
             future_map = {
                 ex.submit(_worker, name, scls): name
-                for name, scls in cls.PLATFORM_MAP.items()
+                for name, scls in platform_items
             }
             for fut in as_completed(future_map):
                 try:

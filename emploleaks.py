@@ -49,6 +49,7 @@ def parse_args():
     parser.add_argument("--wiki", action="store_true", help="Scan repository wiki pages")
     parser.add_argument("--releases", action="store_true", help="Scan repository releases")
     parser.add_argument("--gists", action="store_true", help="Scan employee gists")
+    parser.add_argument("--docker", action="store_true", help="Also scan DockerHub")
     parser.add_argument("--verify-ai", action="store_true", help="Verify leaks with AI")
     parser.add_argument("--active-verify", action="store_true", help="Verify tokens via HTTP")
     parser.add_argument("--notify", action="store_true", help="Send Telegram/Discord alerts")
@@ -184,6 +185,7 @@ def main():
                 scan_wayback=args.wayback,
                 scan_wiki=args.wiki,
                 scan_releases=args.releases,
+                include_docker=args.docker or employees is not None,
             )
             if results:
                 print_results(results)
@@ -208,7 +210,16 @@ def main():
                 top_common=args.top_leaks,
                 scan_wayback=args.wayback,
                 scan_wiki=args.wiki,
+                include_docker=args.docker or args.employees,
             )
+            if args.platform == "github" and (args.docker or args.employees):
+                docker_res = SearchManager.start_search(
+                    "dockerhub",
+                    keyword,
+                    employees=employees,
+                    tokens=tokens,
+                )
+                results.extend(docker_res)
             if results:
                 print_results(results)
             return
@@ -242,6 +253,7 @@ def main():
             wiki = input("Scan repository wiki? (y/N): ").lower() == "y"
             releases = input("Scan releases? (y/N): ").lower() == "y"
             include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
+            docker_flag = input("Scan DockerHub too? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
@@ -277,9 +289,20 @@ def main():
                 scan_wayback=wayback,
                 scan_wiki=wiki,
                 scan_releases=releases,
+                include_docker=docker_flag or employees is not None,
                 result_callback=cb,
                 progress_callback=prog,
             )
+            if platform == "github" and (docker_flag or employees):
+                docker_results = SearchManager.start_search(
+                    "dockerhub",
+                    keyword,
+                    employees=employees,
+                    tokens=tokens,
+                    result_callback=cb,
+                    progress_callback=prog,
+                )
+                results.extend(docker_results)
             _finalize_cli_scan(scan_id, results)
             if results:
                 print_results(results)
@@ -312,6 +335,7 @@ def main():
             wiki = input("Scan repository wiki? (y/N): ").lower() == "y"
             releases = input("Scan releases? (y/N): ").lower() == "y"
             include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
+            docker_flag = input("Scan DockerHub too? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
@@ -349,6 +373,7 @@ def main():
                 scan_wayback=wayback,
                 scan_wiki=wiki,
                 scan_releases=releases,
+                include_docker=docker_flag or employees is not None,
                 result_callback=cb,
                 progress_callback=prog,
             )
