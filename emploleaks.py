@@ -5,6 +5,7 @@ import time
 import queue
 import argparse
 from core.token_manager import get_token, get_github_token
+from utils.config import load_config
 from core.search_manager import SearchManager
 from utils.database import init_db, record_scan, finish_scan, insert_leaks
 from core.github_api import GitHubSearcher
@@ -47,6 +48,7 @@ def parse_args():
     parser.add_argument("--active-verify", action="store_true", help="Verify tokens via HTTP")
     parser.add_argument("--notify", action="store_true", help="Send Telegram/Discord alerts")
     parser.add_argument("--web", action="store_true", help="Launch web interface")
+    parser.add_argument("--config", help="Path to JSON config file")
     return parser.parse_args()
 
 def _create_cli_scan(keyword):
@@ -86,13 +88,14 @@ def start_web_ui():
 
 def main():
     args = parse_args()
+    config = load_config(args.config)
     print("EmploLeaksGuardian - Simple Leak Scanner")
     init_db()
-    github_token = get_token("GitHub", "GITHUB_TOKEN")
-    gitlab_token = get_token("GitLab", "GITLAB_TOKEN")
-    swagger_token = get_token("SwaggerHub", "SWAGGER_TOKEN")
-    bitbucket_token = get_token("Bitbucket", "BITBUCKET_TOKEN")
-    grayhat_token = get_token("GrayHatWarfare", "GRAYHAT_TOKEN")
+    github_token = get_token("GitHub", "GITHUB_TOKEN", config.get("github_token"))
+    gitlab_token = get_token("GitLab", "GITLAB_TOKEN", config.get("gitlab_token"))
+    swagger_token = get_token("SwaggerHub", "SWAGGER_TOKEN", config.get("swaggerhub_token"))
+    bitbucket_token = get_token("Bitbucket", "BITBUCKET_TOKEN", config.get("bitbucket_token"))
+    grayhat_token = get_token("GrayHatWarfare", "GRAYHAT_TOKEN", config.get("grayhat_token"))
     tokens = {
         "github": github_token,
         "gitlab": gitlab_token,

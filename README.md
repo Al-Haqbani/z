@@ -42,6 +42,28 @@ Install the dependencies first:
 pip install -r requirements.txt
 ```
 
+### Configuration file
+
+You can store default tokens and options in a JSON config file. By default the
+tool looks for `config.json` in the current directory or the path specified in
+the `EMPLOLEAKS_CONFIG` environment variable. You can also pass a custom path
+with `--config <file>`.
+
+Example `config.json`:
+
+```json
+{
+  "github_token": "ghp_yourtoken",
+  "gitlab_token": "",
+  "swaggerhub_token": "",
+  "bitbucket_token": "",
+  "grayhat_token": ""
+}
+```
+
+Any value left blank will still prompt at runtime. Using a config file lets you
+avoid retyping tokens for every scan.
+
 At startup you will be asked for API tokens for GitHub, GitLab, **Bitbucket**, SwaggerHub and GrayHatWarfare.
 You can provide **multiple GitHub tokens** separated by commas to avoid rate limits—the
 tool will rotate between them automatically. Providing tokens greatly improves results on

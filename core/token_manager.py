@@ -1,9 +1,9 @@
 import os
 
 
-def get_token(name: str, env_var: str):
-    """Return a token or list of tokens from env or user input."""
-    token = os.environ.get(env_var)
+def get_token(name: str, env_var: str, default=None):
+    """Return a token or list of tokens from env, config default or user input."""
+    token = os.environ.get(env_var) or default
     if not token:
         token = input(
             f"{name} Token (comma separated for multiple, press Enter to skip): "
@@ -18,4 +18,4 @@ def get_token(name: str, env_var: str):
 
 def get_github_token() -> str | None:
     """Backward compatible helper for obtaining the GitHub token."""
-    return get_token("GitHub", "GITHUB_TOKEN")
+    return get_token("GitHub", "GITHUB_TOKEN", None)
