@@ -59,5 +59,12 @@ class TestTokenVerifier(unittest.TestCase):
         mock_get.return_value = self.mock_response(403)
         self.assertFalse(token_verifier.verify_stability_key('bad'))
 
+    @patch('core.token_verifier.requests.get')
+    def test_verify_salesforce_token(self, mock_get):
+        mock_get.return_value = self.mock_response(200)
+        self.assertTrue(token_verifier.verify_salesforce_token('00Dxxx!tok'))
+        mock_get.return_value = self.mock_response(401)
+        self.assertFalse(token_verifier.verify_salesforce_token('bad'))
+
 if __name__ == '__main__':
     unittest.main()

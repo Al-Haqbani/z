@@ -240,6 +240,21 @@ def verify_supabase_token(token: str) -> bool:
         return False
 
 
+def verify_salesforce_token(token: str) -> bool:
+    """Validate Salesforce OAuth token via userinfo endpoint."""
+    if not token:
+        return False
+    try:
+        resp = requests.get(
+            "https://login.salesforce.com/services/oauth2/userinfo",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
+
 def verify_notion_token(token: str) -> bool:
     """Validate Notion integration token via the API."""
     if not token:
@@ -290,6 +305,8 @@ def verify_token(leak_type: str, value: str) -> bool:
         return verify_bugcrowd_token(value)
     if "supabase" in lt:
         return verify_supabase_token(value)
+    if "salesforce" in lt:
+        return verify_salesforce_token(value)
     if "kaggle" in lt:
         return verify_kaggle_key(value)
     if "anthropic" in lt:

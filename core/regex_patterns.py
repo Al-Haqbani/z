@@ -60,6 +60,7 @@ def _load_patterns() -> List[Dict[str, str]]:
         {"name": "Bearer JWT", "regex": r"Bearer [A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_.+/=]*"},
         {"name": "Google API Key", "regex": r"AIza[0-9A-Za-z-_]{35}"},
         {"name": "Google OAuth Token", "regex": r"ya29\.[0-9A-Za-z-_]+"},
+        {"name": "Salesforce OAuth Token", "regex": r"00D[A-Za-z0-9]{12}!+[A-Za-z0-9]{24,40}"},
     ]
 
 
