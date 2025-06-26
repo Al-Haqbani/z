@@ -74,6 +74,13 @@ def parse_args():
     parser.add_argument("--config", help="Path to JSON config file")
     parser.add_argument("--proxy", help="HTTP proxy URL for all requests")
     parser.add_argument(
+        "-t",
+        "--threads",
+        type=int,
+        help="Maximum concurrent search threads in full-auto mode",
+        default=0,
+    )
+    parser.add_argument(
         "--list-patterns", action="store_true", help="List available leak patterns"
     )
     return parser.parse_args()
@@ -221,6 +228,7 @@ def main():
                 scan_actions=args.actions,
                 include_docker=args.docker or employees is not None,
                 follow_docker=args.docker or employees is not None,
+                max_threads=args.threads,
             )
             if results:
                 print_results(results)
@@ -427,6 +435,7 @@ def main():
                 include_docker=docker_flag or employees is not None,
                 result_callback=cb,
                 progress_callback=prog,
+                max_threads=args.threads,
             )
             _finalize_cli_scan(scan_id, results)
             if results:

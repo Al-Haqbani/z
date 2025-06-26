@@ -198,6 +198,7 @@ class SearchManager:
         scan_actions=False,
         scan_gists=False,
         include_docker=True,
+        max_threads=None,
         result_callback=None,
         progress_callback=None,
         **kwargs,
@@ -250,7 +251,10 @@ class SearchManager:
         if not include_docker:
             platform_items = [p for p in platform_items if p[0] != "dockerhub"]
 
-        with ThreadPoolExecutor(max_workers=len(platform_items)) as ex:
+        max_workers = max_threads or len(platform_items)
+        if max_workers < 1:
+            max_workers = len(platform_items)
+        with ThreadPoolExecutor(max_workers=max_workers) as ex:
             future_map = {
                 ex.submit(_worker, name, scls): name
                 for name, scls in platform_items
