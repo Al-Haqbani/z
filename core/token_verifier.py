@@ -360,6 +360,43 @@ def verify_google_oauth_token(token: str) -> bool:
         return False
 
 
+POC_COMMANDS = {
+    "github": "curl -H 'Authorization: token {token}' https://api.github.com/user",
+    "slack": "curl -H 'Authorization: Bearer {token}' https://slack.com/api/auth.test",
+    "discord": "curl -H 'Authorization: Bot {token}' https://discord.com/api/v10/users/@me",
+    "telegram": "curl https://api.telegram.org/bot{token}/getMe",
+    "huggingface": "curl -H 'Authorization: Bearer {token}' https://huggingface.co/api/whoami-v2",
+    "gitlab": "curl -H 'PRIVATE-TOKEN: {token}' https://gitlab.com/api/v4/user",
+    "openai": "curl -H 'Authorization: Bearer {token}' https://api.openai.com/v1/models",
+    "mistral": "curl -H 'Authorization: Bearer {token}' https://api.mistral.ai/v1/models",
+    "zoom": "curl -H 'Authorization: Bearer {token}' https://api.zoom.us/v2/users/me",
+    "vercel": "curl -H 'Authorization: Bearer {token}' https://api.vercel.com/v2/user",
+    "railway": "curl -H 'Authorization: Bearer {token}' https://backboard.railway.app/v2/user",
+    "asana": "curl -H 'Authorization: Bearer {token}' https://app.asana.com/api/1.0/users/me",
+    "bugcrowd": "curl -H 'Authorization: Token {token}' https://api.bugcrowd.com/user",
+    "supabase": "curl -H 'Authorization: Bearer {token}' https://api.supabase.com/v1/projects",
+    "salesforce": "curl -H 'Authorization: Bearer {token}' https://login.salesforce.com/services/oauth2/userinfo",
+    "kaggle": "curl -H 'Authorization: Bearer {token}' https://www.kaggle.com/api/v1/datasets/list",
+    "anthropic": "curl -H 'x-api-key: {token}' https://api.anthropic.com/v1/models",
+    "gemini": "curl 'https://generativelanguage.googleapis.com/v1/models?key={token}'",
+    "replicate": "curl -H 'Authorization: Token {token}' https://api.replicate.com/v1/models",
+    "stability": "curl -H 'Authorization: Bearer {token}' https://api.stability.ai/v1/user/account",
+    "notion": "curl -H 'Authorization: Bearer {token}' -H 'Notion-Version: 2022-06-28' https://api.notion.com/v1/users/me",
+    "digitalocean": "curl -H 'Authorization: Bearer {token}' https://api.digitalocean.com/v2/account",
+    "stripe": "curl -H 'Authorization: Bearer {token}' https://api.stripe.com/v1/charges?limit=1",
+    "google": "curl 'https://generativelanguage.googleapis.com/v1/models?key={token}'",
+}
+
+
+def get_poc_command(leak_type: str, token: str) -> str:
+    """Return a sample curl command used for verification."""
+    lt = leak_type.lower()
+    for key, cmd in POC_COMMANDS.items():
+        if key in lt:
+            return cmd.format(token=token)
+    return ""
+
+
 def verify_digitalocean_token(token: str) -> bool:
     """Check DigitalOcean API token using the account endpoint."""
     if not token:

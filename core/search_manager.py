@@ -79,16 +79,19 @@ class SearchManager:
                     return verify_leak(item.get("leak_type", ""), item.get("value", ""))
                 except Exception as exc:
                     logger.warning("Verification error for %s: %s", item.get("value"), exc)
-                    return False
+                    return (False, "")
 
             with ThreadPoolExecutor(max_workers=8) as ex:
                 future_map = {ex.submit(worker, it): it for it in filtered}
                 for fut in as_completed(future_map):
                     item = future_map[fut]
                     try:
-                        item["active"] = fut.result()
+                        active, poc = fut.result()
+                        item["active"] = active
+                        item["poc"] = poc
                     except Exception as exc:
                         item["active"] = False
+                        item["poc"] = ""
                         logger.warning("Verification error for %s: %s", item.get("value"), exc)
 
             # keep only verified results
@@ -96,6 +99,7 @@ class SearchManager:
         else:
             for item in filtered:
                 item["active"] = None
+                item["poc"] = ""
 
         return filtered
 
@@ -137,13 +141,16 @@ class SearchManager:
             nonlocal leak_count
             if active_verify:
                 try:
-                    item["active"] = verify_leak(
+                    active, poc = verify_leak(
                         item.get("leak_type", ""), item.get("value", "")
                     )
-                    if not item["active"]:
+                    item["active"] = active
+                    item["poc"] = poc
+                    if not active:
                         return
                 except Exception as exc:  # pragma: no cover - best effort
                     item["active"] = False
+                    item["poc"] = ""
             leak_count += 1
             if result_callback:
                 result_callback(item, leak_count)
@@ -227,13 +234,16 @@ class SearchManager:
                 nonlocal leak_count
                 if active_verify:
                     try:
-                        item["active"] = verify_leak(
+                        active, poc = verify_leak(
                             item.get("leak_type", ""), item.get("value", "")
                         )
-                        if not item["active"]:
+                        item["active"] = active
+                        item["poc"] = poc
+                        if not active:
                             return
                     except Exception:
                         item["active"] = False
+                        item["poc"] = ""
                 leak_count += 1
                 if result_callback:
                     result_callback(item, leak_count)

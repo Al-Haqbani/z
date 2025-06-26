@@ -1,6 +1,6 @@
 from utils.logger import logger
 import requests
-from .token_verifier import verify_token
+from .token_verifier import verify_token, get_poc_command
 
 
 def verify_url(url: str) -> bool:
@@ -15,9 +15,12 @@ def verify_url(url: str) -> bool:
         return False
 
 
-def verify_leak(leak_type: str, value: str) -> bool:
-    """Generic verification for a leak value."""
+def verify_leak(leak_type: str, value: str):
+    """Verify a leak and return (status, poc)."""
     if value.startswith("http://") or value.startswith("https://"):
-        return verify_url(value)
-    # fall back to token verification for known tokens
-    return verify_token(leak_type, value)
+        ok = verify_url(value)
+        poc = f"curl -I {value}" if ok else ""
+        return ok, poc
+    ok = verify_token(leak_type, value)
+    poc = get_poc_command(leak_type, value) if ok else ""
+    return ok, poc

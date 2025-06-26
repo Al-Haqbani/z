@@ -66,5 +66,10 @@ class TestTokenVerifier(unittest.TestCase):
         mock_get.return_value = self.mock_response(401)
         self.assertFalse(token_verifier.verify_salesforce_token('bad'))
 
+    def test_get_poc_command(self):
+        cmd = token_verifier.get_poc_command('GitHub Token', 'ghp_test')
+        self.assertIn('ghp_test', cmd)
+        self.assertIn('api.github.com', cmd)
+
 if __name__ == '__main__':
     unittest.main()

@@ -31,6 +31,7 @@ For quick checks you can enable the **Top Leaks** option, which searches GitHub 
 Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active verification*, which issues small HTTP requests (via `curl`) to confirm that URLs are reachable or that tokens remain valid by calling their APIs. Supported checks now cover GitHub, **GitLab**, Slack, Discord, Telegram, HuggingFace, **OpenAI**, **Mistral AI** and **Zoom** tokens, **Vercel**, **Railway**, **Asana**, **Bugcrowd**, **Supabase**, **DigitalOcean**, **Stripe**, **Notion**, **Kaggle**, **Anthropic**, **Gemini**, **Replicate** and **Stability AI**, and **Salesforce** keys as well as **Google** API credentials.
 The CLI now highlights the severity of each finding in color for quick triage.
 When active verification is enabled, each leak is tested with a tiny HTTP request. Unverified results are discarded so the report only lists tokens that still work.
+Verified leaks include a small **PoC** command showing the curl request that confirmed the token is valid.
 Public GitHub Gists are also scanned to catch secrets that might be shared outside repositories, including gists owned by employees when that option is selected.
 
 For deeper analysis you can enable the **TruffleHog** searcher, which runs the open source tool over selected repositories to analyze their full commit history.
