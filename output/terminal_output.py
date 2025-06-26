@@ -1,12 +1,10 @@
 from rich.table import Table
 from rich.console import Console
+from core.regex_patterns import get_severity
 
 
 def _assign_severity(leak_type: str) -> str:
-    name = leak_type.lower()
-    if "token" in name or "key" in name:
-        return "high"
-    return "medium"
+    return get_severity(leak_type)
 
 
 def print_results(results):

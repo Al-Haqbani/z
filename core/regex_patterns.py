@@ -70,10 +70,26 @@ def _load_patterns() -> List[Dict[str, str]]:
 
 LEAK_PATTERNS: List[Dict[str, str]] = _load_patterns()
 
+# Map of pattern name -> severity string
+LEAK_SEVERITY = {}
+for pat in LEAK_PATTERNS:
+    sev = pat.get("severity")
+    if not sev:
+        name_low = pat["name"].lower()
+        if "token" in name_low or "key" in name_low:
+            sev = "high"
+        else:
+            sev = "medium"
+    LEAK_SEVERITY[pat["name"]] = sev
+
+def get_severity(name: str) -> str:
+    """Return configured severity for a leak type."""
+    return LEAK_SEVERITY.get(name, "medium")
+
 
 def add_patterns_from_file(path: str) -> None:
     """Append additional patterns from a JSON file."""
-    global LEAK_PATTERNS, _COMPILED_PATTERNS, _MASTER_REGEX
+    global LEAK_PATTERNS, _COMPILED_PATTERNS, _MASTER_REGEX, LEAK_SEVERITY
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -85,9 +101,18 @@ def add_patterns_from_file(path: str) -> None:
                     re.compile(reg, re.IGNORECASE)
                 except re.error:
                     continue
-                new_patterns.append({"name": p["name"], "regex": reg})
+                entry = {"name": p["name"], "regex": reg}
+                if "severity" in p:
+                    entry["severity"] = p["severity"]
+                new_patterns.append(entry)
         if new_patterns:
             LEAK_PATTERNS.extend(new_patterns)
+            for np in new_patterns:
+                sev = np.get("severity")
+                if not sev:
+                    name_low = np["name"].lower()
+                    sev = "high" if ("token" in name_low or "key" in name_low) else "medium"
+                LEAK_SEVERITY[np["name"]] = sev
             _COMPILED_PATTERNS[:] = [
                 (p["name"], re.compile(p["regex"], re.IGNORECASE))
                 for p in LEAK_PATTERNS

@@ -868,11 +868,10 @@ def control_scan(scan_id, action):
     return Response(json.dumps({"status": "ok"}), mimetype="application/json")
 
 
+from core.regex_patterns import get_severity
+
 def _assign_severity(leak_type: str) -> str:
-    name = leak_type.lower()
-    if "token" in name or "key" in name:
-        return "high"
-    return "medium"
+    return get_severity(leak_type)
 
 @app.route("/search", methods=["POST"])
 def search():
