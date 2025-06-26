@@ -64,10 +64,40 @@ def _load_patterns() -> List[Dict[str, str]]:
         {"name": "Google API Key", "regex": r"AIza[0-9A-Za-z-_]{35}"},
         {"name": "Google OAuth Token", "regex": r"ya29\.[0-9A-Za-z-_]+"},
         {"name": "Salesforce OAuth Token", "regex": r"00D[A-Za-z0-9]{12}!+[A-Za-z0-9]{24,40}"},
+        {"name": "Twilio API Key", "regex": r"SK[0-9a-fA-F]{32}"},
     ]
 
 
 LEAK_PATTERNS: List[Dict[str, str]] = _load_patterns()
+
+
+def add_patterns_from_file(path: str) -> None:
+    """Append additional patterns from a JSON file."""
+    global LEAK_PATTERNS, _COMPILED_PATTERNS, _MASTER_REGEX
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        new_patterns = []
+        for p in data:
+            if isinstance(p, dict) and "name" in p and "regex" in p:
+                reg = p["regex"].replace("\\z", "\\Z")
+                try:
+                    re.compile(reg, re.IGNORECASE)
+                except re.error:
+                    continue
+                new_patterns.append({"name": p["name"], "regex": reg})
+        if new_patterns:
+            LEAK_PATTERNS.extend(new_patterns)
+            _COMPILED_PATTERNS[:] = [
+                (p["name"], re.compile(p["regex"], re.IGNORECASE))
+                for p in LEAK_PATTERNS
+            ]
+            _MASTER_REGEX = re.compile(
+                "|".join(f"({p['regex']})" for p in LEAK_PATTERNS),
+                re.MULTILINE | re.IGNORECASE,
+            )
+    except Exception as exc:  # pragma: no cover - best effort
+        logger.warning("Failed to load extra patterns from %s: %s", path, exc)
 
 
 def get_pattern_names() -> List[str]:

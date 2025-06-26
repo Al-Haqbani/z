@@ -16,7 +16,11 @@ from output.terminal_output import (
     print_result,
     print_progress,
 )
-from core.regex_patterns import get_pattern_names, get_pattern_list
+from core.regex_patterns import (
+    get_pattern_names,
+    get_pattern_list,
+    add_patterns_from_file,
+)
 from core.leak_detector import set_active_patterns
 from report_generator.generate_report import generate_html_report, save_json_report
 
@@ -93,6 +97,10 @@ def parse_args():
         "--patterns",
         help="Comma-separated pattern numbers or names to scan",
     )
+    parser.add_argument(
+        "--pattern-file",
+        help="Path to JSON file with additional leak patterns",
+    )
     return parser.parse_args()
 
 
@@ -163,6 +171,9 @@ def main():
             print(f"{idx}. {name}")
         return
     config = load_config(args.config)
+    if args.pattern_file:
+        from core.regex_patterns import add_patterns_from_file
+        add_patterns_from_file(args.pattern_file)
     if args.proxy:
         os.environ["EMPLOLEAKS_PROXY"] = args.proxy
     print("EmploLeaksGuardian - Simple Leak Scanner")
