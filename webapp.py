@@ -1059,6 +1059,7 @@ def live_results(scan_id):
         STREAM_HTML,
         keyword=scan["keyword"],
         scan_id=scan_id,
+        icon_map=ICON_MAP,
     )
 
 

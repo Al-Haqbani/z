@@ -5,7 +5,10 @@ from __future__ import annotations
 import json
 import os
 import re
+import logging
 from typing import List, Dict
+
+logger = logging.getLogger(__name__)
 
 
 def _load_patterns() -> List[Dict[str, str]]:
@@ -38,8 +41,8 @@ def _load_patterns() -> List[Dict[str, str]]:
                 cleaned.append({"name": p["name"], "regex": reg})
         if cleaned:
             return cleaned
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning("Failed to load %s: %s. Using fallback patterns", json_path, exc)
 
     # Fallback minimal patterns
     return [
