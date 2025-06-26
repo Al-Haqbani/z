@@ -160,7 +160,7 @@ INDEX_HTML = """
                 {% for p in platforms %}
                 <div class=\"col-6 col-md-4\">
                   <div class=\"form-check\">
-                    <input class=\"form-check-input\" type=\"checkbox\" name=\"platforms\" value=\"{{p}}\" id=\"p_{{p}}\" checked>
+                    <input class=\"form-check-input\" type=\"checkbox\" name=\"platforms\" value=\"{{p}}\" id=\"p_{{p}}\" {% if p in selected %}checked{% endif %}>
                     <label class=\"form-check-label\" for=\"p_{{p}}\">{{p}}</label>
                   </div>
                 </div>
@@ -812,10 +812,16 @@ SCANS_HTML = """
 
 @app.route("/")
 def index():
+    selected = request.args.get("platform")
+    platforms = list(SearchManager.PLATFORM_MAP.keys())
+    selected_list = platforms
+    if selected in platforms:
+        selected_list = [selected]
     return render_template_string(
         INDEX_HTML,
-        platforms=SearchManager.PLATFORM_MAP.keys(),
+        platforms=platforms,
         history=SCAN_HISTORY,
+        selected=selected_list,
     )
 
 @app.route("/recon")
@@ -824,6 +830,12 @@ def recon_index():
         RECON_INDEX_HTML,
         history=RECON_HISTORY,
     )
+
+@app.route('/platform/<name>')
+def platform_page(name):
+    if name not in SearchManager.PLATFORM_MAP:
+        return redirect(url_for('index'))
+    return redirect(url_for('index', platform=name))
 
 @app.route('/app/')
 @app.route('/app/<path:path>')
