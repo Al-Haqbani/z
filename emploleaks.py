@@ -337,7 +337,7 @@ def main():
             gists = input("Scan employee gists? (y/N): ").lower() == "y"
             top_leaks = input("Search top leaks? (y/N): ").lower() == "y"
             pattern_in = ""
-            if input("\u0647\u0644 \u062a\u0631\u064a\u062f \u062a\u062d\u062f\u064a\u062f \u062b\u063a\u0631\u0629 \u0645\u0639\u064a\u0646\u0629? (y/N): ").lower() == "y":
+            if input("Do you want to select specific leak types? (y/N): ").lower() == "y":
                 print("Available leak patterns:")
                 for idx, name in get_pattern_list():
                     print(f"{idx}. {name}")
