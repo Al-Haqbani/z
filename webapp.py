@@ -869,6 +869,7 @@ def search():
                     scan_gists=scan_gists,
                     scan_releases=scan_releases,
                     scan_actions=scan_actions,
+                    platforms=chosen,
                     result_callback=callback,
                     progress_callback=progress,
                     **kwargs,

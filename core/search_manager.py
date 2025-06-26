@@ -198,6 +198,7 @@ class SearchManager:
         scan_actions=False,
         scan_gists=False,
         include_docker=True,
+        platforms=None,
         max_threads=None,
         result_callback=None,
         progress_callback=None,
@@ -248,6 +249,9 @@ class SearchManager:
             )
 
         platform_items = list(cls.PLATFORM_MAP.items())
+        if platforms:
+            wanted = set(platforms)
+            platform_items = [p for p in platform_items if p[0] in wanted]
         if not include_docker:
             platform_items = [p for p in platform_items if p[0] != "dockerhub"]
 

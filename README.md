@@ -25,6 +25,8 @@ The dashboard keeps a history of all scans and shows whether each one is still r
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
 The web dashboard adopts a custom dark gradient style with animated cards for a sleeker look. Rows fade in as leaks appear for a smoother experience.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
+You can restrict which platforms run by providing a comma-separated list with
+`--platforms github,gitlab` or entering that list when prompted.
 For quick checks you can enable the **Top Leaks** option, which searches GitHub for ten of the most commonly leaked API tokens such as AWS, Slack and HuggingFace keys.
 Leak results may also be verified by a free AI classifier. When enabled from the prompts or the web form, each detected token is checked with a lightweight model from HuggingFace to reduce false positives. For even more accuracy you can enable *active verification*, which issues small HTTP requests (via `curl`) to confirm that URLs are reachable or that tokens remain valid by calling their APIs. Supported checks now cover GitHub, **GitLab**, Slack, Discord, Telegram, HuggingFace, **OpenAI**, **Mistral AI** and **Zoom** tokens, **Vercel**, **Railway**, **Asana**, **Bugcrowd**, **Supabase**, **DigitalOcean**, **Stripe**, **Notion**, **Kaggle**, **Anthropic**, **Gemini**, **Replicate** and **Stability AI** keys as well as **Google** API credentials.
 The CLI now highlights the severity of each finding in color for quick triage.
@@ -129,6 +131,8 @@ Run `python3 emploleaks.py --list-patterns` to display the names of all built-in
 
 If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history. Optional switches allow scanning commit history, pull requests and employee gists too, and a **Top Leaks** mode queries GitHub for the most common API keywords like AWS, Slack, HuggingFace and Zendesk keys.
 You can adjust the maximum number of concurrent search threads with `--threads N`.
+To limit full-auto scans to certain platforms you can pass a comma-separated
+list with `--platforms github,gitlab,dockerhub`.
 You can also enable **Scan repository wiki** to inspect the project's wiki pages for leaks.
 The new **Scan releases** option analyzes release descriptions so tokens leaked in changelogs are not missed.
 The **Scan actions logs** option downloads GitHub Actions logs and inspects them for secrets leaked during CI runs.

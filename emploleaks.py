@@ -81,6 +81,10 @@ def parse_args():
         default=0,
     )
     parser.add_argument(
+        "--platforms",
+        help="Comma-separated list of platforms for full-auto mode",
+    )
+    parser.add_argument(
         "--list-patterns", action="store_true", help="List available leak patterns"
     )
     return parser.parse_args()
@@ -228,6 +232,7 @@ def main():
                 scan_actions=args.actions,
                 include_docker=args.docker or employees is not None,
                 follow_docker=args.docker or employees is not None,
+                platforms=args.platforms.split(',') if args.platforms else None,
                 max_threads=args.threads,
             )
             if results:
@@ -397,6 +402,11 @@ def main():
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
+            platforms_in = (
+                input("Platforms to scan (comma separated, blank for all): ")
+                .strip()
+            )
+            platforms = [p.strip() for p in platforms_in.split(',') if p.strip()] if platforms_in else None
             temp_tokens = dict(tokens)
             if not include_buckets:
                 temp_tokens["grayhat"] = None
@@ -435,6 +445,7 @@ def main():
                 include_docker=docker_flag or employees is not None,
                 result_callback=cb,
                 progress_callback=prog,
+                platforms=platforms,
                 max_threads=args.threads,
             )
             _finalize_cli_scan(scan_id, results)
