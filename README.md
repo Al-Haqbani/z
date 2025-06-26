@@ -33,6 +33,30 @@ Public GitHub Gists are also scanned to catch secrets that might be shared outsi
 
 For deeper analysis you can enable the **TruffleHog** searcher, which runs the open source tool over selected repositories to analyze their full commit history.
 
+## Architecture Overview
+
+The project follows a modular layout so new platforms or features can be added
+easily. The main CLI lives in `emploleaks.py` and delegates work to the
+`SearchManager`. Each supported service implements a `*Searcher` class under the
+`core/` directory. Utility helpers reside in `utils/`, while reporting logic is
+kept in `output/` and `report_generator/`. A lightweight web interface is
+provided via `webapp.py` and an optional React dashboard can be built from the
+`frontend/` folder. Reports and the SQLite database are stored under `reports/`
+by default. See the directory tree below for a high level view:
+
+```
+EmploLeaksGuardian8/
+├── emploleaks.py
+├── core/               # searchers and detection helpers
+├── utils/              # HTTP helpers, logging, subdomain enum
+├── output/             # terminal table output
+├── report_generator/   # HTML report creation
+├── drive_upload/       # Google Drive integration
+├── is_scanner/         # Smart JS scanner
+└── frontend/           # optional React dashboard
+```
+
+
 ## Installation
 
 Clone the repository and install the dependencies:
