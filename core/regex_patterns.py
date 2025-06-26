@@ -18,7 +18,13 @@ def _load_patterns() -> List[Dict[str, str]]:
     json_path = os.path.join(os.path.dirname(__file__), "..", "data", "leak_patterns.json")
     try:
         with open(json_path, "r", encoding="utf-8") as f:
-            patterns = json.load(f)
+            raw = f.read()
+        try:
+            patterns = json.loads(raw)
+        except json.JSONDecodeError:
+            # if the file contains invalid escape sequences like \z
+            fixed = re.sub(r"\\(?![\\\"/bfnrtu])", r"\\\\", raw)
+            patterns = json.loads(fixed)
         cleaned = []
         if isinstance(patterns, list):
             for p in patterns:
