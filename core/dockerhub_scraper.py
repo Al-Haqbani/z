@@ -41,7 +41,17 @@ class DockerHubSearcher:
                         tags_resp = request_with_backoff(tags_url)
                         if tags_resp and tags_resp.status_code == 200:
                             for t in tags_resp.json().get("results", []):
-                                content += "\n" + (t.get("full_size", "")) + str(t.get("name", ""))
+                                tag_name = t.get("name", "")
+                                content += "\n" + str(t.get("full_size", "")) + tag_name
+                                img_url = f"{self.BASE_URL}/repositories/{namespace}/{name}/tags/{tag_name}/images"
+                                img_resp = request_with_backoff(img_url)
+                                if img_resp and img_resp.status_code == 200:
+                                    for img in img_resp.json().get("results", []):
+                                        content += "\n" + " ".join(
+                                            str(v)
+                                            for v in img.values()
+                                            if isinstance(v, str)
+                                        )
                         for leak_type, value in detect_leaks(content):
                             item = {
                                 "source": "DockerHub",
