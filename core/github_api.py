@@ -2,6 +2,7 @@ import random
 import time
 import os
 import requests
+import re
 
 from .leak_detector import detect_leaks
 from utils.http_utils import request_with_backoff
@@ -35,6 +36,8 @@ class GitHubSearcher:
         "refreshToken"
     ]
 
+    DOCKER_IMAGE_RE = re.compile(r"(?:FROM|docker\s+pull)\s+([\w./:-]+)")
+
     def __init__(self, token=None, silent=False, **_):
         self.tokens = []
         if token:
@@ -48,6 +51,7 @@ class GitHubSearcher:
         self.token_reset = {t: 0 for t in self.tokens}
         self.last_token = None
         self.silent = silent
+        self.docker_images = set()
 
     def _next_token(self):
         if not self.tokens:
@@ -141,18 +145,17 @@ class GitHubSearcher:
             page += 1
         return repos
 
-    @classmethod
-    def scan_repo(cls, repo, token=None, silent=False, progress_callback=None, result_callback=None):
+    def scan_repo(self, repo, token=None, silent=False, progress_callback=None, result_callback=None):
         """Scan every file in the given repository."""
-        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        headers = {"User-Agent": random.choice(self.USER_AGENTS)}
         if token:
             headers["Authorization"] = f"token {token}"
-        info = cls(token=token)._fetch_json(f"{cls.BASE_URL}/repos/{repo}")
+        info = self._fetch_json(f"{self.BASE_URL}/repos/{repo}")
         if not info:
             return []
         branch = info.get("default_branch", "master")
-        tree_url = f"{cls.BASE_URL}/repos/{repo}/git/trees/{branch}?recursive=1"
-        tree = cls(token=token)._fetch_json(tree_url)
+        tree_url = f"{self.BASE_URL}/repos/{repo}/git/trees/{branch}?recursive=1"
+        tree = self._fetch_json(tree_url)
         if not tree:
             return []
         leaks = []
@@ -178,6 +181,9 @@ class GitHubSearcher:
                         leaks.append(item)
                         if result_callback:
                             result_callback(item, len(leaks))
+                if resp and resp.status_code == 200:
+                    for img in self.DOCKER_IMAGE_RE.findall(resp.text):
+                        self.docker_images.add(img.strip())
                 time.sleep(random.uniform(0.5, 1.5))
             except Exception:
                 if not silent:

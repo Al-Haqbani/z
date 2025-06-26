@@ -220,6 +220,7 @@ def main():
                 scan_releases=args.releases,
                 scan_actions=args.actions,
                 include_docker=args.docker or employees is not None,
+                follow_docker=args.docker or employees is not None,
             )
             if results:
                 print_results(results)
@@ -246,6 +247,7 @@ def main():
                 scan_wiki=args.wiki,
                 scan_actions=args.actions,
                 include_docker=args.docker or args.employees,
+                follow_docker=args.docker or args.employees,
             )
             if args.platform == "github" and (args.docker or args.employees):
                 docker_res = SearchManager.start_search(
@@ -334,6 +336,7 @@ def main():
                 scan_releases=releases,
                 scan_actions=actions,
                 include_docker=docker_flag or employees is not None,
+                follow_docker=docker_flag or employees is not None,
                 result_callback=cb,
                 progress_callback=prog,
             )

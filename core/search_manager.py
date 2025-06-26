@@ -116,6 +116,7 @@ class SearchManager:
         scan_releases=False,
         scan_actions=False,
         scan_gists=False,
+        follow_docker=False,
         result_callback=None,
         progress_callback=None,
         **kwargs,
@@ -164,6 +165,17 @@ class SearchManager:
             **kwargs,
         )
         results = cls._verify_results(results, verify_ai, active_verify)
+
+        if follow_docker and hasattr(searcher, "docker_images") and searcher.docker_images:
+            docker_searcher = DockerHubSearcher()
+            for img in searcher.docker_images:
+                results.extend(
+                    docker_searcher.search(
+                        img,
+                        result_callback=result_callback,
+                        progress_callback=progress_callback,
+                    )
+                )
         if notify:
             cls._send_notifications(results)
         logger.info("Finished search on %s with %d results", platform, len(results))

@@ -20,7 +20,7 @@ New patterns also detect GitHub app secrets, GitHub Enterprise PATs, Telegram AP
 To further reduce false positives, matches are filtered using a small entropy check. Short or low‑entropy strings are ignored unless they resemble real credentials. Generic patterns also require at least one digit so ordinary words like `generator-app` aren't flagged.
 
 It can optionally search employees automatically by inspecting both the contributors and commit authors of a repository you provide. Their public gists can be scanned as well when the **scan gists** option is enabled. You can also search an entire GitHub organization in one go by supplying an org name. A modern web interface on `localhost:8000` lets you run scans and view results. The UI is styled with Bootstrap for a clean look and now lets you toggle AI verification, commit scanning and silent mode directly from your browser. A dedicated `/scans` page lists all scans with their status.
-When employee scanning is enabled, DockerHub is also queried for repositories owned by those usernames.
+When employee scanning is enabled, DockerHub is also queried for repositories owned by those usernames. GitHub scans additionally parse `Dockerfile` instructions and automatically search any referenced images on DockerHub so leaks in container descriptions can be found at the same time.
 The dashboard keeps a history of all scans and shows whether each one is still running or finished. You can open a **Live** view to watch results stream in as they are discovered, or view the final report once the scan is done.
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
 The web dashboard adopts a custom dark gradient style with animated cards for a sleeker look. Rows fade in as leaks appear for a smoother experience.
@@ -140,7 +140,7 @@ python3 webapp.py
 
 While a scan runs, results stream live to the page using server‑sent events, so you can watch leaks appear in real time without waiting for the full scan to finish.
 
-The refreshed dark interface (now using the **Darkly** Bootswatch theme) shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. Rows fade in smoothly and you can filter by platform, severity or keyword while the scan runs. A list in the sidebar tracks every repository and turns green once its scan is finished. The CLI also prints progress messages such as `Scanning owner/repo (3/10)` so you know which repository is being processed.
+The refreshed dark interface (now using the **Cyborg** Bootswatch theme) shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. Rows fade in smoothly and you can filter by platform, severity or keyword while the scan runs. A list in the sidebar tracks every repository and turns green once its scan is finished. The CLI also prints progress messages such as `Scanning owner/repo (3/10)` so you know which repository is being processed.
 Progress events now also include the total number of leaks found so far, letting
 you watch the count rise in real time both in the terminal and the web
 dashboard. Other platforms such as DockerHub, PyPI and NPM emit similar progress

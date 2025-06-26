@@ -36,7 +36,7 @@ INDEX_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>EmploLeaksGuardian – Enterprise Secret Detection Platform</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
@@ -250,7 +250,7 @@ RESULTS_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Results</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
@@ -339,7 +339,7 @@ STREAM_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Live Dashboard</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
@@ -536,7 +536,7 @@ RECON_INDEX_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Recon Scanner</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
   </head>
   <body class=\"bg-dark text-light\">
     <div class=\"container mt-4\">
@@ -570,7 +570,7 @@ RECON_STREAM_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Recon Results</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 20px; background: linear-gradient(120deg,#10141f,#1c2640); }
       tr.fade { animation: fadein .5s; }
@@ -624,7 +624,7 @@ MAP_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Map View</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 20px; background: linear-gradient(120deg,#10141f,#1c2640); }
     </style>
@@ -689,7 +689,7 @@ SCANS_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Scans</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
