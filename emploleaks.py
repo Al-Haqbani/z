@@ -334,7 +334,7 @@ def main():
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 only_emp = (
                     input(
-                        "\u0647\u0644 \u062a\u0631\u064a\u062f \u0627\u0644\u0628\u062d\u062b \u0639\u0646 \u0641\u0642\u0637 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646 \u0627\u0644\u0645\u0630\u0643\u0648\u0631\u064a\u0646 \u0641\u064a \u0645\u0633\u062a\u0648\u062f\u0639 \u0627\u0644\u0634\u0631\u0643\u0629؟ (y/N): "
+                        "Search only employees mentioned in the company repository? (y/N): "
                     ).lower()
                     == "y"
                 )
@@ -445,7 +445,7 @@ def main():
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 only_emp = (
                     input(
-                        "\u0647\u0644 \u062a\u0631\u064a\u062f \u0627\u0644\u0628\u062d\u062b \u0639\u0646 \u0641\u0642\u0637 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646 \u0627\u0644\u0645\u0630\u0643\u0648\u0631\u064a\u0646 \u0641\u064a \u0645\u0633\u062a\u0648\u062f\u0639 \u0627\u0644\u0634\u0631\u0643\u0629؟ (y/N): "
+                        "Search only employees mentioned in the company repository? (y/N): "
                     ).lower()
                     == "y"
                 )
