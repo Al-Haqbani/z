@@ -481,8 +481,23 @@ class GitHubSearcher:
         return list(users)
 
     @classmethod
+    def get_repo_collaborators(cls, repo, token=None):
+        """Return a list of repository collaborators (requires token)."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        url = f"{cls.BASE_URL}/repos/{repo}/collaborators"
+        data = cls(token=token)._fetch_json(url)
+        if not data:
+            return []
+        return [item.get("login") for item in data if item.get("login")]
+
+    @classmethod
     def get_repo_employees(cls, repo, token=None):
-        """Combine contributors and commit authors for a repo."""
+        """Return collaborators if available, else contributors and commit authors."""
+        collabs = cls.get_repo_collaborators(repo, token)
+        if collabs:
+            return collabs
         contribs = set(cls.get_repo_contributors(repo, token))
         authors = set(cls.get_repo_commit_authors(repo, token))
         return list(contribs | authors)
