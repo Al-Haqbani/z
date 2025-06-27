@@ -60,6 +60,7 @@ INDEX_HTML = """
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .scan-card { cursor: pointer; transition: transform .2s; }
       .scan-card:hover { transform: scale(1.03); }
+      a { color:#0dcaf0; }
     </style>
   </head>
   <body class=\"bg-dark text-light\">
@@ -275,6 +276,7 @@ RESULTS_HTML = """
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       tr.fade { animation: fadein .5s; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
+      a { color:#0dcaf0; }
     </style>
   </head>
   <body class=\"bg-dark text-light\">
@@ -366,6 +368,7 @@ STREAM_HTML = """
       .sidebar { max-width: 260px; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
       tr.fade { animation: fadein 0.5s; }
+      a { color:#0dcaf0; }
     </style>
     <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
   </head>
@@ -655,6 +658,7 @@ MAP_HTML = """
     <style>
       body { padding-top: 20px; background: linear-gradient(120deg,#10141f,#1c2640); }
       .legend span { display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:4px; }
+      a { color:#0dcaf0; }
     </style>
     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js\"></script>
   </head>
@@ -751,6 +755,7 @@ SCANS_HTML = """
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
+      a { color:#0dcaf0; }
     </style>
   </head>
   <body class=\"bg-dark text-light\">

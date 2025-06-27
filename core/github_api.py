@@ -488,6 +488,25 @@ class GitHubSearcher:
         return list(contribs | authors)
 
     @classmethod
+    def get_org_members(cls, org, token=None):
+        """Return public members of a GitHub organization."""
+        headers = {"User-Agent": random.choice(cls.USER_AGENTS)}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        members = []
+        page = 1
+        while True:
+            url = f"{cls.BASE_URL}/orgs/{org}/members?per_page=100&page={page}"
+            data = cls(token=token)._fetch_json(url)
+            if not data:
+                break
+            members.extend([m.get("login") for m in data if m.get("login")])
+            if len(data) < 100:
+                break
+            page += 1
+        return members
+
+    @classmethod
     def scan_user_gists(cls, username, keyword, token=None, silent=False, result_callback=None):
         """Scan a user's public gists for the keyword and secrets."""
         headers = {"User-Agent": random.choice(cls.USER_AGENTS)}

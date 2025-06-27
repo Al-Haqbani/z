@@ -332,7 +332,21 @@ def main():
             repo = None
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
-                employees = GitHubSearcher.get_repo_employees(repo, github_token)
+                only_emp = (
+                    input(
+                        "\u0647\u0644 \u062a\u0631\u064a\u062f \u0627\u0644\u0628\u062d\u062b \u0639\u0646 \u0641\u0642\u0637 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646 \u0627\u0644\u0645\u0630\u0643\u0648\u0631\u064a\u0646 \u0641\u064a \u0645\u0633\u062a\u0648\u062f\u0639 \u0627\u0644\u0634\u0631\u0643\u0629؟ (y/N): "
+                    ).lower()
+                    == "y"
+                )
+                if only_emp:
+                    employees = GitHubSearcher.get_repo_employees(repo, github_token)
+                else:
+                    org_emp = input("Organization name for employee lookup (blank to skip): ").strip()
+                    if org_emp:
+                        employees = GitHubSearcher.get_org_members(org_emp, github_token)
+                    if not employees:
+                        emp_in = input("Employee usernames (comma separated): ").strip()
+                        employees = [e.strip() for e in emp_in.split(',') if e.strip()] or None
             elif platform == "github":
                 repo = (
                     input("Repository to scan (owner/repo, blank to skip): ").strip()
@@ -429,7 +443,21 @@ def main():
             repo = None
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
-                employees = GitHubSearcher.get_repo_employees(repo, github_token)
+                only_emp = (
+                    input(
+                        "\u0647\u0644 \u062a\u0631\u064a\u062f \u0627\u0644\u0628\u062d\u062b \u0639\u0646 \u0641\u0642\u0637 \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646 \u0627\u0644\u0645\u0630\u0643\u0648\u0631\u064a\u0646 \u0641\u064a \u0645\u0633\u062a\u0648\u062f\u0639 \u0627\u0644\u0634\u0631\u0643\u0629؟ (y/N): "
+                    ).lower()
+                    == "y"
+                )
+                if only_emp:
+                    employees = GitHubSearcher.get_repo_employees(repo, github_token)
+                else:
+                    org_emp = input("Organization name for employee lookup (blank to skip): ").strip()
+                    if org_emp:
+                        employees = GitHubSearcher.get_org_members(org_emp, github_token)
+                    if not employees:
+                        emp_in = input("Employee usernames (comma separated): ").strip()
+                        employees = [e.strip() for e in emp_in.split(',') if e.strip()] or None
             else:
                 repo = (
                     input("Repository to scan (owner/repo, blank to skip): ").strip()
