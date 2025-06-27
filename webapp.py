@@ -325,7 +325,7 @@ RESULTS_HTML = """
           </thead>
           <tbody>
             {% for idx, r in enumerate(results,1) %}
-            <tr class="{% if r.severity=='high' %}table-danger{% elif r.severity=='medium' %}table-warning{% else %}table-light{% endif %}">
+            <tr class="{% if r.severity=='high' %}table-danger text-light{% elif r.severity=='medium' %}table-warning text-dark{% else %}table-secondary text-dark{% endif %}">
               <td>{{idx}}</td>
               <td><i class="{{ icon_map.get(r.source, 'fa-solid fa-circle') }} me-1"></i>{{r.source}}</td>
               <td><a href="{{r.file}}" target="_blank">{{r.file}}</a></td>
