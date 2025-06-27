@@ -447,6 +447,7 @@ STREAM_HTML = """
                   <th>Value</th>
                   <th>Severity</th>
                   <th>Active</th>
+                  <th>PoC</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -532,7 +533,8 @@ STREAM_HTML = """
         row.className=(sev==='high'?'table-danger':(sev==='medium'?'table-warning':'table-light'))+' fade';
         const activeVal=data.active===null?'?':(data.active?'True':'False');
         const icon = PLATFORM_ICONS[plat] || 'fa-solid fa-circle';
-        row.innerHTML=`<td>${idx}</td><td><i class="${icon} me-1"></i>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td>`;
+        const pocCol = data.poc ? `<code>${data.poc}</code>` : '';
+        row.innerHTML=`<td>${idx}</td><td><i class="${icon} me-1"></i>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td><td>${pocCol}</td>`;
         tbody.appendChild(row); idx++; applyFilters();
       });
       evt.addEventListener('progress',ev=>{
