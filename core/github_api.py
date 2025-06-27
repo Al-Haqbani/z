@@ -565,6 +565,7 @@ class GitHubSearcher:
         scan_commits=False,
         employees=None,
         organization=None,
+        employees_only=False,
         deep_scan=False,
         full_scan=False,
         scan_history=False,
@@ -587,7 +588,7 @@ class GitHubSearcher:
         code_endpoint = f"{self.BASE_URL}/search/code"
         commit_endpoint = f"{self.BASE_URL}/search/commits"
         issue_endpoint = f"{self.BASE_URL}/search/issues"
-        queries = [keyword]
+        queries = [] if employees_only and employees else [keyword]
         if organization:
             queries = [f"{keyword} org:{organization}"]
         if employees:

@@ -395,6 +395,7 @@ def main():
                 platform,
                 keyword,
                 employees=employees,
+                employees_only=only_emp,
                 verify_ai=verify_ai,
                 active_verify=active_verify,
                 notify=notify,
@@ -504,6 +505,7 @@ def main():
             results = SearchManager.run_full_auto_mode(
                 keyword,
                 employees=employees,
+                employees_only=only_emp,
                 verify_ai=verify_ai,
                 active_verify=active_verify,
                 notify=notify,
