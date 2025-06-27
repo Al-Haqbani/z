@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import tomli
 import os
 import re
 import logging
@@ -19,15 +20,32 @@ def _load_patterns() -> List[Dict[str, str]]:
     """
 
     json_path = os.path.join(os.path.dirname(__file__), "..", "data", "leak_patterns.json")
+    gitleaks_path = os.path.join(os.path.dirname(__file__), "..", "data", "gitleaks.toml")
     try:
         with open(json_path, "r", encoding="utf-8") as f:
             raw = f.read()
         try:
             patterns = json.loads(raw)
         except json.JSONDecodeError:
-            # if the file contains invalid escape sequences like \z
             fixed = re.sub(r"\\(?![\\\"/bfnrtu])", r"\\\\", raw)
-            patterns = json.loads(fixed)
+            try:
+                patterns = json.loads(fixed)
+            except json.JSONDecodeError:
+                patterns = None
+        if not patterns and os.path.exists(gitleaks_path):
+            try:
+                with open(gitleaks_path, "rb") as gf:
+                    data = tomli.load(gf)
+                patterns = [
+                    {
+                        "name": r.get("id", "unknown"),
+                        "regex": r.get("regex", "")
+                    }
+                    for r in data.get("rules", []) if "regex" in r
+                ]
+            except Exception as exc:
+                logger.warning("Failed to load gitleaks patterns: %s", exc)
+                patterns = None
         cleaned = []
         if isinstance(patterns, list):
             for p in patterns:
@@ -42,7 +60,7 @@ def _load_patterns() -> List[Dict[str, str]]:
         if cleaned:
             return cleaned
     except Exception as exc:
-        logger.warning("Failed to load %s: %s. Using fallback patterns", json_path, exc)
+        logger.warning("Failed to load pattern files: %s", exc)
 
     # Fallback minimal patterns
     return [
