@@ -492,6 +492,7 @@ STREAM_HTML = """
       const verifiedOnly = document.getElementById('verifiedOnly');
       let idx = 1;
       const startTime = Date.now();
+      const tableDiv = document.querySelector('.table-responsive');
       setInterval(()=>{ progText.dataset.time = Math.floor((Date.now()-startTime)/1000); },1000);
 
       function applyFilters(){
@@ -536,6 +537,7 @@ STREAM_HTML = """
         const pocCol = data.poc ? `<code>${data.poc}</code>` : '';
         row.innerHTML=`<td>${idx}</td><td><i class="${icon} me-1"></i>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td><td>${pocCol}</td>`;
         tbody.appendChild(row); idx++; applyFilters();
+        tableDiv.scrollTop = tableDiv.scrollHeight;
       });
       evt.addEventListener('progress',ev=>{
         const info=JSON.parse(ev.data);
@@ -819,9 +821,11 @@ SCANS_HTML = """
               </td>
               <td>
                 {% if item.status == 'running' %}
-                <a href=\"/live/{{sid}}\" class=\"btn btn-sm btn-outline-primary\">Live</a>
+                <a href="/live/{{sid}}" class="btn btn-sm btn-outline-primary">Live</a>
                 {% else %}
-                <a href=\"/results/{{sid}}\" class=\"btn btn-sm btn-outline-primary\">View</a>
+                <a href="/results/{{sid}}" class="btn btn-sm btn-outline-primary">View</a>
+                <a href="/download/{{sid}}.html" class="btn btn-sm btn-outline-secondary ms-1">HTML</a>
+                <a href="/download/{{sid}}.json" class="btn btn-sm btn-outline-secondary ms-1">JSON</a>
                 {% endif %}
               </td>
             </tr>
