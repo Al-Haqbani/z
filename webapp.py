@@ -56,11 +56,14 @@ INDEX_HTML = """
     <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
+      :root{ --brand:#8e44ad; }
       body { padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size: 400% 400%; animation: bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .scan-card { cursor: pointer; transition: transform .2s; }
       .scan-card:hover { transform: scale(1.03); }
-      a { color:#0dcaf0; }
+      a { color: var(--brand); }
+      .bg-primary { background-color: var(--brand) !important; }
+      .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
     </style>
   </head>
   <body class=\"bg-dark text-light\">
@@ -272,11 +275,14 @@ RESULTS_HTML = """
     <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
+      :root{ --brand:#8e44ad; }
       body { padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       tr.fade { animation: fadein .5s; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
-      a { color:#0dcaf0; }
+      a { color: var(--brand); }
+      .bg-primary { background-color: var(--brand) !important; }
+      .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
     </style>
   </head>
   <body class=\"bg-dark text-light\">
@@ -363,12 +369,15 @@ STREAM_HTML = """
     <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
+      :root{ --brand:#8e44ad; }
       body { padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .sidebar { max-width: 260px; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
       tr.fade { animation: fadein 0.5s; }
-      a { color:#0dcaf0; }
+      a { color: var(--brand); }
+      .bg-primary { background-color: var(--brand) !important; }
+      .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
     </style>
     <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
   </head>
@@ -465,6 +474,7 @@ STREAM_HTML = """
       const progText = document.getElementById('progressText');
       let leakTotal = 0;
       const repoList = document.getElementById('repoList');
+      const BRAND = '#8e44ad';
       const sevChart = new Chart(document.getElementById('sevChart'), {
         type: 'doughnut',
         data: { labels:['High','Medium','Low','Info'], datasets:[{ data:[0,0,0,0], backgroundColor:['#dc3545','#ffc107','#0dcaf0','#6c757d'] }] },
@@ -472,7 +482,7 @@ STREAM_HTML = """
       });
       const platChart = new Chart(document.getElementById('platChart'), {
         type: 'bar',
-        data: { labels:[], datasets:[{ label:'Leaks', data:[], backgroundColor:'#6610f2' }] },
+        data: { labels:[], datasets:[{ label:'Leaks', data:[], backgroundColor: BRAND }] },
         options:{ scales:{y:{beginAtZero:true}} }
       });
       const searchBox = document.getElementById('searchBox');
@@ -563,8 +573,12 @@ RECON_INDEX_HTML = """
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
     <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <style>
+      :root{ --brand:#8e44ad; }
       body { padding-top:20px; background:linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
+      .bg-primary{ background-color: var(--brand) !important; }
+      .btn-primary{ background-color: var(--brand) !important; border-color: var(--brand) !important; }
+      a{ color: var(--brand); }
     </style>
   </head>
   <body class=\"bg-dark text-light\">
@@ -601,10 +615,14 @@ RECON_STREAM_HTML = """
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
     <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
     <style>
+      :root{ --brand:#8e44ad; }
       body { padding-top: 20px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       tr.fade { animation: fadein .5s; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
+      .bg-primary{ background-color: var(--brand)!important; }
+      .btn-primary{ background-color: var(--brand)!important; border-color: var(--brand)!important; }
+      a{ color: var(--brand); }
     </style>
   </head>
   <body class=\"bg-dark text-light\">
