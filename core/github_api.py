@@ -601,10 +601,21 @@ class GitHubSearcher:
                 queries.append(q)
         # Add GitDorker dorks combined with the keyword
         for d in self.DORKS:
-            base = f"{keyword} {d}".strip()
-            if organization:
-                base += f" org:{organization}"
-            queries.append(base)
+            if employees_only and employees:
+                for user in employees:
+                    base = f"{keyword} {d} user:{user}".strip()
+                    if organization:
+                        base += f" org:{organization}"
+                    queries.append(base)
+            else:
+                base = f"{keyword} {d}".strip()
+                if organization:
+                    base += f" org:{organization}"
+                if employees and not employees_only:
+                    for user in employees:
+                        queries.append(f"{base} user:{user}")
+                else:
+                    queries.append(base)
         if top_common:
             for pat in self.TOP_COMMON_QUERIES:
                 q = f"{pat} {keyword}" if keyword else pat
