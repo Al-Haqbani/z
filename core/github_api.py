@@ -494,13 +494,8 @@ class GitHubSearcher:
 
     @classmethod
     def get_repo_employees(cls, repo, token=None):
-        """Return collaborators if available, else contributors and commit authors."""
-        collabs = cls.get_repo_collaborators(repo, token)
-        if collabs:
-            return collabs
-        contribs = set(cls.get_repo_contributors(repo, token))
-        authors = set(cls.get_repo_commit_authors(repo, token))
-        return list(contribs | authors)
+        """Return repository collaborators only."""
+        return cls.get_repo_collaborators(repo, token)
 
     @classmethod
     def get_org_members(cls, org, token=None):
