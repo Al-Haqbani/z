@@ -494,7 +494,13 @@ class GitHubSearcher:
 
     @classmethod
     def get_repo_employees(cls, repo, token=None):
-        """Return repository collaborators only."""
+        """Return organization members or repository collaborators."""
+        info = cls(token=token)._fetch_json(f"{cls.BASE_URL}/repos/{repo}")
+        if not info:
+            return []
+        owner = info.get("owner", {})
+        if owner.get("type") == "Organization":
+            return cls.get_org_members(owner.get("login"), token)
         return cls.get_repo_collaborators(repo, token)
 
     @classmethod
