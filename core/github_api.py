@@ -500,8 +500,32 @@ class GitHubSearcher:
             return []
         owner = info.get("owner", {})
         if owner.get("type") == "Organization":
-            return cls.get_org_members(owner.get("login"), token)
+            members = cls.get_org_people(owner.get("login"))
+            if not members:
+                members = cls.get_org_members(owner.get("login"), token)
+            return members
         return cls.get_repo_collaborators(repo, token)
+
+    @classmethod
+    def get_org_people(cls, org):
+        """Return usernames listed on the GitHub organization people page."""
+        users = set()
+        page = 1
+        while True:
+            url = f"https://github.com/orgs/{org}/people?page={page}&query="
+            resp = request_with_backoff(url)
+            if not resp or resp.status_code != 200:
+                break
+            pattern = r'href="/([A-Za-z0-9_-]+)" data-hovercard-type="user"'
+            matches = re.findall(pattern, resp.text)
+            if not matches:
+                break
+            users.update(matches)
+            if 'next_page' not in resp.text:
+                break
+            page += 1
+            time.sleep(random.uniform(1, 2))
+        return list(users)
 
     @classmethod
     def get_org_members(cls, org, token=None):
