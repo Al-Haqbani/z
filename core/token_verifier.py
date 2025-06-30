@@ -1,9 +1,12 @@
-import requests
+try:
+    import requests  # noqa: F401
+except Exception:  # pragma: no cover - optional dependency
+    requests = None
 
 
 def verify_slack_token(token: str) -> bool:
     """Check Slack token via the API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.post(
@@ -18,7 +21,7 @@ def verify_slack_token(token: str) -> bool:
 
 def verify_github_token(token: str) -> bool:
     """Check if a GitHub token is valid using the API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -33,7 +36,7 @@ def verify_github_token(token: str) -> bool:
 
 def verify_discord_token(token: str) -> bool:
     """Check Discord bot token via the API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -48,7 +51,7 @@ def verify_discord_token(token: str) -> bool:
 
 def verify_telegram_token(token: str) -> bool:
     """Validate Telegram bot token by calling getMe."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -62,7 +65,7 @@ def verify_telegram_token(token: str) -> bool:
 
 def verify_huggingface_token(token: str) -> bool:
     """Check HuggingFace token via whoami-v2 endpoint."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -77,7 +80,7 @@ def verify_huggingface_token(token: str) -> bool:
 
 def verify_gitlab_token(token: str) -> bool:
     """Check GitLab personal access token via the API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -92,7 +95,7 @@ def verify_gitlab_token(token: str) -> bool:
 
 def verify_openai_key(token: str) -> bool:
     """Validate OpenAI API key by requesting the model list."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -107,7 +110,7 @@ def verify_openai_key(token: str) -> bool:
 
 def verify_replicate_key(token: str) -> bool:
     """Check Replicate API token by listing models."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -122,7 +125,7 @@ def verify_replicate_key(token: str) -> bool:
 
 def verify_stability_key(token: str) -> bool:
     """Validate Stability AI API token."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -137,7 +140,7 @@ def verify_stability_key(token: str) -> bool:
 
 def verify_mistral_key(token: str) -> bool:
     """Check Mistral AI API key using the models endpoint."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -152,7 +155,7 @@ def verify_mistral_key(token: str) -> bool:
 
 def verify_zoom_jwt(token: str) -> bool:
     """Validate Zoom JWT token using the users API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -167,7 +170,7 @@ def verify_zoom_jwt(token: str) -> bool:
 
 def verify_vercel_token(token: str) -> bool:
     """Check Vercel token via the users API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -182,7 +185,7 @@ def verify_vercel_token(token: str) -> bool:
 
 def verify_railway_token(token: str) -> bool:
     """Check Railway token using the user endpoint."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -197,7 +200,7 @@ def verify_railway_token(token: str) -> bool:
 
 def verify_asana_token(token: str) -> bool:
     """Validate Asana personal access token."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -212,7 +215,7 @@ def verify_asana_token(token: str) -> bool:
 
 def verify_bugcrowd_token(token: str) -> bool:
     """Check Bugcrowd API token."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -227,7 +230,7 @@ def verify_bugcrowd_token(token: str) -> bool:
 
 def verify_supabase_token(token: str) -> bool:
     """Check Supabase service token via the management API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -242,7 +245,7 @@ def verify_supabase_token(token: str) -> bool:
 
 def verify_salesforce_token(token: str) -> bool:
     """Validate Salesforce OAuth token via userinfo endpoint."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -257,7 +260,7 @@ def verify_salesforce_token(token: str) -> bool:
 
 def verify_notion_token(token: str) -> bool:
     """Validate Notion integration token via the API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -332,7 +335,7 @@ def verify_token(leak_type: str, value: str) -> bool:
 
 def verify_google_api_key(token: str) -> bool:
     """Check Google API key by calling a discovery endpoint."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -347,7 +350,7 @@ def verify_google_api_key(token: str) -> bool:
 
 def verify_google_oauth_token(token: str) -> bool:
     """Check Google OAuth token validity using tokeninfo."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -399,7 +402,7 @@ def get_poc_command(leak_type: str, token: str) -> str:
 
 def verify_digitalocean_token(token: str) -> bool:
     """Check DigitalOcean API token using the account endpoint."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -414,7 +417,7 @@ def verify_digitalocean_token(token: str) -> bool:
 
 def verify_stripe_key(token: str) -> bool:
     """Check Stripe secret key using a minimal API request."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -430,7 +433,7 @@ def verify_stripe_key(token: str) -> bool:
 
 def verify_kaggle_key(token: str) -> bool:
     """Check Kaggle API key using the datasets API."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -445,7 +448,7 @@ def verify_kaggle_key(token: str) -> bool:
 
 def verify_anthropic_key(token: str) -> bool:
     """Validate Anthropic API key using the models endpoint."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(
@@ -460,7 +463,7 @@ def verify_anthropic_key(token: str) -> bool:
 
 def verify_gemini_key(token: str) -> bool:
     """Check Google Gemini API key via the models endpoint."""
-    if not token:
+    if not token or requests is None:
         return False
     try:
         resp = requests.get(

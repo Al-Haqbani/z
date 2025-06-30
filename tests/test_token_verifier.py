@@ -1,8 +1,14 @@
 import unittest
 from unittest.mock import patch, Mock
 
+try:
+    import requests  # noqa: F401
+except Exception:  # pragma: no cover - requests may be missing
+    requests = None
+
 from core import token_verifier
 
+@unittest.skipIf(requests is None, "requests not installed")
 class TestTokenVerifier(unittest.TestCase):
     def mock_response(self, status=200, json=None):
         resp = Mock()
