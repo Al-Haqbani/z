@@ -83,6 +83,8 @@ def _load_patterns() -> List[Dict[str, str]]:
         {"name": "Google OAuth Token", "regex": r"ya29\.[0-9A-Za-z-_]+"},
         {"name": "Salesforce OAuth Token", "regex": r"00D[A-Za-z0-9]{12}!+[A-Za-z0-9]{24,40}"},
         {"name": "Twilio API Key", "regex": r"SK[0-9a-fA-F]{32}"},
+        {"name": "Twitch Client ID", "regex": r"(?i)twitch[\w\s]{0,20}client[_-]?id[=:\s]*['\"]?([a-z0-9]{15,})"},
+        {"name": "Twitch Client Secret", "regex": r"(?i)twitch[\w\s]{0,20}client[_-]?secret[=:\s]*['\"]?([a-z0-9]{30,})"},
     ]
 
 
