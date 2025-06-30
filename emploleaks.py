@@ -339,7 +339,8 @@ def main():
                     == "y"
                 )
                 if only_emp:
-                    employees = GitHubSearcher.get_repo_employees(repo, github_token)
+                    emp_in = input("Employee usernames (comma separated): ").strip()
+                    employees = [e.strip() for e in emp_in.split(',') if e.strip()] or None
                 else:
                     org_emp = input("Organization name for employee lookup (blank to skip): ").strip()
                     if org_emp:
@@ -451,7 +452,8 @@ def main():
                     == "y"
                 )
                 if only_emp:
-                    employees = GitHubSearcher.get_repo_employees(repo, github_token)
+                    emp_in = input("Employee usernames (comma separated): ").strip()
+                    employees = [e.strip() for e in emp_in.split(',') if e.strip()] or None
                 else:
                     org_emp = input("Organization name for employee lookup (blank to skip): ").strip()
                     if org_emp:
