@@ -613,7 +613,14 @@ class GitHubSearcher:
         code_endpoint = f"{self.BASE_URL}/search/code"
         commit_endpoint = f"{self.BASE_URL}/search/commits"
         issue_endpoint = f"{self.BASE_URL}/search/issues"
-        queries = [] if employees_only and employees else [keyword]
+        if employees_only:
+            if not employees:
+                if not self.silent:
+                    print("No employees found, skipping GitHub results.")
+                return []
+            queries = []
+        else:
+            queries = [keyword]
         if organization:
             queries = [f"{keyword} org:{organization}"]
         if employees:
