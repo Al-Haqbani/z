@@ -53,7 +53,7 @@ INDEX_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>EmploLeaksGuardian – Enterprise Secret Detection Platform</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
@@ -65,8 +65,18 @@ INDEX_HTML = """
       .bg-primary { background-color: var(--brand) !important; }
       .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
     </style>
+    <script>
+      const stored=localStorage.getItem("theme");
+      if(stored){document.getElementById("theme").href=stored;}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+    </script>
   </head>
   <body class=\"bg-dark text-light\">
+    <script>
+      const stored = localStorage.getItem("theme");
+      if(stored){document.getElementById("theme").href=stored;}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+    </script>
     <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
       <div class=\"container\">
         <a class=\"navbar-brand fw-bold\" href=\"/\">
@@ -78,6 +88,7 @@ INDEX_HTML = """
         </button>
         <div id=\"nav\" class=\"collapse navbar-collapse\">
           <ul class=\"navbar-nav ms-auto\">
+<button class="btn btn-sm btn-secondary ms-2" onclick="toggleTheme()">Toggle Theme</button>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
           </ul>
         </div>
@@ -272,7 +283,7 @@ RESULTS_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Results</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
@@ -284,6 +295,11 @@ RESULTS_HTML = """
       .bg-primary { background-color: var(--brand) !important; }
       .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
     </style>
+    <script>
+      const stored=localStorage.getItem("theme");
+      if(stored){document.getElementById("theme").href=stored;}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+    </script>
   </head>
   <body class=\"bg-dark text-light\">
     <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
@@ -297,6 +313,7 @@ RESULTS_HTML = """
         </button>
         <div class=\"collapse navbar-collapse\" id=\"nav2\">
           <ul class=\"navbar-nav ms-auto\">
+<button class="btn btn-sm btn-secondary ms-2" onclick="toggleTheme()">Toggle Theme</button>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
           </ul>
         </div>
@@ -366,7 +383,7 @@ STREAM_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Live Dashboard</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
@@ -379,6 +396,11 @@ STREAM_HTML = """
       .bg-primary { background-color: var(--brand) !important; }
       .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
     </style>
+    <script>
+      const stored=localStorage.getItem("theme");
+      if(stored){document.getElementById("theme").href=stored;}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+    </script>
     <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
   </head>
   <body class=\"bg-dark text-light\">
@@ -393,6 +415,7 @@ STREAM_HTML = """
         </button>
         <div class=\"collapse navbar-collapse\" id=\"nav3\">
           <ul class=\"navbar-nav ms-auto\">
+<button class="btn btn-sm btn-secondary ms-2" onclick="toggleTheme()">Toggle Theme</button>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
           </ul>
         </div>
@@ -575,7 +598,7 @@ RECON_INDEX_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Recon Scanner</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
       body { padding-top:20px; background:linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
@@ -584,6 +607,11 @@ RECON_INDEX_HTML = """
       .btn-primary{ background-color: var(--brand) !important; border-color: var(--brand) !important; }
       a{ color: var(--brand); }
     </style>
+    <script>
+      const stored=localStorage.getItem("theme");
+      if(stored){document.getElementById("theme").href=stored;}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+    </script>
   </head>
   <body class=\"bg-dark text-light\">
     <div class=\"container mt-4\">
@@ -617,7 +645,7 @@ RECON_STREAM_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Recon Results</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
       body { padding-top: 20px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
@@ -628,6 +656,11 @@ RECON_STREAM_HTML = """
       .btn-primary{ background-color: var(--brand)!important; border-color: var(--brand)!important; }
       a{ color: var(--brand); }
     </style>
+    <script>
+      const stored=localStorage.getItem("theme");
+      if(stored){document.getElementById("theme").href=stored;}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+    </script>
   </head>
   <body class=\"bg-dark text-light\">
     <div class=\"container\">
@@ -676,12 +709,17 @@ MAP_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Map View</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <style>
       body { padding-top: 20px; background: linear-gradient(120deg,#10141f,#1c2640); }
       .legend span { display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:4px; }
       a { color:#0dcaf0; }
     </style>
+    <script>
+      const stored=localStorage.getItem("theme");
+      if(stored){document.getElementById("theme").href=stored;}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+    </script>
     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js\"></script>
   </head>
   <body class=\"bg-dark text-light\">
@@ -773,12 +811,17 @@ SCANS_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Scans</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css\" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
       a { color:#0dcaf0; }
     </style>
+    <script>
+      const stored=localStorage.getItem("theme");
+      if(stored){document.getElementById("theme").href=stored;}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+    </script>
   </head>
   <body class=\"bg-dark text-light\">
     <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
@@ -792,6 +835,7 @@ SCANS_HTML = """
         </button>
         <div class=\"collapse navbar-collapse\" id=\"nav4\">
           <ul class=\"navbar-nav ms-auto\">
+<button class="btn btn-sm btn-secondary ms-2" onclick="toggleTheme()">Toggle Theme</button>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
           </ul>
         </div>
