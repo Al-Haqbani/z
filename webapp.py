@@ -481,6 +481,7 @@ STREAM_HTML = """
           <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
         </div>
       </div>
+      <div class=\"toast-container position-fixed top-0 end-0 p-3\" id=\"toastContainer\"></div>
     </div>
     <script>
       const PLATFORM_ICONS = JSON.parse('{{ icon_map|tojson }}');
@@ -539,6 +540,17 @@ STREAM_HTML = """
         const btn=e.target.closest('.copy-btn');
         if(btn){navigator.clipboard.writeText(btn.dataset.val);}
       });
+      function showToast(msg){
+        const container=document.getElementById('toastContainer');
+        const div=document.createElement('div');
+        div.className='toast align-items-center text-bg-dark border-0';
+        div.role='alert';
+        div.innerHTML=`<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white ms-auto me-2" data-bs-dismiss="toast"></button></div>`;
+        container.appendChild(div);
+        const t=new bootstrap.Toast(div,{delay:3000});
+        t.show();
+        div.addEventListener('hidden.bs.toast',()=>div.remove());
+      }
       evt.addEventListener('message',ev=>{
         const data=JSON.parse(ev.data);
         let sev=(data.severity||'').toLowerCase();
@@ -561,6 +573,7 @@ STREAM_HTML = """
         row.innerHTML=`<td>${idx}</td><td><i class="${icon} me-1"></i>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td><td>${pocCol}</td>`;
         tbody.appendChild(row); idx++; applyFilters();
         tableDiv.scrollTop = tableDiv.scrollHeight;
+        showToast(`${data.leak_type} found`);
       });
       evt.addEventListener('progress',ev=>{
         const info=JSON.parse(ev.data);
