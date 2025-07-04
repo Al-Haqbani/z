@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Your Submissions</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Reward</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sub in submissions %}
+    <tr>
+      <td>{{ sub.title }}</td>
+      <td>{{ sub.description }}</td>
+      <td>${{ sub.reward }}</td>
+      <td>{{ sub.status }}</td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="4">No submissions yet.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{{ url_for('submit') }}" class="btn btn-success">New Submission</a>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Submit a vulnerability</h2>
+<form method="post">
+  <div class="mb-3">
+    <label class="form-label">Company</label>
+    <select name="company_id" class="form-select" required>
+      {% for company in companies %}
+      <option value="{{ company.id }}">{{ company.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Title</label>
+    <input type="text" class="form-control" name="title" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Description</label>
+    <textarea class="form-control" name="description" rows="5" required></textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Proposed Reward (USD)</label>
+    <input type="number" class="form-control" name="reward" step="0.01" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
