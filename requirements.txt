@@ -1,0 +1,8 @@
+requests
+rich
+flask
+transformers
+torch
+trufflehog
+tomli
+fpdf2
