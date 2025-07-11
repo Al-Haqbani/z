@@ -25,6 +25,7 @@ When employee scanning is enabled, DockerHub is also queried for repositories ow
 The dashboard keeps a history of all scans and shows whether each one is still running or finished. Start and finish times are displayed so you can track when a scan began and ended. You can open a **Live** view to watch results stream in as they are discovered, or view the final report once the scan is done.
 Results appear on the page in real time thanks to server‑sent events, so you can monitor a scan while it is still running.
 The web dashboard adopts a custom dark gradient style with animated cards for a sleeker look. Rows fade in as leaks appear for a smoother experience. The moving gradient background gives each page a dynamic feel.
+Animations are powered by the lightweight effects from [reactbits.de](https://reactbits.de), giving buttons and cards subtle motion.
 Full Auto Mode executes all searchers concurrently to accelerate large scans.
 You can restrict which platforms run by providing a comma-separated list with
 `--platforms github,gitlab` or entering that list when prompted.

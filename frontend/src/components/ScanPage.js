@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FadeIn } from 'reactbits';
 import { useParams } from 'react-router-dom';
 import {
   Typography, Button, Table, TableHead, TableRow,
@@ -55,12 +56,14 @@ export default function ScanPage() {
         </TableHead>
         <TableBody>
           {results.map((r, idx) => (
-            <TableRow key={idx}>
-              <TableCell>{idx+1}</TableCell>
-              <TableCell>{r.source}</TableCell>
-              <TableCell><a href={r.file} target="_blank" rel="noreferrer">{r.file}</a></TableCell>
-              <TableCell>{r.leak_type}</TableCell>
-            </TableRow>
+            <FadeIn key={idx}>
+              <TableRow>
+                <TableCell>{idx+1}</TableCell>
+                <TableCell>{r.source}</TableCell>
+                <TableCell><a href={r.file} target="_blank" rel="noreferrer">{r.file}</a></TableCell>
+                <TableCell>{r.leak_type}</TableCell>
+              </TableRow>
+            </FadeIn>
           ))}
         </TableBody>
       </Table>
