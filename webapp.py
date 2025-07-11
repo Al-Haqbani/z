@@ -55,11 +55,12 @@ INDEX_HTML = """
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
     <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
       :root{ --brand:#8e44ad; }
-      body { padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size: 400% 400%; animation: bgmove 15s ease infinite; }
+      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size: 400% 400%; animation: bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
-      .scan-card { cursor: pointer; transition: transform .2s; }
+      .scan-card { box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2); cursor: pointer; transition: transform .2s; }
       .scan-card:hover { transform: scale(1.03); }
       a { color: var(--brand); }
       .bg-primary { background-color: var(--brand) !important; }
@@ -287,7 +288,7 @@ RESULTS_HTML = """
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
-      body { padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       tr.fade { animation: fadein .5s; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
@@ -398,7 +399,8 @@ STREAM_HTML = """
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
-      body { padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .sidebar { max-width: 260px; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
@@ -625,7 +627,7 @@ RECON_INDEX_HTML = """
     <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
-      body { padding-top:20px; background:linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      body { font-family: 'Inter', sans-serif; padding-top:20px; background:linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .bg-primary{ background-color: var(--brand) !important; }
       .btn-primary{ background-color: var(--brand) !important; border-color: var(--brand) !important; }
@@ -672,7 +674,7 @@ RECON_STREAM_HTML = """
     <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <style>
       :root{ --brand:#8e44ad; }
-      body { padding-top: 20px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      body { font-family: 'Inter', sans-serif; padding-top: 20px; background: linear-gradient(-45deg,#10141f,#1c2640,#162030,#0e1220); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       tr.fade { animation: fadein .5s; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
@@ -735,7 +737,7 @@ MAP_HTML = """
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
     <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <style>
-      body { padding-top: 20px; background: linear-gradient(120deg,#10141f,#1c2640); }
+      body { font-family: 'Inter', sans-serif; padding-top: 20px; background: linear-gradient(120deg,#10141f,#1c2640); }
       .legend span { display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:4px; }
       a { color:#0dcaf0; }
     </style>
@@ -838,7 +840,7 @@ SCANS_HTML = """
     <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
-      body { padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
+      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
       a { color:#0dcaf0; }
     </style>
     <script>

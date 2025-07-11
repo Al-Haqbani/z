@@ -158,6 +158,7 @@ While a scan runs, results stream live to the page using server‑sent events, s
 
 The refreshed dark interface (now using the **Cyborg** Bootswatch theme) shows live results in color-coded tables with running counters for High, Medium, Low and Info leaks. Rows fade in smoothly and you can filter by platform, severity or keyword while the scan runs. A list in the sidebar tracks every repository and turns green once its scan is finished. The CLI also prints progress messages such as `Scanning owner/repo (3/10)` so you know which repository is being processed.
 Each new leak also triggers a small toast notification in the corner so you don't miss important findings while navigating the dashboard.
+The interface now loads the Inter font and cards feature soft shadows for a polished look.
 Progress events now also include the total number of leaks found so far, letting
 you watch the count rise in real time both in the terminal and the web
 dashboard. Other platforms such as DockerHub, PyPI and NPM emit similar progress
