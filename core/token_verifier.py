@@ -276,6 +276,21 @@ def verify_notion_token(token: str) -> bool:
         return False
 
 
+def verify_facebook_token(token: str) -> bool:
+    """Validate Facebook access token using the /me endpoint."""
+    if not token or requests is None:
+        return False
+    try:
+        resp = requests.get(
+            "https://graph.facebook.com/me",
+            params={"access_token": token},
+            timeout=5,
+        )
+        return resp.status_code == 200 and resp.json().get("id")
+    except Exception:
+        return False
+
+
 def verify_token(leak_type: str, value: str) -> bool:
     """Return True if the token looks valid via online checks."""
     lt = leak_type.lower()
@@ -324,6 +339,8 @@ def verify_token(leak_type: str, value: str) -> bool:
         return verify_notion_token(value)
     if "digitalocean" in lt:
         return verify_digitalocean_token(value)
+    if "facebook" in lt:
+        return verify_facebook_token(value)
     if "stripe" in lt or value.startswith("sk_live_"):
         return verify_stripe_key(value)
     if "google" in lt or value.startswith("AIza"):
@@ -386,6 +403,7 @@ POC_COMMANDS = {
     "stability": "curl -H 'Authorization: Bearer {token}' https://api.stability.ai/v1/user/account",
     "notion": "curl -H 'Authorization: Bearer {token}' -H 'Notion-Version: 2022-06-28' https://api.notion.com/v1/users/me",
     "digitalocean": "curl -H 'Authorization: Bearer {token}' https://api.digitalocean.com/v2/account",
+    "facebook": "curl 'https://graph.facebook.com/me?access_token={token}'",
     "stripe": "curl -H 'Authorization: Bearer {token}' https://api.stripe.com/v1/charges?limit=1",
     "google": "curl 'https://generativelanguage.googleapis.com/v1/models?key={token}'",
 }
