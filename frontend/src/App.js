@@ -1,26 +1,22 @@
 import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import ScanPage from './components/ScanPage';
-import { AppBar, Toolbar, Typography, Container } from '@mui/material';
+import Layout from './components/Layout';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+const theme = createTheme({ palette: { mode: 'dark', primary: { main: '#7F3FBF' } } });
 
 export default function App() {
   return (
-    <div>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            EmploLeaksGuardian
-          </Typography>
-          <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>Dashboard</Link>
-        </Toolbar>
-      </AppBar>
-      <Container sx={{ mt: 4 }}>
+    <ThemeProvider theme={theme}>
+      <Layout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/scan/:scanId" element={<ScanPage />} />
+          <Route path="/scans" element={<Dashboard />} />
         </Routes>
-      </Container>
-    </div>
+      </Layout>
+    </ThemeProvider>
   );
 }
