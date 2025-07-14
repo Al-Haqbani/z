@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, IconButton } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import HistoryIcon from '@mui/icons-material/History';
+import RadarIcon from '@mui/icons-material/Radar';
+import SettingsIcon from '@mui/icons-material/Settings';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 export default function Layout({ children }) {
@@ -29,6 +32,18 @@ export default function Layout({ children }) {
           <ListItem button component={Link} to="/scans">
             <ListItemIcon sx={{ color: 'inherit' }}><HistoryIcon /></ListItemIcon>
             <ListItemText primary="Scan History" />
+          </ListItem>
+          <ListItem button component={Link} to="/scan/active">
+            <ListItemIcon sx={{ color: 'inherit' }}><RadarIcon /></ListItemIcon>
+            <ListItemText primary="Live Scan" />
+          </ListItem>
+          <ListItem button component={Link} to="/tokens">
+            <ListItemIcon sx={{ color: 'inherit' }}><VpnKeyIcon /></ListItemIcon>
+            <ListItemText primary="Tokens Vault" />
+          </ListItem>
+          <ListItem button component={Link} to="/settings">
+            <ListItemIcon sx={{ color: 'inherit' }}><SettingsIcon /></ListItemIcon>
+            <ListItemText primary="Settings" />
           </ListItem>
         </List>
       </Drawer>

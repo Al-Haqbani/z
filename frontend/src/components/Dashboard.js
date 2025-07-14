@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography, Grid, Card, CardContent } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Typography, Grid, Card, CardContent, Chip } from '@mui/material';
+import { FadeIn } from 'reactbits';
 
 export default function Dashboard() {
   const [scans, setScans] = useState([]);
@@ -21,6 +22,8 @@ export default function Dashboard() {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Keyword</TableCell>
+              <TableCell>Started</TableCell>
+              <TableCell>Finished</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Leaks</TableCell>
               <TableCell>Actions</TableCell>
@@ -28,18 +31,24 @@ export default function Dashboard() {
           </TableHead>
           <TableBody>
             {Object.entries(scans).map(([id, s]) => (
-              <TableRow key={id}>
-                <TableCell>{id}</TableCell>
-                <TableCell>{s.keyword}</TableCell>
-                <TableCell>{s.status}</TableCell>
-                <TableCell>{s.results.length}</TableCell>
-                <TableCell>
-                  <Button component={Link} to={`/scan/${id}`} size="small" variant="contained">View</Button>
-                  {s.status === 'done' && (
-                    <Button href={`/download/${id}.html`} size="small" sx={{ ml:1 }} variant="outlined">Report</Button>
-                  )}
-                </TableCell>
-              </TableRow>
+              <FadeIn key={id}>
+                <TableRow>
+                  <TableCell>{id}</TableCell>
+                  <TableCell>{s.keyword}</TableCell>
+                  <TableCell>{s.started}</TableCell>
+                  <TableCell>{s.finished || '-'}</TableCell>
+                  <TableCell>
+                    <Chip label={s.status} color={s.status==='running' ? 'warning' : s.status==='failed'? 'error':'success'} size="small" />
+                  </TableCell>
+                  <TableCell>{s.results.length}</TableCell>
+                  <TableCell>
+                    <Button component={Link} to={`/scan/${id}`} size="small" variant="contained">View</Button>
+                    {s.status === 'done' && (
+                      <Button href={`/download/${id}.html`} size="small" sx={{ ml:1 }} variant="outlined">Report</Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              </FadeIn>
             ))}
           </TableBody>
         </Table>
