@@ -64,7 +64,17 @@ INDEX_HTML = """
       .scan-card:hover { transform: scale(1.03); }
       a { color: var(--brand); }
       .bg-primary { background-color: var(--brand) !important; }
-      .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
+      .btn-primary {
+        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        border: none;
+        color: #fff !important;
+        box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.3);
+        transition: transform .2s, box-shadow .2s;
+      }
+      .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.4);
+      }
     </style>
     <script>
       const stored=localStorage.getItem("theme");
@@ -294,7 +304,14 @@ RESULTS_HTML = """
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
       a { color: var(--brand); }
       .bg-primary { background-color: var(--brand) !important; }
-      .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
+      .btn-primary {
+        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        border: none;
+        color:#fff !important;
+        box-shadow:0 0.25rem 0.5rem rgba(0,0,0,0.3);
+        transition:transform .2s, box-shadow .2s;
+      }
+      .btn-primary:hover{transform:scale(1.05);box-shadow:0 0.5rem 1rem rgba(0,0,0,0.4);}
     </style>
     <script>
       const stored=localStorage.getItem("theme");
@@ -407,7 +424,13 @@ STREAM_HTML = """
       tr.fade { animation: fadein 0.5s; }
       a { color: var(--brand); }
       .bg-primary { background-color: var(--brand) !important; }
-      .btn-primary { background-color: var(--brand) !important; border-color: var(--brand) !important; }
+      .btn-primary {
+        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        border:none; color:#fff!important;
+        box-shadow:0 0.25rem 0.5rem rgba(0,0,0,0.3);
+        transition:transform .2s, box-shadow .2s;
+      }
+      .btn-primary:hover{transform:scale(1.05);box-shadow:0 0.5rem 1rem rgba(0,0,0,0.4);}
     </style>
     <script>
       const stored=localStorage.getItem("theme");
@@ -630,7 +653,13 @@ RECON_INDEX_HTML = """
       body { font-family: 'Inter', sans-serif; padding-top:20px; background:linear-gradient(-45deg,#1b1525,#301a3a,#2b1b33,#170b20); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .bg-primary{ background-color: var(--brand) !important; }
-      .btn-primary{ background-color: var(--brand) !important; border-color: var(--brand) !important; }
+      .btn-primary{
+        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        border:none;color:#fff!important;
+        box-shadow:0 0.25rem 0.5rem rgba(0,0,0,0.3);
+        transition:transform .2s, box-shadow .2s;
+      }
+      .btn-primary:hover{transform:scale(1.05);box-shadow:0 0.5rem 1rem rgba(0,0,0,0.4);}
       a{ color: var(--brand); }
     </style>
     <script>
@@ -679,7 +708,13 @@ RECON_STREAM_HTML = """
       tr.fade { animation: fadein .5s; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
       .bg-primary{ background-color: var(--brand)!important; }
-      .btn-primary{ background-color: var(--brand)!important; border-color: var(--brand)!important; }
+      .btn-primary{
+        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        border:none;color:#fff!important;
+        box-shadow:0 0.25rem 0.5rem rgba(0,0,0,0.3);
+        transition:transform .2s, box-shadow .2s;
+      }
+      .btn-primary:hover{transform:scale(1.05);box-shadow:0 0.5rem 1rem rgba(0,0,0,0.4);}
       a{ color: var(--brand); }
     </style>
     <script>
