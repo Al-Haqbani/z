@@ -159,6 +159,14 @@ counts for all network requests if you need slower or more persistent scanning.
 If you have your own JSON file of regex rules, set `EMPLOLEAKS_EXTRA_PATTERNS`
 to the file path so those patterns are loaded automatically at startup.
 
+### Repository wordlists
+
+A sample list of common GitHub repositories is provided at
+`data/repo_wordlist.txt`. You can pass this file to the wordlist generator
+with `--wordlist` to create a custom dictionary containing repository names such
+as `Googleai` and `Sallaapp`. These wordlists are useful for brute forcing or
+mass searching tools that require candidate repository names.
+
 ### Command line options
 
 You can also run scans non-interactively:
