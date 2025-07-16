@@ -91,6 +91,12 @@ def _load_patterns() -> List[Dict[str, str]]:
 
 
 LEAK_PATTERNS: List[Dict[str, str]] = _load_patterns()
+extra_file = os.getenv("EMPLOLEAKS_EXTRA_PATTERNS")
+if extra_file:
+    try:
+        add_patterns_from_file(extra_file)
+    except Exception as exc:  # pragma: no cover - best effort
+        logger.warning("Failed to load patterns from %s: %s", extra_file, exc)
 
 # Map of pattern name -> severity string
 LEAK_SEVERITY = {}

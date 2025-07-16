@@ -156,6 +156,8 @@ Set the `EMPLOLEAKS_THREADS` environment variable to control the default number
 of concurrent threads used in full-auto mode.
 `EMPLOLEAKS_TIMEOUT` and `EMPLOLEAKS_RETRIES` can adjust HTTP timeouts and retry
 counts for all network requests if you need slower or more persistent scanning.
+If you have your own JSON file of regex rules, set `EMPLOLEAKS_EXTRA_PATTERNS`
+to the file path so those patterns are loaded automatically at startup.
 
 ### Command line options
 
