@@ -7,6 +7,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Dict
 
 from utils.http_utils import request_with_backoff
+from utils.subdomain_enum import enumerate_subdomains
+from is_scanner.js_scanner import run_smart_scan
 
 
 class ReconSearcher:
@@ -20,10 +22,13 @@ class ReconSearcher:
         "drive.google.com",
     ]
 
-    def __init__(self, services=None, silent=False, github_token=None, gitlab_token=None, **_):
+    def __init__(self, services=None, silent=False, github_token=None, gitlab_token=None,
+                 scan_subdomains=False, scan_js=True, **_):
         self.silent = silent
         self.github_token = github_token
         self.gitlab_token = gitlab_token
+        self.scan_subdomains = scan_subdomains
+        self.scan_js = scan_js
         self.services = services or self._load_services()
 
     @classmethod
@@ -150,9 +155,30 @@ class ReconSearcher:
             all_urls.extend(self._query_wayback(keyword, domain))
         all_urls.extend(self._query_github(keyword))
         all_urls.extend(self._query_gitlab(keyword))
+
+        # enumerate subdomains and verify availability
+        sub_results = []
+        js_leaks = []
+        if self.scan_subdomains:
+            subs = enumerate_subdomains(keyword)
+            sub_items = [{"url": f"https://{s}", "domain": s, "source": "subdomain"} for s in subs]
+            if sub_items:
+                sub_results = self._verify_live(sub_items, progress_callback=progress_callback)
+            # optional JS scan on each subdomain
+            if self.scan_js:
+                for s in subs:
+                    if progress_callback:
+                        progress_callback({"js_domain": s})
+                    for r in run_smart_scan(s, include_subdomains=False):
+                        js_leaks.append({
+                            "source": "JS", "file": r["url"], "leak_type": r["leak_type"],
+                            "value": r["value"], "domain": s
+                        })
+
         if not all_urls:
             return []
         verified = self._verify_live(all_urls, progress_callback=progress_callback)
+        verified.extend(sub_results)
         results = []
         for item in verified:
             res_item = {
@@ -167,4 +193,9 @@ class ReconSearcher:
             results.append(res_item)
             if result_callback:
                 result_callback(res_item, len(results))
+        # include JS leaks gathered from subdomains
+        for js in js_leaks:
+            results.append(js)
+            if result_callback:
+                result_callback(js, len(results))
         return results
