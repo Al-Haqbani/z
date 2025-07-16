@@ -254,7 +254,7 @@ This implementation provides a basic framework. Each searcher can be extended or
 
 ### Recon Module
 
-Select "Recon Scan" from the menu to gather URLs mentioning your target on popular third-party platforms. The module queries the Wayback Machine for historical hits on domains like Slack and Google Docs, then verifies each link concurrently to record its current HTTP status. Recon also enumerates subdomains of your target and scans their JavaScript for hidden paths or repository links. All URLs are verified and shown with status codes. Results appear alongside other findings and can be filtered by status code in the web UI.
+Select "Recon Scan" from the menu to gather URLs mentioning your target on popular third-party platforms. The module queries the Wayback Machine and **urlscan.io** for historical hits on domains like Slack and Google Docs, then verifies each link concurrently to record its current HTTP status. Recon also enumerates subdomains of your target and scans their JavaScript for hidden paths or repository links. All URLs are verified and shown with status codes. Results appear alongside other findings and can be filtered by status code in the web UI.
 You can customize the domains checked by editing `data/recon_services.json` and enable subdomain enumeration using the `scan_subdomains` option.
 
 ---

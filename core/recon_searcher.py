@@ -119,6 +119,24 @@ class ReconSearcher:
                 print(f"GitLab recon error: {exc}")
         return urls
 
+    def _query_urlscan(self, keyword: str) -> List[Dict[str, str]]:
+        """Query urlscan.io for pages referencing the keyword."""
+        url = "https://urlscan.io/api/v1/search/"
+        params = {"q": f"{keyword}"}
+        urls: List[Dict[str, str]] = []
+        try:
+            resp = request_with_backoff(url, params=params)
+            if resp and resp.status_code == 200:
+                data = resp.json()
+                for result in data.get("results", []):
+                    page_url = result.get("page", {}).get("url")
+                    if page_url:
+                        urls.append({"url": page_url, "domain": "urlscan", "source": "urlscan"})
+        except Exception as exc:
+            if not self.silent:
+                print(f"urlscan query failed: {exc}")
+        return urls
+
     def _verify_live(self, items: List[Dict[str, str]], progress_callback=None) -> List[Dict[str, str]]:
         results = []
         with ThreadPoolExecutor(max_workers=8) as ex:
@@ -155,6 +173,7 @@ class ReconSearcher:
             all_urls.extend(self._query_wayback(keyword, domain))
         all_urls.extend(self._query_github(keyword))
         all_urls.extend(self._query_gitlab(keyword))
+        all_urls.extend(self._query_urlscan(keyword))
 
         # enumerate subdomains and verify availability
         sub_results = []
