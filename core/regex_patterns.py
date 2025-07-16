@@ -88,6 +88,8 @@ def _load_patterns() -> List[Dict[str, str]]:
         {"name": "Twitch Client Secret", "regex": r"(?i)twitch[\w\s]{0,20}client[_-]?secret[=:\s]*['\"]?([a-z0-9]{30,})"},
         {"name": "Okta API Token", "regex": r"00[a-zA-Z0-9]{20,}"},
         {"name": "Azure Client Secret", "regex": r"(?i)azure[\w\s]{0,20}client[_-]?secret[=:\s]*['\"]?([A-Za-z0-9-_]{20,})"},
+        {"name": "Figma Access Token", "regex": r"figd_[A-Za-z0-9]{40}"},
+        {"name": "Bitly Generic Token", "regex": r"(?i)(?:bitly|bit\.ly)[\w\s'\"=:\-]*([A-Za-z0-9_-]{20,})"},
     ]
 
 
