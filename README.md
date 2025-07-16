@@ -80,6 +80,22 @@ cd EmploLeaksGuardian
 pip install -r requirements.txt
 ```
 
+### Quickstart
+
+Instead of manually installing packages you can run:
+
+```bash
+./setup.sh
+```
+
+This installs all requirements and prints a command to launch the tool. To
+start the web interface immediately use:
+
+```bash
+./run.sh
+```
+
+
 
 ## Usage
 
