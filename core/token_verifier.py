@@ -3,64 +3,83 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     requests = None
 
+from utils.http_utils import request_with_backoff, post_with_backoff
+from utils.logger import logger
+
+
+def _get(url: str, *, headers=None, params=None) -> bool:
+    if requests is None:
+        return False
+    resp = request_with_backoff(
+        url, headers=headers, params=params, timeout=5, retries=3, silent=True
+    )
+    if resp is None:
+        logger.debug("Verification request failed: %s", url)
+        return False
+    return resp.status_code == 200
+
+
+def _post(url: str, *, headers=None, json=None) -> bool:
+    if requests is None:
+        return False
+    resp = post_with_backoff(
+        url, headers=headers, json=json, timeout=5, retries=3, silent=True
+    )
+    if resp is None:
+        logger.debug("Verification POST failed: %s", url)
+        return False
+    return resp.status_code == 200
+
 
 def verify_slack_token(token: str) -> bool:
     """Check Slack token via the API."""
-    if not token or requests is None:
+    if not token:
         return False
-    try:
-        resp = requests.post(
-            "https://slack.com/api/auth.test",
-            headers={"Authorization": f"Bearer {token}"},
-            timeout=5,
-        )
-        return resp.status_code == 200 and resp.json().get("ok")
-    except Exception:
-        return False
+    resp = post_with_backoff(
+        "https://slack.com/api/auth.test",
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=5,
+        retries=3,
+    )
+    return bool(resp and resp.status_code == 200 and resp.json().get("ok"))
 
 
 def verify_github_token(token: str) -> bool:
     """Check if a GitHub token is valid using the API."""
-    if not token or requests is None:
+    if not token:
         return False
-    try:
-        resp = requests.get(
-            "https://api.github.com/user",
-            headers={"Authorization": f"token {token}"},
-            timeout=5,
-        )
-        return resp.status_code == 200
-    except Exception:
-        return False
+    resp = request_with_backoff(
+        "https://api.github.com/user",
+        headers={"Authorization": f"token {token}"},
+        timeout=5,
+        retries=3,
+    )
+    return bool(resp and resp.status_code == 200)
 
 
 def verify_discord_token(token: str) -> bool:
     """Check Discord bot token via the API."""
-    if not token or requests is None:
+    if not token:
         return False
-    try:
-        resp = requests.get(
-            "https://discord.com/api/v10/users/@me",
-            headers={"Authorization": f"Bot {token}"},
-            timeout=5,
-        )
-        return resp.status_code == 200
-    except Exception:
-        return False
+    resp = request_with_backoff(
+        "https://discord.com/api/v10/users/@me",
+        headers={"Authorization": f"Bot {token}"},
+        timeout=5,
+        retries=3,
+    )
+    return bool(resp and resp.status_code == 200)
 
 
 def verify_telegram_token(token: str) -> bool:
     """Validate Telegram bot token by calling getMe."""
-    if not token or requests is None:
+    if not token:
         return False
-    try:
-        resp = requests.get(
-            f"https://api.telegram.org/bot{token}/getMe",
-            timeout=5,
-        )
-        return resp.status_code == 200 and resp.json().get("ok")
-    except Exception:
-        return False
+    resp = request_with_backoff(
+        f"https://api.telegram.org/bot{token}/getMe",
+        timeout=5,
+        retries=3,
+    )
+    return bool(resp and resp.status_code == 200 and resp.json().get("ok"))
 
 
 def verify_huggingface_token(token: str) -> bool:
@@ -68,7 +87,7 @@ def verify_huggingface_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://huggingface.co/api/whoami-v2",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -83,7 +102,7 @@ def verify_gitlab_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://gitlab.com/api/v4/user",
             headers={"PRIVATE-TOKEN": token},
             timeout=5,
@@ -98,7 +117,7 @@ def verify_openai_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.openai.com/v1/models",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -113,7 +132,7 @@ def verify_replicate_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.replicate.com/v1/models",
             headers={"Authorization": f"Token {token}"},
             timeout=5,
@@ -128,7 +147,7 @@ def verify_stability_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.stability.ai/v1/user/account",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -143,7 +162,7 @@ def verify_mistral_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.mistral.ai/v1/models",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -158,7 +177,7 @@ def verify_zoom_jwt(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.zoom.us/v2/users/me",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -173,7 +192,7 @@ def verify_vercel_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.vercel.com/v2/user",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -188,7 +207,7 @@ def verify_railway_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://backboard.railway.app/v2/user",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -202,7 +221,7 @@ def verify_cohere_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.post(
+        resp = post_with_backoff(
             "https://api.cohere.ai/token/check",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -217,7 +236,7 @@ def verify_asana_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://app.asana.com/api/1.0/users/me",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -232,7 +251,7 @@ def verify_bugcrowd_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.bugcrowd.com/user",
             headers={"Authorization": f"Token {token}"},
             timeout=5,
@@ -247,7 +266,7 @@ def verify_supabase_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.supabase.com/v1/projects",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -262,7 +281,7 @@ def verify_salesforce_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://login.salesforce.com/services/oauth2/userinfo",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -277,7 +296,7 @@ def verify_notion_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.notion.com/v1/users/me",
             headers={
                 "Authorization": f"Bearer {token}",
@@ -295,7 +314,7 @@ def verify_facebook_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://graph.facebook.com/me",
             params={"access_token": token},
             timeout=5,
@@ -371,7 +390,7 @@ def verify_google_api_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://content.googleapis.com/discovery/v1/apis",
             params={"key": token},
             timeout=5,
@@ -386,7 +405,7 @@ def verify_google_oauth_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://www.googleapis.com/oauth2/v1/tokeninfo",
             params={"access_token": token},
             timeout=5,
@@ -440,7 +459,7 @@ def verify_digitalocean_token(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.digitalocean.com/v2/account",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -455,7 +474,7 @@ def verify_stripe_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.stripe.com/v1/charges",
             headers={"Authorization": f"Bearer {token}"},
             params={"limit": 1},
@@ -471,7 +490,7 @@ def verify_kaggle_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://www.kaggle.com/api/v1/datasets/list",
             headers={"Authorization": f"Bearer {token}"},
             timeout=5,
@@ -486,7 +505,7 @@ def verify_anthropic_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://api.anthropic.com/v1/models",
             headers={"x-api-key": token},
             timeout=5,
@@ -501,7 +520,7 @@ def verify_gemini_key(token: str) -> bool:
     if not token or requests is None:
         return False
     try:
-        resp = requests.get(
+        resp = request_with_backoff(
             "https://generativelanguage.googleapis.com/v1/models",
             params={"key": token},
             timeout=5,

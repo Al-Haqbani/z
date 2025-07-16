@@ -52,3 +52,46 @@ def request_with_backoff(url, *, headers=None, params=None, timeout=DEFAULT_TIME
             time.sleep(backoff)
             backoff *= 2
     return None
+
+
+def post_with_backoff(
+    url,
+    *,
+    headers=None,
+    json=None,
+    data=None,
+    timeout=DEFAULT_TIMEOUT,
+    retries=DEFAULT_RETRIES,
+    silent=True,
+    proxies=None,
+):
+    """POST request with backoff and UA rotation."""
+    headers = headers or {}
+    if "User-Agent" not in headers:
+        headers["User-Agent"] = random.choice(USER_AGENTS)
+    backoff = 1.0
+    for _ in range(retries):
+        try:
+            resp = requests.post(
+                url,
+                headers=headers,
+                json=json,
+                data=data,
+                timeout=timeout,
+                proxies=proxies or PROXIES,
+            )
+            if resp.status_code == 429:
+                time.sleep(backoff)
+                backoff *= 2
+                continue
+            if resp.status_code >= 500:
+                time.sleep(backoff)
+                backoff *= 2
+                continue
+            return resp
+        except Exception:
+            if not silent:
+                raise
+            time.sleep(backoff)
+            backoff *= 2
+    return None
