@@ -271,6 +271,8 @@ This implementation provides a basic framework. Each searcher can be extended or
 Select "Recon Scan" from the menu to gather URLs mentioning your target on popular third-party platforms. The module queries the Wayback Machine and **urlscan.io** for historical hits on domains like Slack and Google Docs, then verifies each link concurrently to record its current HTTP status. Recon also enumerates subdomains of your target and scans their JavaScript for hidden paths or repository links. All URLs are verified and shown with status codes. Results appear alongside other findings and can be filtered by status code in the web UI.
 You can customize the domains checked by editing `data/recon_services.json` and enable subdomain enumeration using the `scan_subdomains` option.
 
+### Plugin system
+Custom search modules can be dropped into a `plugins/` folder as Python scripts or YAML files. A Python plugin should subclass `BasePlugin` from `utils.plugin_loader` and implement `search(keyword)` returning a list of leak dictionaries. YAML files may define a simple `name` and list of regex `patterns`. Use `--plugins path1,path2` to load them at runtime.
 ---
 
 EmploLeaksGuardian is distributed for educational and defensive security purposes only. The author does **not** take responsibility for any misuse of this project.

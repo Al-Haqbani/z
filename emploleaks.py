@@ -214,6 +214,11 @@ def main():
         "trufflehog": github_token,
         "gitea": gitea_token,
     }
+    plugins = []
+    if args.plugins:
+        from utils.plugin_loader import load_plugins
+        paths = [p.strip() for p in args.plugins.split(',') if p.strip()]
+        plugins = load_plugins(paths)
 
     if args.wordlist and args.keyword:
         from utils.wordlist_builder import build_wordlist
@@ -258,6 +263,11 @@ def main():
                         "value": item["value"],
                     }
                 )
+            for plug in plugins:
+                try:
+                    results.extend(plug.search(keyword))
+                except Exception as exc:
+                    logger.warning("Plugin %s error: %s", getattr(plug, 'name', 'unknown'), exc)
             if results:
                 print_results(results)
                 from output.terminal_output import print_summary
@@ -333,6 +343,11 @@ def main():
                 follow_docker=args.docker or args.employees,
                 patterns=selected_patterns,
             )
+            for plug in plugins:
+                try:
+                    results.extend(plug.search(keyword))
+                except Exception as exc:
+                    logger.warning("Plugin %s error: %s", getattr(plug, 'name', 'unknown'), exc)
             if args.platform == "github" and (args.docker or args.employees):
                 docker_res = SearchManager.start_search(
                     "dockerhub",
