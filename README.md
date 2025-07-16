@@ -95,6 +95,15 @@ start the web interface immediately use:
 ./run.sh
 ```
 
+### Docker
+
+Alternatively build a Docker image and run it in an isolated container:
+
+```bash
+docker build -t emploleaks .
+docker run --rm -it emploleaks
+```
+
 
 
 ## Usage
