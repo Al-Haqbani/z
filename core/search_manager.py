@@ -175,22 +175,26 @@ class SearchManager:
                 progress_callback(ev)
 
         cb = wrapped_cb if result_callback else None
-        results = searcher.search(
-            keyword,
-            employees=employees,
-            organization=organization,
-            employees_only=employees_only,
-            patterns=patterns,
-            full_scan=full_scan,
-            scan_wayback=scan_wayback,
-            scan_wiki=scan_wiki,
-            scan_actions=scan_actions,
-            scan_gists=scan_gists,
-            progress_callback=wrap_progress,
-            result_callback=cb,
-            scan_releases=scan_releases,
-            **kwargs,
-        )
+        try:
+            results = searcher.search(
+                keyword,
+                employees=employees,
+                organization=organization,
+                employees_only=employees_only,
+                patterns=patterns,
+                full_scan=full_scan,
+                scan_wayback=scan_wayback,
+                scan_wiki=scan_wiki,
+                scan_actions=scan_actions,
+                scan_gists=scan_gists,
+                progress_callback=wrap_progress,
+                result_callback=cb,
+                scan_releases=scan_releases,
+                **kwargs,
+            )
+        except Exception as exc:
+            logger.error("%s search failed: %s", platform, exc)
+            results = []
         results = cls._verify_results(results, verify_ai, active_verify)
 
         if follow_docker and hasattr(searcher, "docker_images") and searcher.docker_images:
@@ -270,22 +274,26 @@ class SearchManager:
                     progress_callback(ev)
 
             cb = wrapped_cb if result_callback else None
-            return searcher.search(
-                keyword,
-                employees=employees,
-                organization=organization,
-                employees_only=employees_only,
-                patterns=patterns,
-                full_scan=full_scan,
-                scan_wayback=scan_wayback,
-                scan_wiki=scan_wiki,
-                scan_actions=scan_actions,
-                scan_gists=scan_gists,
-                progress_callback=wrap_progress,
-                result_callback=cb,
-                scan_releases=scan_releases,
-                **kwargs,
-            )
+            try:
+                return searcher.search(
+                    keyword,
+                    employees=employees,
+                    organization=organization,
+                    employees_only=employees_only,
+                    patterns=patterns,
+                    full_scan=full_scan,
+                    scan_wayback=scan_wayback,
+                    scan_wiki=scan_wiki,
+                    scan_actions=scan_actions,
+                    scan_gists=scan_gists,
+                    progress_callback=wrap_progress,
+                    result_callback=cb,
+                    scan_releases=scan_releases,
+                    **kwargs,
+                )
+            except Exception as exc:
+                logger.error("%s search failed: %s", name, exc)
+                return []
 
         platform_items = list(cls.PLATFORM_MAP.items())
         if platforms:
