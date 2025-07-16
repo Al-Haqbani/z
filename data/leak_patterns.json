@@ -919,5 +919,8 @@
   {"name": "zoom-jwt", "regex": "(?i)zoom[_-]?(?:jwt|token)[\\"'=:\s]*([A-Za-z0-9._-]{20,})"},
   {"name": "replicate-api-token", "regex": "r8_[A-Za-z0-9]{32,}"},
   {"name": "stability-api-key", "regex": "sk-[A-Za-z0-9]{40}"},
+  {"name": "trello-api-key", "regex": "(?i)trello[\\w.-]{0,20}[\\"'=:\s]*([0-9a-f]{32})"},
+  {"name": "trello-token", "regex": "(?i)trello[\\w.-]{0,20}[\\"'=:\s]*([0-9a-f]{64})"},
+  {"name": "dropbox-api-token", "regex": "sl\.[A-Za-z0-9_-]{15,}"},
   {"name": "salesforce-oauth-token", "regex": "00D[A-Za-z0-9]{12}!+[A-Za-z0-9]{24,40}"}
 ]
