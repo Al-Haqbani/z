@@ -499,17 +499,14 @@ class GitHubSearcher:
         if not info:
             return []
         owner = info.get("owner", {})
+        employees = []
         if owner.get("type") == "Organization":
-            members = cls.get_org_people(owner.get("login"), token)
-            if not members:
-                members = cls.get_org_members(owner.get("login"), token)
-            if not members:
-                members = cls.get_repo_contributors(repo, token)
-            return members
-        collaborators = cls.get_repo_collaborators(repo, token)
-        if not collaborators:
-            collaborators = cls.get_repo_contributors(repo, token)
-        return collaborators
+            employees = cls.get_org_people(owner.get("login"), token)
+            if not employees:
+                employees = cls.get_org_members(owner.get("login"), token)
+        if not employees:
+            employees = cls.get_repo_collaborators(repo, token)
+        return list(dict.fromkeys(employees))
 
     @classmethod
     def get_org_people(cls, org, token=None):
