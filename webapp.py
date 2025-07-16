@@ -283,6 +283,9 @@ INDEX_HTML = """
         });
       });
     </script>
+    <footer class="text-center mt-5">
+      <small>تم صناعة هذه الأداة بحب عبر shakbany</small>
+    </footer>
   </body>
 </html>
 """
@@ -401,6 +404,9 @@ RESULTS_HTML = """
         });
       </script>
     </div>
+    <footer class="text-center mt-5">
+      <small>تم صناعة هذه الأداة بحب عبر shakbany</small>
+    </footer>
   </body>
 </html>
 """
@@ -636,6 +642,9 @@ STREAM_HTML = """
       });
       evt.addEventListener('done',()=>{document.getElementById('done').style.display='block'; evt.close();});
     </script>
+    <footer class="text-center mt-5">
+      <small>تم صناعة هذه الأداة بحب عبر shakbany</small>
+    </footer>
   </body>
 </html>
 """
@@ -689,6 +698,9 @@ RECON_INDEX_HTML = """
         {% endfor %}
       </ul>
     </div>
+    <footer class="text-center mt-5">
+      <small>تم صناعة هذه الأداة بحب عبر shakbany</small>
+    </footer>
   </body>
 </html>
 """
@@ -759,6 +771,9 @@ RECON_STREAM_HTML = """
       };
       evt.addEventListener('done', ()=>{document.getElementById('done').style.display='block';evt.close();});
     </script>
+    <footer class="text-center mt-5">
+      <small>تم صناعة هذه الأداة بحب عبر shakbany</small>
+    </footer>
   </body>
 </html>
 """
@@ -861,6 +876,9 @@ MAP_HTML = """
       });
       evt.addEventListener('done', ()=> evt.close());
     </script>
+    <footer class="text-center mt-5">
+      <small>تم صناعة هذه الأداة بحب عبر shakbany</small>
+    </footer>
   </body>
 </html>
 """
@@ -948,6 +966,9 @@ SCANS_HTML = """
       </div>
       <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
     </div>
+    <footer class=\"text-center mt-5\">
+      <small>تم صناعة هذه الأداة بحب عبر shakbany</small>
+    </footer>
   </body>
 </html>
 """
