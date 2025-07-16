@@ -54,19 +54,19 @@ INDEX_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>EmploLeaksGuardian – Enterprise Secret Detection Platform</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-      :root{ --brand:#9b59b6; }
-      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#1b1525,#301a3a,#2b1b33,#170b20); background-size: 400% 400%; animation: bgmove 15s ease infinite; }
+      :root{ --brand:#7F3FBF; }
+      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#0e101c,#1e1e2f,#1a1628,#0e101c); background-size: 400% 400%; animation: bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .scan-card { box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.2); cursor: pointer; transition: transform .2s; }
       .scan-card:hover { transform: scale(1.03); }
       a { color: var(--brand); }
       .bg-primary { background-color: var(--brand) !important; }
       .btn-primary {
-        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        background-image: linear-gradient(45deg,#7F3FBF,#e67e22);
         border: none;
         color: #fff !important;
         box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.3);
@@ -80,14 +80,14 @@ INDEX_HTML = """
     <script>
       const stored=localStorage.getItem("theme");
       if(stored){document.getElementById("theme").href=stored;}
-      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("quartz")?light:dark;localStorage.setItem("theme",el.href);}
     </script>
   </head>
   <body class=\"bg-dark text-light\">
     <script>
       const stored = localStorage.getItem("theme");
       if(stored){document.getElementById("theme").href=stored;}
-      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("quartz")?light:dark;localStorage.setItem("theme",el.href);}
     </script>
     <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
       <div class=\"container\">
@@ -295,18 +295,18 @@ RESULTS_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Results</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
-      :root{ --brand:#9b59b6; }
-      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#1b1525,#301a3a,#2b1b33,#170b20); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      :root{ --brand:#7F3FBF; }
+      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#0e101c,#1e1e2f,#1a1628,#0e101c); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       tr.fade { animation: fadein .5s; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
       a { color: var(--brand); }
       .bg-primary { background-color: var(--brand) !important; }
       .btn-primary {
-        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        background-image: linear-gradient(45deg,#7F3FBF,#e67e22);
         border: none;
         color:#fff !important;
         box-shadow:0 0.25rem 0.5rem rgba(0,0,0,0.3);
@@ -317,7 +317,7 @@ RESULTS_HTML = """
     <script>
       const stored=localStorage.getItem("theme");
       if(stored){document.getElementById("theme").href=stored;}
-      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("quartz")?light:dark;localStorage.setItem("theme",el.href);}
     </script>
   </head>
   <body class=\"bg-dark text-light\">
@@ -413,12 +413,12 @@ STREAM_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Live Dashboard</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
-      :root{ --brand:#9b59b6; }
+      :root{ --brand:#7F3FBF; }
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#1b1525,#301a3a,#2b1b33,#170b20); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(-45deg,#0e101c,#1e1e2f,#1a1628,#0e101c); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .sidebar { max-width: 260px; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
@@ -426,7 +426,7 @@ STREAM_HTML = """
       a { color: var(--brand); }
       .bg-primary { background-color: var(--brand) !important; }
       .btn-primary {
-        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        background-image: linear-gradient(45deg,#7F3FBF,#e67e22);
         border:none; color:#fff!important;
         box-shadow:0 0.25rem 0.5rem rgba(0,0,0,0.3);
         transition:transform .2s, box-shadow .2s;
@@ -436,7 +436,7 @@ STREAM_HTML = """
     <script>
       const stored=localStorage.getItem("theme");
       if(stored){document.getElementById("theme").href=stored;}
-      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("quartz")?light:dark;localStorage.setItem("theme",el.href);}
     </script>
     <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
   </head>
@@ -536,7 +536,7 @@ STREAM_HTML = """
       const progText = document.getElementById('progressText');
       let leakTotal = 0;
       const repoList = document.getElementById('repoList');
-      const BRAND = '#9b59b6';
+      const BRAND = '#7F3FBF';
       const sevChart = new Chart(document.getElementById('sevChart'), {
         type: 'doughnut',
         data: { labels:['High','Medium','Low','Info'], datasets:[{ data:[0,0,0,0], backgroundColor:['#dc3545','#ffc107','#0dcaf0','#6c757d'] }] },
@@ -648,14 +648,14 @@ RECON_INDEX_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Recon Scanner</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel=\"stylesheet\">
     <style>
-      :root{ --brand:#9b59b6; }
-      body { font-family: 'Inter', sans-serif; padding-top:20px; background:linear-gradient(-45deg,#1b1525,#301a3a,#2b1b33,#170b20); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      :root{ --brand:#7F3FBF; }
+      body { font-family: 'Inter', sans-serif; padding-top:20px; background:linear-gradient(-45deg,#0e101c,#1e1e2f,#1a1628,#0e101c); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       .bg-primary{ background-color: var(--brand) !important; }
       .btn-primary{
-        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        background-image: linear-gradient(45deg,#7F3FBF,#e67e22);
         border:none;color:#fff!important;
         box-shadow:0 0.25rem 0.5rem rgba(0,0,0,0.3);
         transition:transform .2s, box-shadow .2s;
@@ -666,7 +666,7 @@ RECON_INDEX_HTML = """
     <script>
       const stored=localStorage.getItem("theme");
       if(stored){document.getElementById("theme").href=stored;}
-      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("quartz")?light:dark;localStorage.setItem("theme",el.href);}
     </script>
   </head>
   <body class=\"bg-dark text-light\">
@@ -701,16 +701,16 @@ RECON_STREAM_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Recon Results</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel=\"stylesheet\">
     <style>
-      :root{ --brand:#9b59b6; }
-      body { font-family: 'Inter', sans-serif; padding-top: 20px; background: linear-gradient(-45deg,#1b1525,#301a3a,#2b1b33,#170b20); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      :root{ --brand:#7F3FBF; }
+      body { font-family: 'Inter', sans-serif; padding-top: 20px; background: linear-gradient(-45deg,#0e101c,#1e1e2f,#1a1628,#0e101c); background-size:400% 400%; animation:bgmove 15s ease infinite; }
       @keyframes bgmove {0%{background-position:0 50%;}50%{background-position:100% 50%;}100%{background-position:0 50%;}}
       tr.fade { animation: fadein .5s; }
       @keyframes fadein { from {opacity:0;} to {opacity:1;} }
       .bg-primary{ background-color: var(--brand)!important; }
       .btn-primary{
-        background-image: linear-gradient(45deg,#9b59b6,#e67e22);
+        background-image: linear-gradient(45deg,#7F3FBF,#e67e22);
         border:none;color:#fff!important;
         box-shadow:0 0.25rem 0.5rem rgba(0,0,0,0.3);
         transition:transform .2s, box-shadow .2s;
@@ -721,7 +721,7 @@ RECON_STREAM_HTML = """
     <script>
       const stored=localStorage.getItem("theme");
       if(stored){document.getElementById("theme").href=stored;}
-      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("quartz")?light:dark;localStorage.setItem("theme",el.href);}
     </script>
   </head>
   <body class=\"bg-dark text-light\">
@@ -771,7 +771,7 @@ MAP_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Map View</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel=\"stylesheet\">
     <style>
       body { font-family: 'Inter', sans-serif; padding-top: 20px; background: linear-gradient(120deg,#10141f,#1c2640); }
       .legend span { display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:4px; }
@@ -780,7 +780,7 @@ MAP_HTML = """
     <script>
       const stored=localStorage.getItem("theme");
       if(stored){document.getElementById("theme").href=stored;}
-      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("quartz")?light:dark;localStorage.setItem("theme",el.href);}
     </script>
     <script src=\"https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js\"></script>
   </head>
@@ -873,7 +873,7 @@ SCANS_HTML = """
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Scans</title>
     <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
-    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css" rel=\"stylesheet\">
+    <link id="theme" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css" rel=\"stylesheet\">
     <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
     <style>
       body { font-family: 'Inter', sans-serif; padding-top: 70px; background: linear-gradient(120deg,#10141f,#1c2640); }
@@ -882,7 +882,7 @@ SCANS_HTML = """
     <script>
       const stored=localStorage.getItem("theme");
       if(stored){document.getElementById("theme").href=stored;}
-      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/cyborg/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("cyborg")?light:dark;localStorage.setItem("theme",el.href);}
+      function toggleTheme(){const el=document.getElementById("theme");const dark="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css";const light="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css";el.href=el.href.includes("quartz")?light:dark;localStorage.setItem("theme",el.href);}
     </script>
   </head>
   <body class=\"bg-dark text-light\">
