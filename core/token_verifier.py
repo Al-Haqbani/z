@@ -197,6 +197,20 @@ def verify_railway_token(token: str) -> bool:
     except Exception:
         return False
 
+def verify_cohere_key(token: str) -> bool:
+    """Check Cohere API key using token check endpoint."""
+    if not token or requests is None:
+        return False
+    try:
+        resp = requests.post(
+            "https://api.cohere.ai/token/check",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=5,
+        )
+        return resp.status_code == 200
+    except Exception:
+        return False
+
 
 def verify_asana_token(token: str) -> bool:
     """Validate Asana personal access token."""
@@ -319,6 +333,8 @@ def verify_token(leak_type: str, value: str) -> bool:
         return verify_railway_token(value)
     if "asana" in lt:
         return verify_asana_token(value)
+    if "cohere" in lt:
+        return verify_cohere_key(value)
     if "bugcrowd" in lt:
         return verify_bugcrowd_token(value)
     if "supabase" in lt:
@@ -405,6 +421,7 @@ POC_COMMANDS = {
     "digitalocean": "curl -H 'Authorization: Bearer {token}' https://api.digitalocean.com/v2/account",
     "facebook": "curl 'https://graph.facebook.com/me?access_token={token}'",
     "stripe": "curl -H 'Authorization: Bearer {token}' https://api.stripe.com/v1/charges?limit=1",
+    "cohere": "curl -H 'Authorization: Bearer {token}' https://api.cohere.ai/token/check",
     "google": "curl 'https://generativelanguage.googleapis.com/v1/models?key={token}'",
 }
 
