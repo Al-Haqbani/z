@@ -357,7 +357,7 @@ def main():
         if choice == "1":
             start_web_ui(args.host)
             platform = input(
-                "Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog/gitea): "
+                "Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog/gitea/jsfile): "
             )
             keyword = input("Keyword: ")
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"

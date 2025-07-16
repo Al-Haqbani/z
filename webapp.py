@@ -43,6 +43,7 @@ ICON_MAP = {
     'GrayHat': 'fa-solid fa-bucket',
     'Gitea': 'fa-brands fa-git-alt',
     'TruffleHog': 'fa-solid fa-search'
+    ,'JSFile': 'fa-brands fa-js'
 }
 
 INDEX_HTML = """

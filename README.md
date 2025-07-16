@@ -1,6 +1,6 @@
 # EmploLeaksGuardian
 
-EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, **Bitbucket**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, **Gitea instances**, and even public **GitHub Gists** by performing real HTTP requests with randomized user-agents and automatic backoff. HTTP requests now use a 30-second timeout and retry up to eight times to avoid API timeouts.
+EmploLeaksGuardian is a lightweight Python tool that scans multiple platforms for leaked API keys or secrets. It now searches GitHub, **GitLab**, **Bitbucket**, DockerHub, HuggingFace, NPM, PyPI, Reddit, Pastebin, **SwaggerHub**, **GrayHatWarfare buckets**, **Gitea instances**, even public **GitHub Gists**, and archived **JavaScript files** via the new `jsfile` platform. All requests use randomized user-agents and automatic backoff with a 30-second timeout and up to eight retries.
 It can also run **TruffleHog** scans on repositories to leverage their advanced secret hunting heuristics.
 
 It also includes a **Recon module** that discovers references to your company across third‑party services like Slack or Google Docs. These URLs are gathered from live queries and the Wayback Machine, then verified asynchronously so you know whether each link is still reachable.
@@ -235,6 +235,10 @@ enumerate subdomains, fetch archived files from the Wayback Machine and even run
 [LinkFinder](https://github.com/GerbenJavado/LinkFinder) for deeper crawling. It
 also extracts hidden paths and repository links from the scripts so you can map
 potential endpoints in addition to leaked tokens.
+For convenience this logic is also available as a standalone platform named
+`jsfile` so you can include archived JavaScript scanning when running normal or
+full‑auto scans. Simply choose `jsfile` as the platform and supply the target
+domain.
 A fourth option allows scanning a list of JavaScript URLs stored in a text file.
 
 ```bash
