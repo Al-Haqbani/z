@@ -10,6 +10,9 @@ USER_AGENTS = [
     "Mozilla/5.0 (X11; Linux x86_64)"
 ]
 
+# Optional custom user-agent via EMPLOLEAKS_UA
+CUSTOM_UA = os.environ.get("EMPLOLEAKS_UA")
+
 # Optional proxy support via EMPLOLEAKS_PROXY
 PROXY_URL = os.environ.get("EMPLOLEAKS_PROXY")
 PROXIES = {"http": PROXY_URL, "https": PROXY_URL} if PROXY_URL else None
@@ -27,7 +30,10 @@ def request_with_backoff(url, *, headers=None, params=None, timeout=DEFAULT_TIME
     """
     headers = headers or {}
     if "User-Agent" not in headers:
-        headers["User-Agent"] = random.choice(USER_AGENTS)
+        if CUSTOM_UA:
+            headers["User-Agent"] = CUSTOM_UA
+        else:
+            headers["User-Agent"] = random.choice(USER_AGENTS)
     backoff = 1.0
     for _ in range(retries):
         try:
@@ -69,7 +75,10 @@ def post_with_backoff(
     """POST request with backoff and UA rotation."""
     headers = headers or {}
     if "User-Agent" not in headers:
-        headers["User-Agent"] = random.choice(USER_AGENTS)
+        if CUSTOM_UA:
+            headers["User-Agent"] = CUSTOM_UA
+        else:
+            headers["User-Agent"] = random.choice(USER_AGENTS)
     backoff = 1.0
     for _ in range(retries):
         try:
