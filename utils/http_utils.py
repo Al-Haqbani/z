@@ -2,6 +2,7 @@ import random
 import time
 import os
 import requests
+import hashlib
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -95,3 +96,22 @@ def post_with_backoff(
             time.sleep(backoff)
             backoff *= 2
     return None
+
+
+def save_screenshot(url: str, out_dir: str = "screenshots", silent: bool = True) -> str:
+    """Fetch a screenshot for ``url`` using a public service and save it."""
+    os.makedirs(out_dir, exist_ok=True)
+    fname = hashlib.md5(url.encode()).hexdigest() + ".png"
+    path = os.path.join(out_dir, fname)
+    try:
+        resp = request_with_backoff(
+            f"https://image.thum.io/get/png/{url}", timeout=15, silent=silent
+        )
+        if resp and resp.status_code == 200:
+            with open(path, "wb") as f:
+                f.write(resp.content)
+            return path
+    except Exception:
+        if not silent:
+            raise
+    return ""

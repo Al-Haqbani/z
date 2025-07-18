@@ -517,6 +517,7 @@ STREAM_HTML = """
                   <th>Severity</th>
                   <th>Active</th>
                   <th>PoC</th>
+                  <th>Screenshot</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -616,7 +617,8 @@ STREAM_HTML = """
         const activeVal=data.active===null?'?':(data.active?'True':'False');
         const icon = PLATFORM_ICONS[plat] || 'fa-solid fa-circle';
         const pocCol = data.poc ? `<code>${data.poc}</code>` : '';
-        row.innerHTML=`<td>${idx}</td><td><i class="${icon} me-1"></i>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td><td>${pocCol}</td>`;
+        const shotCol = data.screenshot ? `<img src="/screenshots/${scan_id}/${data.screenshot}" style="max-width:150px">` : '';
+        row.innerHTML=`<td>${idx}</td><td><i class="${icon} me-1"></i>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sev}</td><td>${activeVal}</td><td>${pocCol}</td><td>${shotCol}</td>`;
         tbody.appendChild(row); idx++; applyFilters();
         tableDiv.scrollTop = tableDiv.scrollHeight;
         showToast(`${data.leak_type} found`);
@@ -1109,6 +1111,8 @@ def search():
                     platforms=chosen,
                     result_callback=callback,
                     progress_callback=progress,
+                    screenshot_dir=f"reports/{scan_id}_shots",
+                    screenshot_prefix=f"/screenshots/{scan_id}/",
                     **kwargs,
                 )
             else:
@@ -1126,6 +1130,8 @@ def search():
                     scan_actions=scan_actions,
                     result_callback=callback,
                     progress_callback=progress,
+                    screenshot_dir=f"reports/{scan_id}_shots" if platform=='shorturl' else None,
+                    screenshot_prefix=f"/screenshots/{scan_id}/" if platform=='shorturl' else None,
                     **kwargs,
                 )
         except RuntimeError:
@@ -1217,6 +1223,11 @@ def map_view(scan_id):
 @app.route("/download/<path:filename>")
 def download_report(filename):
     return send_from_directory("reports", filename, as_attachment=True)
+
+
+@app.route("/screenshots/<scan_id>/<path:filename>")
+def serve_screenshot(scan_id, filename):
+    return send_from_directory(f"reports/{scan_id}_shots", filename)
 
 
 @app.route("/live/<scan_id>")

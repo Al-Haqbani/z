@@ -1,8 +1,9 @@
 import random
 import time
+import os
 from typing import List, Dict, Optional
 
-from utils.http_utils import request_with_backoff
+from utils.http_utils import request_with_backoff, save_screenshot
 
 class ShortURLSearcher:
     """Search GrayHatWarfare short URLs for company/domain matches."""
@@ -20,6 +21,8 @@ class ShortURLSearcher:
         domains: Optional[List[str]] = None,
         result_callback=None,
         progress_callback=None,
+        screenshot_dir=None,
+        screenshot_prefix=None,
         **kwargs,
     ) -> List[Dict[str, str]]:
         if not self.token:
@@ -76,6 +79,14 @@ class ShortURLSearcher:
                         "value": long_url or "",
                         "match": match_type,
                     }
+                    if screenshot_dir and long_url:
+                        shot = save_screenshot(long_url, screenshot_dir, silent=self.silent)
+                        if shot:
+                            name = os.path.basename(shot)
+                            if screenshot_prefix:
+                                record["screenshot"] = screenshot_prefix + name
+                            else:
+                                record["screenshot"] = shot
                     if created:
                         record["created"] = created
                     if size:

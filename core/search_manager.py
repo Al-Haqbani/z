@@ -137,6 +137,8 @@ class SearchManager:
         scan_actions=False,
         scan_gists=False,
         follow_docker=False,
+        screenshot_dir=None,
+        screenshot_prefix=None,
         result_callback=None,
         progress_callback=None,
         patterns=None,
@@ -196,6 +198,8 @@ class SearchManager:
                 progress_callback=wrap_progress,
                 result_callback=cb,
                 scan_releases=scan_releases,
+                screenshot_dir=screenshot_dir,
+                screenshot_prefix=screenshot_prefix,
                 **kwargs,
             )
         except Exception as exc:
@@ -237,12 +241,14 @@ class SearchManager:
         scan_releases=False,
         scan_actions=False,
         scan_gists=False,
-        include_docker=True,
-        platforms=None,
-        max_threads=None,
-        result_callback=None,
-        progress_callback=None,
-        patterns=None,
+       include_docker=True,
+       platforms=None,
+       max_threads=None,
+       result_callback=None,
+       progress_callback=None,
+       patterns=None,
+        screenshot_dir=None,
+        screenshot_prefix=None,
         **kwargs,
     ):
         """Run searches on all platforms concurrently."""
@@ -283,7 +289,7 @@ class SearchManager:
 
             cb = wrapped_cb if result_callback else None
             try:
-                return searcher.search(
+               return searcher.search(
                     keyword,
                     company=company,
                     domains=domains,
@@ -299,6 +305,8 @@ class SearchManager:
                     progress_callback=wrap_progress,
                     result_callback=cb,
                     scan_releases=scan_releases,
+                   screenshot_dir=screenshot_dir,
+                    screenshot_prefix=screenshot_prefix,
                     **kwargs,
                 )
             except Exception as exc:

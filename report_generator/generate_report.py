@@ -32,7 +32,7 @@ def generate_html_report(results, path: str | None = None) -> str:
   <div class='table-responsive'>
     <table class='table table-bordered table-striped'>
       <thead class='table-dark'>
-        <tr><th>#</th><th>Source</th><th>File</th><th>Leak Type</th><th>Value</th><th>Severity</th><th>Active</th><th>PoC</th></tr>
+        <tr><th>#</th><th>Source</th><th>File</th><th>Leak Type</th><th>Value</th><th>Severity</th><th>Active</th><th>PoC</th><th>Screenshot</th></tr>
       </thead>
       <tbody>
 """
@@ -48,8 +48,10 @@ def generate_html_report(results, path: str | None = None) -> str:
             active_str = 'True' if active else 'False'
         poc = item.get("poc", "")
         poc_html = f"<code>{poc}</code>" if poc else ""
+        shot = item.get('screenshot')
+        shot_html = f"<img src='{shot}' style=\"max-width:150px\">" if shot else ""
         rows.append(
-            f"        <tr class='{cls}'><td>{idx}</td><td>{item.get('source')}</td><td><a href='{item.get('file')}' target='_blank'>{item.get('file')}</a></td><td>{item.get('leak_type')}</td><td><code>{item.get('value')}</code></td><td>{sev}</td><td>{active_str}</td><td>{poc_html}</td></tr>"
+            f"        <tr class='{cls}'><td>{idx}</td><td>{item.get('source')}</td><td><a href='{item.get('file')}' target='_blank'>{item.get('file')}</a></td><td>{item.get('leak_type')}</td><td><code>{item.get('value')}</code></td><td>{sev}</td><td>{active_str}</td><td>{poc_html}</td><td>{shot_html}</td></tr>"
         )
 
     tail = """
