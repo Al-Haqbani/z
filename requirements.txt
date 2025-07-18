@@ -8,3 +8,4 @@ tomli
 fpdf2
 schedule>=1.2.0
 cryptography
+pyyaml

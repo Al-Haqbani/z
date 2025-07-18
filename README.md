@@ -80,7 +80,7 @@ Clone the repository and install the dependencies:
 ```bash
 git clone https://github.com/Al-Haqbani/EmploLeaksGuardian.git
 cd EmploLeaksGuardian
-pip install -r requirements.txt
+pip install -r requirements.txt  # installs requests, pyyaml, flask and more
 ```
 
 ### Quickstart
