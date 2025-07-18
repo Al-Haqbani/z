@@ -475,6 +475,7 @@ STREAM_HTML = """
           <div class=\"progress mb-3\">
             <div id=\"progBar\" class=\"progress-bar\" role=\"progressbar\" style=\"width:0%\"></div>
           </div>
+          <p id=\"startTime\" class=\"small mb-0\"></p>
           <p id=\"progressText\" class=\"small mb-3\"></p>
           <div class=\"btn-group mb-3\">
             <button id=\"pauseBtn\" class=\"btn btn-sm btn-warning\">Pause</button>
@@ -549,6 +550,7 @@ STREAM_HTML = """
       };
       const progBar = document.getElementById('progBar');
       const progText = document.getElementById('progressText');
+      const startEl = document.getElementById('startTime');
       const pauseBtn = document.getElementById('pauseBtn');
       const resumeBtn = document.getElementById('resumeBtn');
       const cancelBtn = document.getElementById('cancelBtn');
@@ -651,6 +653,7 @@ STREAM_HTML = """
           li.className='list-group-item list-group-item-dark';
           li.textContent=`Scanning ${info.repo}`;
           repoList.appendChild(li);
+          startEl.textContent = 'Started: ' + new Date().toLocaleTimeString();
         }else if(info.status==='done'){
           const li=document.getElementById('repo-'+info.repo.replace(/[^\w]+/g,'-'));
           if(li){li.className='list-group-item list-group-item-success'; li.textContent=`${info.repo} done`;}
