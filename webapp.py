@@ -476,6 +476,11 @@ STREAM_HTML = """
             <div id=\"progBar\" class=\"progress-bar\" role=\"progressbar\" style=\"width:0%\"></div>
           </div>
           <p id=\"progressText\" class=\"small mb-3\"></p>
+          <div class=\"btn-group mb-3\">
+            <button id=\"pauseBtn\" class=\"btn btn-sm btn-warning\">Pause</button>
+            <button id=\"resumeBtn\" class=\"btn btn-sm btn-success\" style=\"display:none\">Resume</button>
+            <button id=\"cancelBtn\" class=\"btn btn-sm btn-danger\">Cancel</button>
+          </div>
           <ul id=\"repoList\" class=\"list-group mb-3\"></ul>
           <ul class=\"list-group mb-3\">
             <li class=\"list-group-item bg-dark text-light d-flex justify-content-between align-items-center\"><i class=\"fa-solid fa-circle-exclamation text-danger me-1\"></i>High<span class=\"badge bg-danger\" id=\"count-high\">0</span></li>
@@ -544,6 +549,9 @@ STREAM_HTML = """
       };
       const progBar = document.getElementById('progBar');
       const progText = document.getElementById('progressText');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const resumeBtn = document.getElementById('resumeBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
       let leakTotal = 0;
       const repoList = document.getElementById('repoList');
       const BRAND = '#7F3FBF';
@@ -583,6 +591,18 @@ STREAM_HTML = """
       severityFilter.addEventListener('change',applyFilters);
       platformFilter.addEventListener('input',applyFilters);
       verifiedOnly.addEventListener('change',applyFilters);
+      pauseBtn.addEventListener('click',()=>{
+        fetch(`/api/scan/${scan_id}/pause`,{method:'POST'});
+        pauseBtn.style.display='none'; resumeBtn.style.display='inline-block';
+      });
+      resumeBtn.addEventListener('click',()=>{
+        fetch(`/api/scan/${scan_id}/resume`,{method:'POST'});
+        resumeBtn.style.display='none'; pauseBtn.style.display='inline-block';
+      });
+      cancelBtn.addEventListener('click',()=>{
+        fetch(`/api/scan/${scan_id}/cancel`,{method:'POST'});
+        cancelBtn.disabled=true; pauseBtn.disabled=true; resumeBtn.disabled=true;
+      });
       tbody.addEventListener('click',e=>{
         const btn=e.target.closest('.copy-btn');
         if(btn){navigator.clipboard.writeText(btn.dataset.val);}
