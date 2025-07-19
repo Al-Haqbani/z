@@ -109,6 +109,10 @@ def parse_args():
         help="Generate a custom wordlist for the keyword and exit",
     )
     parser.add_argument(
+        "--plugins",
+        help="Comma-separated list of plugin files to load",
+    )
+    parser.add_argument(
         "--bugbounty",
         action="store_true",
         help="List known bug bounty programs and exit",
