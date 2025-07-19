@@ -113,12 +113,13 @@ docker run --rm -it emploleaks
 ## Usage
 
 ```
-python3 emploleaks.py
+python3 -m emploleaks
 ```
 Install the dependencies first:
 
 ```
 pip install -r requirements.txt
+pip install -e .  # install as package
 ```
 
 ### Configuration file
