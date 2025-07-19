@@ -393,6 +393,7 @@ def main():
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
             repo = None
+            only_emp = False
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 only_emp = (
@@ -519,6 +520,7 @@ def main():
             use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
             repo = None
+            only_emp = False
             if use_emp:
                 repo = input("GitHub repository (owner/repo) for lookup: ")
                 only_emp = (
