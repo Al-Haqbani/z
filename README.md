@@ -122,6 +122,9 @@ pip install -r requirements.txt
 pip install -e .  # install as package
 ```
 
+Run `python3 emploleaks.py --bugbounty` to see a list of example bug bounty
+programs and their reporting links.
+
 ### Configuration file
 
 You can store default tokens and options in a JSON config file. By default the
@@ -278,6 +281,9 @@ This implementation provides a basic framework. Each searcher can be extended or
 
 Select "Recon Scan" from the menu to gather URLs mentioning your target on popular third-party platforms. The module queries the Wayback Machine and **urlscan.io** for historical hits on domains like Slack and Google Docs, then verifies each link concurrently to record its current HTTP status. Recon also enumerates subdomains of your target and scans their JavaScript for hidden paths or repository links. All URLs are verified and shown with status codes. Results appear alongside other findings and can be filtered by status code in the web UI.
 You can customize the domains checked by editing `data/recon_services.json` and enable subdomain enumeration using the `scan_subdomains` option.
+
+### Bug bounty program
+The file `data/bugbounty_programs.json` lists a few public bug bounty programs with reporting links and scope. Run `python3 emploleaks.py --bugbounty` to print them so you know where to report leaks (many programs include GitHub repositories in scope).
 
 ### Plugin system
 Custom search modules can be dropped into a `plugins/` folder as Python scripts or YAML files. A Python plugin should subclass `BasePlugin` from `utils.plugin_loader` and implement `search(keyword)` returning a list of leak dictionaries. YAML files may define a simple `name` and list of regex `patterns`. Use `--plugins path1,path2` to load them at runtime.

@@ -1,0 +1,17 @@
+[
+  {
+    "name": "GitHub Security Bug Bounty",
+    "report_url": "https://hackerone.com/github",
+    "scope": "All repositories under github.com"
+  },
+  {
+    "name": "Google VRP",
+    "report_url": "https://bughunters.google.com/",
+    "scope": "Google services and open-source projects"
+  },
+  {
+    "name": "Uber Bug Bounty",
+    "report_url": "https://hackerone.com/uber",
+    "scope": "Uber apps and infrastructure, including GitHub repos"
+  }
+]

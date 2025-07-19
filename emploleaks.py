@@ -11,6 +11,7 @@ from utils.config import load_config
 from core.search_manager import SearchManager
 from utils.database import init_db, record_scan, finish_scan, insert_leaks
 from core.github_api import GitHubSearcher
+from utils.bugbounty import print_programs
 from output.terminal_output import (
     print_results,
     print_result,
@@ -107,6 +108,11 @@ def parse_args():
         action="store_true",
         help="Generate a custom wordlist for the keyword and exit",
     )
+    parser.add_argument(
+        "--bugbounty",
+        action="store_true",
+        help="List known bug bounty programs and exit",
+    )
     return parser.parse_args()
 
 
@@ -183,6 +189,9 @@ def main():
     if args.list_patterns:
         for idx, name in get_pattern_list():
             print(f"{idx}. {name}")
+        return
+    if args.bugbounty:
+        print_programs()
         return
     config = load_config(args.config)
     if args.pattern_file:
