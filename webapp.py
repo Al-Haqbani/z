@@ -112,6 +112,7 @@ INDEX_HTML = """
           <ul class=\"navbar-nav ms-auto\">
 <button class="btn btn-sm btn-secondary ms-2" onclick="toggleTheme()">Toggle Theme</button>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/bugbounty\">Bug Bounty</a></li>
           </ul>
         </div>
       </div>
@@ -347,6 +348,7 @@ RESULTS_HTML = """
           <ul class=\"navbar-nav ms-auto\">
 <button class="btn btn-sm btn-secondary ms-2" onclick="toggleTheme()">Toggle Theme</button>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/bugbounty\">Bug Bounty</a></li>
           </ul>
         </div>
       </div>
@@ -476,6 +478,7 @@ STREAM_HTML = """
           <ul class=\"navbar-nav ms-auto\">
 <button class="btn btn-sm btn-secondary ms-2" onclick="toggleTheme()">Toggle Theme</button>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/bugbounty\">Bug Bounty</a></li>
           </ul>
         </div>
       </div>
@@ -1013,6 +1016,63 @@ SCANS_HTML = """
       <small>تم صناعة هذه الأداة بحب عبر shakbany</small>
     </footer>
   </body>
+  </html>
+"""
+
+BUGBOUNTY_HTML = """
+<!doctype html>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>Bug Bounty Programs</title>
+    <link rel=\"icon\" href=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgGAUAAQYBAqdo+gAAAABJRU5ErkJggg==\">
+    <link id=\"theme\" href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
+    <style>
+      body{font-family:'Inter',sans-serif;padding-top:70px;background:linear-gradient(120deg,#10141f,#1c2640);} a{color:#0dcaf0;}
+    </style>
+    <script>
+      const stored=localStorage.getItem('theme');
+      if(stored){document.getElementById('theme').href=stored;}
+      function toggleTheme(){const el=document.getElementById('theme');const dark='https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css';const light='https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css';el.href=el.href.includes('quartz')?light:dark;localStorage.setItem('theme',el.href);}
+    </script>
+  </head>
+  <body class=\"bg-dark text-light\">
+    <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
+      <div class=\"container\">
+        <a class=\"navbar-brand\" href=\"/\"><i class=\"fa-solid fa-shield-halved me-2 logo-icon\"></i>EmploLeaksGuardian</a>
+        <button class=\"navbar-toggler\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#navbb\"><span class=\"navbar-toggler-icon\"></span></button>
+        <div class=\"collapse navbar-collapse\" id=\"navbb\">
+          <ul class=\"navbar-nav ms-auto\">
+            <button class=\"btn btn-sm btn-secondary ms-2\" onclick=\"toggleTheme()\">Toggle Theme</button>
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class=\"container\">
+      <h1 class=\"mb-4\">Bug Bounty Programs</h1>
+      <div class=\"table-responsive\">
+        <table class=\"table table-bordered\">
+          <thead class=\"table-dark\">
+            <tr><th>Name</th><th>Scope</th><th>Report Link</th></tr>
+          </thead>
+          <tbody>
+          {% for p in programs %}
+            <tr>
+              <td>{{p.name}}</td>
+              <td>{{p.scope}}</td>
+              <td><a href=\"{{p.report_url}}\" target=\"_blank\">Report</a></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
+    </div>
+    <footer class=\"text-center mt-5\"><small>تم صناعة هذه الأداة بحب عبر shakbany</small></footer>
+  </body>
 </html>
 """
 
@@ -1056,6 +1116,14 @@ def scans():
     return render_template_string(
         SCANS_HTML,
         history=SCAN_HISTORY,
+    )
+
+@app.route("/bugbounty")
+def bugbounty_page():
+    from utils.bugbounty import load_programs
+    return render_template_string(
+        BUGBOUNTY_HTML,
+        programs=load_programs(),
     )
 
 @app.route("/api/scans")
