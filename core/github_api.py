@@ -6,9 +6,10 @@ import re
 
 from .leak_detector import detect_leaks
 from utils.http_utils import request_with_backoff
+from .base_searcher import BaseSearcher
 
 
-class GitHubSearcher:
+class GitHubSearcher(BaseSearcher):
     BASE_URL = "https://api.github.com"
     USER_AGENTS = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -38,7 +39,8 @@ class GitHubSearcher:
 
     DOCKER_IMAGE_RE = re.compile(r"(?:FROM|docker\s+pull)\s+([\w./:-]+)")
 
-    def __init__(self, token=None, silent=False, **_):
+    def __init__(self, token=None, silent=False, **kwargs):
+        super().__init__(token=token, silent=silent, **kwargs)
         self.tokens = []
         if token:
             if isinstance(token, list):
