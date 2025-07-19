@@ -508,8 +508,8 @@ def main():
                 print_results(results)
                 from output.terminal_output import print_summary
                 print_summary(results)
-                report_path = generate_html_report(results)
-                json_path = save_json_report(results)
+                report_path = generate_html_report(results, path=f"reports/{scan_id}.html")
+                json_path = save_json_report(results, path=f"reports/{scan_id}.json")
                 print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No leaks found.")
@@ -611,8 +611,8 @@ def main():
                 print_results(results)
                 from output.terminal_output import print_summary
                 print_summary(results)
-                report_path = generate_html_report(results)
-                json_path = save_json_report(results)
+                report_path = generate_html_report(results, path=f"reports/{scan_id}.html")
+                json_path = save_json_report(results, path=f"reports/{scan_id}.json")
                 print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No leaks found.")
@@ -647,8 +647,8 @@ def main():
                 print_results(results)
                 from output.terminal_output import print_summary
                 print_summary(results)
-                report_path = generate_html_report(results)
-                json_path = save_json_report(results)
+                report_path = generate_html_report(results, path=f"reports/{scan_id}.html")
+                json_path = save_json_report(results, path=f"reports/{scan_id}.json")
                 print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No leaks found.")
@@ -676,8 +676,8 @@ def main():
                 print_results(results)
                 from output.terminal_output import print_summary
                 print_summary(results)
-                report_path = generate_html_report(results)
-                json_path = save_json_report(results)
+                report_path = generate_html_report(results, path=f"reports/{scan_id}.html")
+                json_path = save_json_report(results, path=f"reports/{scan_id}.json")
                 print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No leaks found.")
@@ -702,8 +702,8 @@ def main():
                 print_results(results)
                 from output.terminal_output import print_summary
                 print_summary(results)
-                report_path = generate_html_report(results)
-                json_path = save_json_report(results)
+                report_path = generate_html_report(results, path=f"reports/{scan_id}.html")
+                json_path = save_json_report(results, path=f"reports/{scan_id}.json")
                 print(f"Report saved to {report_path} and {json_path}")
             else:
                 print("No URLs found.")
