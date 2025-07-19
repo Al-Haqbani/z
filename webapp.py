@@ -11,6 +11,7 @@ from flask import (
     url_for,
     Response,
     send_from_directory,
+    abort,
 )
 from core.search_manager import SearchManager
 from core.token_manager import get_github_token
@@ -1056,7 +1057,7 @@ BUGBOUNTY_HTML = """
       <div class=\"table-responsive\">
         <table class=\"table table-bordered\">
           <thead class=\"table-dark\">
-            <tr><th>Name</th><th>Scope</th><th>Report Link</th></tr>
+            <tr><th>Name</th><th>Scope</th><th>Report Link</th><th></th></tr>
           </thead>
           <tbody>
           {% for p in programs %}
@@ -1064,12 +1065,52 @@ BUGBOUNTY_HTML = """
               <td>{{p.name}}</td>
               <td>{{p.scope}}</td>
               <td><a href=\"{{p.report_url}}\" target=\"_blank\">Report</a></td>
+              <td><a class=\"btn btn-sm btn-primary\" href=\"/hunt/{{loop.index0}}\">Hunt it?</a></td>
             </tr>
           {% endfor %}
           </tbody>
         </table>
       </div>
       <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
+    </div>
+    <footer class=\"text-center mt-5\"><small>تم صناعة هذه الأداة بحب عبر shakbany</small></footer>
+  </body>
+</html>
+"""
+
+HUNT_HTML = """
+<!doctype html>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>Program Details</title>
+    <link id=\"theme\" href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
+    <style>body{font-family:'Inter',sans-serif;padding-top:70px;background:linear-gradient(120deg,#10141f,#1c2640);} a{color:#0dcaf0;}</style>
+    <script>const stored=localStorage.getItem('theme');if(stored){document.getElementById('theme').href=stored;}function toggleTheme(){const el=document.getElementById('theme');const dark='https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css';const light='https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css';el.href=el.href.includes('quartz')?light:dark;localStorage.setItem('theme',el.href);}</script>
+  </head>
+  <body class=\"bg-dark text-light\">
+    <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
+      <div class=\"container\">
+        <a class=\"navbar-brand\" href=\"/\"><i class=\"fa-solid fa-shield-halved me-2\"></i>EmploLeaksGuardian</a>
+      </div>
+    </nav>
+    <div class=\"container\">
+      <h1 class=\"mb-4\">{{program.name}}</h1>
+      <p><strong>Scope:</strong> {{program.scope}}</p>
+      <p><a href=\"{{program.report_url}}\" target=\"_blank\" class=\"btn btn-primary btn-sm\">Report Link</a></p>
+      {% if program.repos %}
+      <h5>Repositories</h5>
+      <ul>
+        {% for r in program.repos %}
+          <li><a href=\"https://github.com/{{r}}\" target=\"_blank\">{{r}}</a></li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No repository list available.</p>
+      {% endif %}
+      <a href=\"/bugbounty\" class=\"btn btn-secondary mt-3\">Back</a>
     </div>
     <footer class=\"text-center mt-5\"><small>تم صناعة هذه الأداة بحب عبر shakbany</small></footer>
   </body>
@@ -1125,6 +1166,14 @@ def bugbounty_page():
         BUGBOUNTY_HTML,
         programs=load_programs(),
     )
+
+@app.route("/hunt/<int:idx>")
+def hunt_program(idx):
+    from utils.bugbounty import load_programs
+    progs = load_programs()
+    if idx < 0 or idx >= len(progs):
+        abort(404)
+    return render_template_string(HUNT_HTML, program=progs[idx])
 
 @app.route("/api/scans")
 def api_scans():

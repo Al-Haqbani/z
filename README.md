@@ -122,9 +122,11 @@ pip install -r requirements.txt
 pip install -e .  # install as package
 ```
 
-Run `python3 emploleaks.py --bugbounty` to print some example bug bounty programs.
-When using the web interface a **Bug Bounty** link in the navigation bar opens a
-page listing known programs so you can check which repositories are in scope.
+Run `python3 emploleaks.py --bugbounty` to print the list of bug bounty programs
+loaded from `data/bugbounty_programs.json` (now over 100 entries).
+In the web interface a **Bug Bounty** link opens a table of all programs with a
+**Hunt it?** button. Clicking it shows the program scope and any known GitHub
+repositories so you can jump directly to targets.
 
 ### Configuration file
 
