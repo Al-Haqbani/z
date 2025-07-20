@@ -662,6 +662,62 @@ class GitHubSearcher(BaseSearcher):
                     q += f" org:{organization}"
                 queries.append(q)
         leaks = []
+        if repo:
+            leaks.extend(
+                self.scan_repo(
+                    repo,
+                    token=self.tokens[0] if self.tokens else None,
+                    silent=self.silent,
+                    progress_callback=progress_callback,
+                    result_callback=result_callback,
+                )
+            )
+            if scan_commits:
+                leaks.extend(
+                    self.scan_repo_commits(
+                        repo,
+                        token=self.tokens[0] if self.tokens else None,
+                        silent=self.silent,
+                        result_callback=result_callback,
+                    )
+                )
+            if scan_wayback:
+                leaks.extend(
+                    self.scan_repo_wayback(
+                        repo,
+                        silent=self.silent,
+                        result_callback=result_callback,
+                    )
+                )
+            if scan_wiki:
+                leaks.extend(
+                    self.scan_repo_wiki(
+                        repo,
+                        token=self.tokens[0] if self.tokens else None,
+                        silent=self.silent,
+                        result_callback=result_callback,
+                    )
+                )
+            if scan_releases:
+                leaks.extend(
+                    self.scan_repo_releases(
+                        repo,
+                        token=self.tokens[0] if self.tokens else None,
+                        silent=self.silent,
+                        result_callback=result_callback,
+                    )
+                )
+            if scan_actions:
+                leaks.extend(
+                    self.scan_actions_logs(
+                        repo,
+                        token=self.tokens[0] if self.tokens else None,
+                        silent=self.silent,
+                        result_callback=result_callback,
+                    )
+                )
+            return leaks
+
         for q in queries:
             page = 1
             while True:
