@@ -191,8 +191,15 @@ def start_web_ui(host="127.0.0.1"):
 def main():
     args = parse_args()
     if args.list_patterns:
+        from rich.table import Table
+        from rich.console import Console
+
+        table = Table(title="Available Leak Patterns")
+        table.add_column("#", style="cyan")
+        table.add_column("Name")
         for idx, name in get_pattern_list():
-            print(f"{idx}. {name}")
+            table.add_row(str(idx), name)
+        Console().print(table)
         return
     if args.bugbounty:
         print_programs()
