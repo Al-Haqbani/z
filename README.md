@@ -195,7 +195,7 @@ Use `python3 emploleaks.py --help` to see every available flag.
 Passing `--docker` will include DockerHub searches alongside GitHub results.
 Run `python3 emploleaks.py --list-patterns` to display the names of all built-in leak patterns.
 
-If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history. Optional switches allow scanning commit history, pull requests and employee gists too, and a **Top Leaks** mode queries GitHub for the most common API keywords like AWS, Slack, HuggingFace and Zendesk keys.
+If you enable **Full Repo Scan**, the GitHub searcher crawls every file in each selected repository (or the entire organization) rather than relying solely on the search API. This thorough mode may take significantly longer. Repository crawling now runs in parallel using multiple threads to speed up large org scans. The **Wayback Repo** option can additionally fetch archived snapshots of those files to detect secrets that were deleted from history. Optional switches allow scanning commit history, pull requests and employee gists too, and a **Top Leaks** mode queries GitHub for the most common API keywords like AWS, Slack, HuggingFace and Zendesk keys.
 You can adjust the maximum number of concurrent search threads with `--threads N`.
 To limit full-auto scans to certain platforms you can pass a comma-separated
 list with `--platforms github,gitlab,dockerhub`.

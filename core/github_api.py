@@ -786,10 +786,14 @@ class GitHubSearcher(BaseSearcher):
                 for user in employees:
                     repos.extend(self.get_user_repos(user, self.tokens[0] if self.tokens else None))
             total = len(repos)
-            for i, r in enumerate(repos, 1):
+
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+
+            def process_repo(r, idx):
+                r_leaks = []
                 if progress_callback:
-                    progress_callback({"repo": r, "index": i, "total": total})
-                leaks.extend(
+                    progress_callback({"repo": r, "index": idx, "total": total, "status": "start"})
+                r_leaks.extend(
                     self.scan_repo(
                         r,
                         token=self.tokens[0] if self.tokens else None,
@@ -799,7 +803,7 @@ class GitHubSearcher(BaseSearcher):
                     )
                 )
                 if scan_history:
-                    leaks.extend(
+                    r_leaks.extend(
                         self.scan_repo_commits(
                             r,
                             token=self.tokens[0] if self.tokens else None,
@@ -808,7 +812,7 @@ class GitHubSearcher(BaseSearcher):
                         )
                     )
                 if scan_prs:
-                    leaks.extend(
+                    r_leaks.extend(
                         self.scan_pull_requests(
                             r,
                             token=self.tokens[0] if self.tokens else None,
@@ -817,13 +821,13 @@ class GitHubSearcher(BaseSearcher):
                         )
                     )
                 if scan_wayback:
-                    leaks.extend(
+                    r_leaks.extend(
                         self.scan_repo_wayback(
                             r, silent=self.silent, result_callback=result_callback
                         )
                     )
                 if scan_wiki:
-                    leaks.extend(
+                    r_leaks.extend(
                         self.scan_repo_wiki(
                             r,
                             token=self.tokens[0] if self.tokens else None,
@@ -832,7 +836,7 @@ class GitHubSearcher(BaseSearcher):
                         )
                     )
                 if scan_releases:
-                    leaks.extend(
+                    r_leaks.extend(
                         self.scan_repo_releases(
                             r,
                             token=self.tokens[0] if self.tokens else None,
@@ -841,7 +845,7 @@ class GitHubSearcher(BaseSearcher):
                         )
                     )
                 if scan_actions:
-                    leaks.extend(
+                    r_leaks.extend(
                         self.scan_actions_logs(
                             r,
                             token=self.tokens[0] if self.tokens else None,
@@ -849,6 +853,14 @@ class GitHubSearcher(BaseSearcher):
                             result_callback=result_callback,
                         )
                     )
+                if progress_callback:
+                    progress_callback({"repo": r, "index": idx, "total": total, "status": "done"})
+                return r_leaks
+
+            with ThreadPoolExecutor(max_workers=min(4, len(repos))) as ex:
+                futures = {ex.submit(process_repo, r, i): r for i, r in enumerate(repos, 1)}
+                for fut in as_completed(futures):
+                    leaks.extend(fut.result())
         if employees and scan_gists:
             for user in employees:
                 leaks.extend(
