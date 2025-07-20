@@ -286,7 +286,8 @@ Select "Recon Scan" from the menu to gather URLs mentioning your target on popul
 You can customize the domains checked by editing `data/recon_services.json` and enable subdomain enumeration using the `scan_subdomains` option.
 
 ### Bug bounty program
-The file `data/bugbounty_programs.json` lists a few public bug bounty programs with reporting links and scope. Run `python3 emploleaks.py --bugbounty` to print them so you know where to report leaks (many programs include GitHub repositories in scope).
+The file `data/bugbounty_programs.json` lists public bug bounty programs with reporting links and scope. Run `python3 emploleaks.py --bugbounty` to print them so you know where to report leaks (many programs include GitHub repositories in scope).  
+Recent additions include lesser known programs from Zoho, Atlassian, DigitalOcean and Twilio so hunters can discover new opportunities.
 
 ### Plugin system
 Custom search modules can be dropped into a `plugins/` folder as Python scripts or YAML files. A Python plugin should subclass `BasePlugin` from `utils.plugin_loader` and implement `search(keyword)` returning a list of leak dictionaries. YAML files may define a simple `name` and list of regex `patterns`. Use `--plugins path1,path2` to load them at runtime.

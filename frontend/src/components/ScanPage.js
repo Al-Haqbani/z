@@ -52,6 +52,8 @@ export default function ScanPage() {
             <TableCell>Source</TableCell>
             <TableCell>File</TableCell>
             <TableCell>Leak Type</TableCell>
+            <TableCell>Severity</TableCell>
+            <TableCell>Active</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -62,6 +64,10 @@ export default function ScanPage() {
                 <TableCell>{r.source}</TableCell>
                 <TableCell><a href={r.file} target="_blank" rel="noreferrer">{r.file}</a></TableCell>
                 <TableCell>{r.leak_type}</TableCell>
+                <TableCell>
+                  <span className={`badge bg-${r.severity==='high'?'danger':r.severity==='medium'?'warning text-dark':r.severity==='low'?'info text-dark':'secondary'}`}>{r.severity||'?'}</span>
+                </TableCell>
+                <TableCell>{r.active===true?'✔️':r.active===false?'❌':'?'}</TableCell>
               </TableRow>
             </FadeIn>
           ))}

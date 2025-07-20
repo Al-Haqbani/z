@@ -7,13 +7,23 @@ export default function Dashboard() {
   const [scans, setScans] = useState([]);
   useEffect(() => { fetch('/api/scans').then(res => res.json()).then(setScans); }, []);
 
-  const metrics = { total: scans ? Object.keys(scans).length : 0 };
+  const metrics = {
+    total: scans ? Object.keys(scans).length : 0,
+    running: scans ? Object.values(scans).filter(s => s.status==='running').length : 0,
+    leaks: scans ? Object.values(scans).reduce((a,b)=>a+b.results.length,0) : 0,
+  };
   return (
     <div>
       <Typography variant="h4" gutterBottom>Scan History</Typography>
       <Grid container spacing={2} sx={{ mb:2 }}>
         <Grid item xs={12} md={3}>
-          <Card sx={{ bgcolor: '#1f1b2d', color: 'white' }}><CardContent><Typography variant="h5">Scans</Typography><Typography>{metrics.total}</Typography></CardContent></Card>
+          <Card sx={{ bgcolor: '#1f1b2d', color: 'white' }}><CardContent><Typography variant="h6">Scans</Typography><Typography>{metrics.total}</Typography></CardContent></Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ bgcolor: '#1f1b2d', color: 'white' }}><CardContent><Typography variant="h6">Running</Typography><Typography>{metrics.running}</Typography></CardContent></Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ bgcolor: '#1f1b2d', color: 'white' }}><CardContent><Typography variant="h6">Leaks</Typography><Typography>{metrics.leaks}</Typography></CardContent></Card>
         </Grid>
       </Grid>
       <TableContainer component={Paper} sx={{ bgcolor: '#1e1e1e' }}>
