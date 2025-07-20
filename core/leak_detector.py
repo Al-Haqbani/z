@@ -1,4 +1,5 @@
 import math
+import os
 import re
 from typing import List, Tuple
 
@@ -7,6 +8,18 @@ from .regex_patterns import LEAK_PATTERNS
 _COMPILED_PATTERNS: List[Tuple[str, re.Pattern]] = [
     (p["name"], re.compile(p["regex"], re.IGNORECASE)) for p in LEAK_PATTERNS
 ]
+
+# Optional exclusion regexes from EMPLOLEAKS_EXCLUDE
+_EXCLUDE_REGEXES = []
+exclude_env = os.environ.get("EMPLOLEAKS_EXCLUDE")
+if exclude_env:
+    for pat in exclude_env.split(','):
+        pat = pat.strip()
+        if pat:
+            try:
+                _EXCLUDE_REGEXES.append(re.compile(pat, re.IGNORECASE))
+            except re.error:
+                pass
 
 # selected pattern names, or None for all
 _ACTIVE_PATTERNS: List[str] | None = None
@@ -68,6 +81,13 @@ def detect_leaks(text, entropy_threshold: float = 3.0, patterns: List[str] | Non
             if key in seen:
                 continue
             seen.add(key)
+            skip = False
+            for ex in _EXCLUDE_REGEXES:
+                if ex.search(val):
+                    skip = True
+                    break
+            if skip:
+                continue
             results.append((name, val))
 
     return results

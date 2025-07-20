@@ -171,6 +171,8 @@ the verbosity of these logs if you need more or less detail.
 counts for all network requests if you need slower or more persistent scanning.
 If you have your own JSON file of regex rules, set `EMPLOLEAKS_EXTRA_PATTERNS`
 to the file path so those patterns are loaded automatically at startup.
+Set `EMPLOLEAKS_EXCLUDE` to a comma-separated list of regex patterns to ignore
+matching secrets that you know are false positives.
 
 ### Repository wordlists
 
