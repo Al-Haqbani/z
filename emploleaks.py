@@ -449,11 +449,10 @@ def main():
                 include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
                 docker_flag = input("Scan DockerHub too? (y/N): ").lower() == "y"
             elif platform == "shorturl":
-                if input("Search by company name? (y/N): ").lower() == "y":
+                dom_in = input("Shortener domain name(s) (comma separated): ").strip()
+                domains = [d.strip() for d in dom_in.split(',') if d.strip()] or None
+                if input("Do you want search shortener URLs with company name only? (y/N): ").lower() == "y":
                     company = input("Company name: ").strip()
-                else:
-                    dom_in = input("Domains (comma separated): ").strip()
-                    domains = [d.strip() for d in dom_in.split(',') if d.strip()] or None
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
