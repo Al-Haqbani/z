@@ -94,4 +94,41 @@
     "scope": "Twilio products and associated GitHub repositories",
     "repos": ["twilio"]
   }
+,
+  {
+    "name": "Agora (YesWeHack)",
+    "report_url": "https://yeswehack.com/programs/agora",
+    "scope": "Agora gouv open source projects",
+    "repos": ["agora-gouv"]
+  },
+  {
+    "name": "Alasco GmbH Bug Bounty",
+    "report_url": "https://yeswehack.com/programs/alasco-gmbh-bug-bounty-program",
+    "scope": "Alasco tech repositories",
+    "repos": ["alasco-tech"]
+  },
+  {
+    "name": "BookBeat Bug Bounty",
+    "report_url": "https://yeswehack.com/programs/bookbeat",
+    "scope": "BookBeat services",
+    "repos": ["BookBeat"]
+  },
+  {
+    "name": "BlaBlaCar Bug Bounty",
+    "report_url": "https://yeswehack.com/programs/bug-bounty-program-blablacar",
+    "scope": "BlaBlaCar applications",
+    "repos": ["blablacar"]
+  },
+  {
+    "name": "Moreficent Bug Bounty",
+    "report_url": "https://bugbase.in/programs/moreficent_bug_bounty",
+    "scope": "Moreficent software",
+    "repos": ["Moreficent"]
+  },
+  {
+    "name": "Razorpay Bug Bounty",
+    "report_url": "https://bugbase.in/programs/razorpay-bugbounty",
+    "scope": "Razorpay infrastructure",
+    "repos": ["razorpay"]
+  }
 ]

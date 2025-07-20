@@ -294,6 +294,7 @@ You can customize the domains checked by editing `data/recon_services.json` and 
 The file `data/bugbounty_programs.json` lists public bug bounty programs with reporting links and scope. Run `python3 emploleaks.py --bugbounty` to print them so you know where to report leaks (many programs include GitHub repositories in scope).  
 Recent additions include lesser known programs from Zoho, Atlassian, DigitalOcean and Twilio so hunters can discover new opportunities.
 
+Additional entries have been imported from the [orgs-data](https://github.com/nikitastupin/orgs-data) project so the list now covers over twenty programs.
 ### Bounty tracker
 Visit `/bounty` on the web interface to record your own bug bounty payouts. Enter the amount and date for each reward and the page will track totals and render a line chart of your progress. Bounty records are stored in the SQLite database so they persist between sessions.
 
