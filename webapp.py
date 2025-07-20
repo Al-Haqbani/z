@@ -507,6 +507,9 @@ STREAM_HTML = """
             <li class=\"list-group-item bg-dark text-light d-flex justify-content-between align-items-center\"><i class=\"fa-solid fa-circle-info text-secondary me-1\"></i>Info<span class=\"badge bg-secondary\" id=\"count-info\">0</span></li>
           </ul>
           <p class=\"small text-muted\">Total leaks: <span id=\"totalLeaks\">0</span></p>
+          <p class=\"small text-muted\">Repositories scanned: <span id=\"repoCount\">0</span></p>
+          <p class=\"small text-muted\">Files scanned: <span id=\"fileCount\">0</span></p>
+          <p class=\"small text-muted\">Employees scanned: <span id=\"empCount\">0</span></p>
           <canvas id=\"sevChart\" class=\"mb-4\"></canvas>
           <canvas id=\"platChart\"></canvas>
         </div>
@@ -685,6 +688,15 @@ STREAM_HTML = """
         if(info.leaks){
           leakTotal = info.leaks;
           document.getElementById('totalLeaks').innerText = leakTotal;
+        }
+        if(info.repos){
+          document.getElementById('repoCount').innerText = info.repos;
+        }
+        if(info.files){
+          document.getElementById('fileCount').innerText = info.files;
+        }
+        if(info.employees){
+          document.getElementById('empCount').innerText = info.employees;
         }
       });
       evt.addEventListener('done',()=>{document.getElementById('done').style.display='block'; evt.close();});

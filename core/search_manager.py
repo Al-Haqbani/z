@@ -154,6 +154,9 @@ class SearchManager:
         searcher = searcher_cls(token=token, **kwargs)
 
         leak_count = 0
+        repo_count = 0
+        file_count = 0
+        emp_count = len(employees) if employees else 0
 
         def wrapped_cb(item, idx):
             nonlocal leak_count
@@ -176,8 +179,20 @@ class SearchManager:
                 wrap_progress({"leaks": leak_count})
 
         def wrap_progress(ev):
+            nonlocal repo_count, file_count
+            if "status" in ev and ev.get("repo"):
+                if ev["status"] == "start":
+                    repo_count += 1
+            if "path" in ev:
+                file_count += 1
             if progress_callback:
                 ev.setdefault("platform", platform)
+                if repo_count:
+                    ev.setdefault("repos", repo_count)
+                if file_count:
+                    ev.setdefault("files", file_count)
+                if emp_count:
+                    ev.setdefault("employees", emp_count)
                 progress_callback(ev)
 
         cb = wrapped_cb if result_callback else None
@@ -257,6 +272,9 @@ class SearchManager:
         results = []
         tokens = tokens or {}
 
+        repo_count = 0
+        file_count = 0
+
         def _worker(name, searcher_cls):
             token = tokens.get(name)
             searcher = searcher_cls(token=token, **kwargs)
@@ -283,8 +301,18 @@ class SearchManager:
                     wrap_progress({"leaks": leak_count})
 
             def wrap_progress(ev):
+                nonlocal repo_count, file_count
+                if "status" in ev and ev.get("repo"):
+                    if ev["status"] == "start":
+                        repo_count += 1
+                if "path" in ev:
+                    file_count += 1
                 if progress_callback:
                     ev.setdefault("platform", name)
+                    if repo_count:
+                        ev.setdefault("repos", repo_count)
+                    if file_count:
+                        ev.setdefault("files", file_count)
                     progress_callback(ev)
 
             cb = wrapped_cb if result_callback else None
