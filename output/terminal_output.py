@@ -3,6 +3,13 @@ from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
 from core.regex_patterns import get_severity
 
+SEVERITY_ICON = {
+    "high": "\U0001F534",  # red circle
+    "medium": "\U0001F7E0",  # orange circle
+    "low": "\U0001F7E1",  # yellow circle
+    "info": "\U0001F535",  # blue circle
+}
+
 
 def _assign_severity(leak_type: str) -> str:
     return get_severity(leak_type)
@@ -21,13 +28,14 @@ def print_results(results):
     for idx, item in enumerate(results, 1):
         sev = item.get("severity") or _assign_severity(item.get("leak_type", ""))
         style = "red" if sev == "high" else "yellow"
+        sev_display = f"{SEVERITY_ICON.get(sev.lower(), '')} {sev}"
         table.add_row(
             str(idx),
             item.get("source", ""),
             item.get("file", ""),
             item.get("leak_type", ""),
             item.get("value", ""),
-            sev,
+            sev_display,
             "True" if item.get("active") else ("False" if item.get("active") is not None else "?"),
             style=style,
         )
@@ -70,6 +78,7 @@ def print_result(item, idx=None):
     idx = idx or 1
     sev = item.get("severity") or _assign_severity(item.get("leak_type", ""))
     style = "red" if sev == "high" else "yellow"
+    sev_display = f"{SEVERITY_ICON.get(sev.lower(), '')} {sev}"
     table = Table(show_header=True if idx == 1 else False)
     table.add_column("#", style="cyan")
     table.add_column("Source")
@@ -84,7 +93,7 @@ def print_result(item, idx=None):
         item.get("file", ""),
         item.get("leak_type", ""),
         item.get("value", ""),
-        sev,
+        sev_display,
         "True" if item.get("active") else ("False" if item.get("active") is not None else "?"),
         style=style,
     )
@@ -130,7 +139,8 @@ def print_summary(results):
     table.add_column("Severity")
     table.add_column("Count", style="cyan")
     for sev in ["high", "medium", "low", "info"]:
-        table.add_row(sev.capitalize(), str(counts.get(sev, 0)))
+        icon = SEVERITY_ICON.get(sev, "")
+        table.add_row(f"{icon} {sev.capitalize()}", str(counts.get(sev, 0)))
     console = Console()
     console.print(table)
     import sys

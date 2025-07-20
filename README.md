@@ -163,6 +163,7 @@ particular **requires** authentication. When no GitHub token is supplied the too
 and skips GitHub results instead of timing out.
 
 Follow the prompts to perform a normal scan on a chosen platform, run the Smart JS scan, or run full auto mode across all supported platforms. When employee scanning is enabled you will be asked for a repository name (owner/repo) and the tool will automatically gather contributor usernames. If you disable employee scanning you may still provide a repository path so only that repo is searched. Results now stream to the terminal immediately whenever a leak is found, and the same events are forwarded to the web UI if it is running. After each scan a timestamped HTML report, JSON file, and PDF file are saved under the directory specified by the `EMPLOLEAKS_OUTPUT` environment variable (default `reports`). All findings are also stored in a small SQLite database at `reports/scan_results.db` (override with `EMPLOLEAKS_DB`). Optionally, the raw results can be uploaded to **jsontr.ee** to share an interactive JSON map. You can also launch the web interface from the menu, which mirrors CLI scans automatically. When started from the CLI, the interface opens automatically on http://localhost:8000 so you can follow progress live.
+CLI tables now include severity icons (🔴, 🟠, 🟡, 🔵) so you can spot high-risk leaks instantly.
 All console output is saved to `logs/runtime.log` for later review.
 Set the `EMPLOLEAKS_THREADS` environment variable to control the default number
 of concurrent threads used in full-auto mode.
