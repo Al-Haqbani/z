@@ -114,6 +114,7 @@ INDEX_HTML = """
 <button class="btn btn-sm btn-secondary ms-2" onclick="toggleTheme()">Toggle Theme</button>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/scans\">Scans</a></li>
             <li class=\"nav-item\"><a class=\"nav-link\" href=\"/bugbounty\">Bug Bounty</a></li>
+            <li class=\"nav-item\"><a class=\"nav-link\" href=\"/bounty\">Bounty</a></li>
           </ul>
         </div>
       </div>
@@ -1129,6 +1130,62 @@ HUNT_HTML = """
 </html>
 """
 
+BOUNTY_HTML = """
+<!doctype html>
+<html lang=\"en\">
+  <head>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <title>Bounty Tracker</title>
+    <link id=\"theme\" href=\"https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css\" rel=\"stylesheet\">
+    <link href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\" rel=\"stylesheet\">
+    <style>body{font-family:'Inter',sans-serif;padding-top:70px;background:linear-gradient(120deg,#10141f,#1c2640);} a{color:#0dcaf0;}</style>
+    <script src=\"https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js\"></script>
+    <script>const stored=localStorage.getItem('theme');if(stored){document.getElementById('theme').href=stored;}function toggleTheme(){const el=document.getElementById('theme');const dark='https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/quartz/bootstrap.min.css';const light='https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/flatly/bootstrap.min.css';el.href=el.href.includes('quartz')?light:dark;localStorage.setItem('theme',el.href);}</script>
+  </head>
+  <body class=\"bg-dark text-light\">
+    <nav class=\"navbar navbar-expand-lg navbar-dark bg-primary fixed-top\">
+      <div class=\"container\">
+        <a class=\"navbar-brand\" href=\"/\"><i class=\"fa-solid fa-shield-halved me-2\"></i>EmploLeaksGuardian</a>
+        <button class=\"btn btn-sm btn-secondary ms-auto\" onclick=\"toggleTheme()\">Toggle Theme</button>
+      </div>
+    </nav>
+    <div class=\"container mt-4\">
+      <h1 class=\"mb-4\">Bounty Tracker</h1>
+      <form class=\"row g-2 mb-4\" method=\"post\" action=\"/bounty/add\">
+        <div class=\"col-auto\">
+          <input required type=\"date\" name=\"day\" class=\"form-control form-control-sm\">
+        </div>
+        <div class=\"col-auto\">
+          <input required type=\"number\" step=\"0.01\" name=\"amount\" placeholder=\"Amount\" class=\"form-control form-control-sm\">
+        </div>
+        <div class=\"col\">
+          <input type=\"text\" name=\"note\" placeholder=\"Note\" class=\"form-control form-control-sm\">
+        </div>
+        <div class=\"col-auto\">
+          <button class=\"btn btn-sm btn-primary\" type=\"submit\">Add</button>
+        </div>
+      </form>
+      <canvas id=\"chart\" height=\"120\"></canvas>
+      <table class=\"table table-bordered table-dark table-sm mt-4\">
+        <thead><tr><th>Date</th><th>Amount</th><th>Note</th></tr></thead>
+        <tbody>
+          {% for b in bounties %}<tr><td>{{b.day}}</td><td>{{'%.2f'|format(b.amount)}}</td><td>{{b.note or ''}}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+      <h5>Total: {{total}}</h5>
+      <a href=\"/\" class=\"btn btn-secondary mt-3\">Back</a>
+    </div>
+    <footer class=\"text-center mt-5\"><small>تم صناعة هذه الأداة بحب عبر shakbany</small></footer>
+    <script>
+      const data={{bounties|tojson}};
+      const ctx=document.getElementById('chart');
+      new Chart(ctx,{type:'line',data:{labels:data.map(d=>d.day),datasets:[{label:'Bounty',data:data.map(d=>d.amount),borderColor:'#7F3FBF',tension:.3}]},options:{scales:{y:{beginAtZero:true}}}});
+    </script>
+  </body>
+</html>
+"""
+
 @app.route("/")
 def index():
     selected = request.args.get("platform")
@@ -1186,6 +1243,23 @@ def hunt_program(idx):
     if idx < 0 or idx >= len(progs):
         abort(404)
     return render_template_string(HUNT_HTML, program=progs[idx])
+
+
+@app.route('/bounty')
+def bounty_page():
+    from utils.database import get_bounties, total_bounty
+    return render_template_string(BOUNTY_HTML, bounties=get_bounties(), total=total_bounty())
+
+
+@app.route('/bounty/add', methods=['POST'])
+def add_bounty_route():
+    from utils.database import add_bounty
+    amount = float(request.form.get('amount', 0))
+    day = request.form.get('day')
+    note = request.form.get('note')
+    if day:
+        add_bounty(amount, day, note)
+    return redirect('/bounty')
 
 @app.route("/api/scans")
 def api_scans():

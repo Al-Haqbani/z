@@ -43,6 +43,16 @@ def init_db():
             )
             """
         )
+        c.execute(
+            """
+            CREATE TABLE IF NOT EXISTS bounties (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                amount REAL,
+                day TEXT,
+                note TEXT
+            )
+            """
+        )
 
 
 def record_scan(scan_id: str, keyword: str, started: str):
@@ -79,3 +89,24 @@ def insert_leaks(scan_id: str, leaks: Iterable[Dict]):
                 for leak in leaks
             ],
         )
+
+
+def add_bounty(amount: float, day: str, note: str | None = None):
+    with get_conn() as conn:
+        conn.execute(
+            "INSERT INTO bounties(amount, day, note) VALUES(?,?,?)",
+            (amount, day, note),
+        )
+
+
+def get_bounties():
+    with get_conn() as conn:
+        cur = conn.execute("SELECT id, amount, day, note FROM bounties ORDER BY day")
+        return [dict(id=row[0], amount=row[1], day=row[2], note=row[3]) for row in cur.fetchall()]
+
+
+def total_bounty():
+    with get_conn() as conn:
+        cur = conn.execute("SELECT SUM(amount) FROM bounties")
+        row = cur.fetchone()
+        return row[0] or 0
