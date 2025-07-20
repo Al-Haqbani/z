@@ -1,0 +1,97 @@
+[
+  {
+    "name": "GitHub Security Bug Bounty",
+    "report_url": "https://hackerone.com/github",
+    "scope": "All repositories under github.com",
+    "repos": ["github", "cli", "docs"]
+  },
+  {
+    "name": "Google VRP",
+    "report_url": "https://bughunters.google.com/",
+    "scope": "Google services and open-source projects",
+    "repos": ["google", "googleapis", "tensorflow"]
+  },
+  {
+    "name": "Uber Bug Bounty",
+    "report_url": "https://hackerone.com/uber",
+    "scope": "Uber apps and infrastructure, including GitHub repos"
+  },
+  {
+    "name": "Microsoft Bug Bounty",
+    "report_url": "https://msrc.microsoft.com/report",
+    "scope": "Microsoft products and cloud services",
+    "repos": ["microsoft", "Azure", "dotnet"]
+  },
+  {
+    "name": "Apple Security Bounty",
+    "report_url": "https://security.apple.com/bounty/",
+    "scope": "Apple services and open-source projects",
+    "repos": ["apple"]
+  },
+  {
+    "name": "Meta Bug Bounty",
+    "report_url": "https://www.facebook.com/whitehat",
+    "scope": "Facebook, Instagram, WhatsApp, and other Meta apps",
+    "repos": ["facebook", "react", "metasdk"]
+  },
+  {
+    "name": "GitLab Bug Bounty",
+    "report_url": "https://hackerone.com/gitlab",
+    "scope": "GitLab.com and first-party projects",
+    "repos": ["gitlab-org"]
+  },
+  {
+    "name": "Twitter Bug Bounty",
+    "report_url": "https://hackerone.com/twitter",
+    "scope": "Twitter and related properties",
+    "repos": ["twitter"]
+  },
+  {
+    "name": "Yahoo Bug Bounty",
+    "report_url": "https://hackerone.com/yahoo",
+    "scope": "Yahoo web properties",
+    "repos": ["yahoo"]
+  },
+  {
+    "name": "Shopify Bug Bounty",
+    "report_url": "https://hackerone.com/shopify",
+    "scope": "Shopify core and apps",
+    "repos": ["Shopify"]
+  },
+  {
+    "name": "Slack Bug Bounty",
+    "report_url": "https://hackerone.com/slack",
+    "scope": "Slack apps and infrastructure",
+    "repos": ["slackapi"]
+  },
+  {
+    "name": "Dropbox Bug Bounty",
+    "report_url": "https://hackerone.com/dropbox",
+    "scope": "Dropbox services and open-source projects",
+    "repos": ["dropbox"]
+  },
+  {
+    "name": "Zoho Security Rewards Program",
+    "report_url": "https://bugbounty.zoho.com/",
+    "scope": "Zoho applications and services",
+    "repos": ["zoho"]
+  },
+  {
+    "name": "Atlassian Vulnerability Program",
+    "report_url": "https://www.atlassian.com/trust/security/bug-bounty",
+    "scope": "Atlassian cloud products and Bitbucket repositories",
+    "repos": ["atlassian"]
+  },
+  {
+    "name": "DigitalOcean Bug Bounty",
+    "report_url": "https://hackerone.com/digitalocean",
+    "scope": "DigitalOcean services and open-source projects",
+    "repos": ["digitalocean"]
+  },
+  {
+    "name": "Twilio Vulnerability Disclosure",
+    "report_url": "https://www.twilio.com/docs/security/vulnerability-reporting",
+    "scope": "Twilio products and associated GitHub repositories",
+    "repos": ["twilio"]
+  }
+]
