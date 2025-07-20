@@ -390,65 +390,63 @@ def main():
                 "Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog/gitea/jsfile/shorturl): "
             )
             keyword = input("Keyword: ")
-            use_emp = input("Search employee accounts? (y/N): ").lower() == "y"
             employees = None
             repo = None
             only_emp = False
-            if use_emp:
-                repo = input("GitHub repository (owner/repo) for lookup: ")
-                only_emp = (
-                    input(
-                        "Search only employees mentioned in the company repository? (y/N): "
-                    ).lower()
-                    == "y"
-                )
-                if only_emp:
-                    emp_in = input("Employee usernames (comma separated): ").strip()
-                    employees = [e.strip() for e in emp_in.split(',') if e.strip()] or None
-                else:
-                    org_emp = input("Organization name for employee lookup (blank to skip): ").strip()
-                    if org_emp:
-                        employees = GitHubSearcher.get_org_members(org_emp, github_token)
-                    if not employees:
+            company = ""
+            domains = None
+            org = None
+            deep_scan = full_repo = history = prs = gists = False
+            top_leaks = wayback = wiki = releases = actions = False
+            include_buckets = docker_flag = False
+            verify_ai = active_verify = notify = False
+            selected_patterns = None
+            if platform == "github":
+                if input("Search employee accounts? (y/N): ").lower() == "y":
+                    repo = input("GitHub repository (owner/repo) for lookup: ")
+                    only_emp = (
+                        input("Search only employees mentioned in the company repository? (y/N): ").lower()
+                        == "y"
+                    )
+                    if only_emp:
                         emp_in = input("Employee usernames (comma separated): ").strip()
                         employees = [e.strip() for e in emp_in.split(',') if e.strip()] or None
-            elif platform == "github":
-                repo = (
-                    input("Repository to scan (owner/repo, blank to skip): ").strip()
-                    or None
-                )
+                    else:
+                        org_emp = input("Organization name for employee lookup (blank to skip): ").strip()
+                        if org_emp:
+                            employees = GitHubSearcher.get_org_members(org_emp, github_token)
+                        if not employees:
+                            emp_in = input("Employee usernames (comma separated): ").strip()
+                            employees = [e.strip() for e in emp_in.split(',') if e.strip()] or None
+                else:
+                    repo = input("Repository to scan (owner/repo, blank to skip): ").strip() or None
+                if input("Scan entire GitHub org? (y/N): ").lower() == "y":
+                    org = input("Organization name: ")
+                deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
+                full_repo = input("Full repo scan? (y/N): ").lower() == "y"
+                history = input("Scan commit history? (y/N): ").lower() == "y"
+                prs = input("Scan pull requests? (y/N): ").lower() == "y"
+                gists = input("Scan employee gists? (y/N): ").lower() == "y"
+                top_leaks = input("Search top leaks? (y/N): ").lower() == "y"
+                if input("Do you want to select specific leak types? (y/N): ").lower() == "y":
+                    print("Available leak patterns:")
+                    for idx, name in get_pattern_list():
+                        print(f"{idx}. {name}")
+                    pattern_in = input("Pattern numbers to scan (comma separated, blank for all): ").strip()
+                    selected_patterns = parse_pattern_selection(pattern_in)
+                    set_active_patterns(selected_patterns)
+                wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
+                wiki = input("Scan repository wiki? (y/N): ").lower() == "y"
+                releases = input("Scan releases? (y/N): ").lower() == "y"
+                actions = input("Scan actions logs? (y/N): ").lower() == "y"
+                include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
+                docker_flag = input("Scan DockerHub too? (y/N): ").lower() == "y"
             elif platform == "shorturl":
                 if input("Search by company name? (y/N): ").lower() == "y":
-                    repo = None
                     company = input("Company name: ").strip()
-                    domains = None
                 else:
-                    company = ""
                     dom_in = input("Domains (comma separated): ").strip()
                     domains = [d.strip() for d in dom_in.split(',') if d.strip()] or None
-            org = None
-            if input("Scan entire GitHub org? (y/N): ").lower() == "y":
-                org = input("Organization name: ")
-            deep_scan = input("Deep GitHub scan? (y/N): ").lower() == "y"
-            full_repo = input("Full repo scan? (y/N): ").lower() == "y"
-            history = input("Scan commit history? (y/N): ").lower() == "y"
-            prs = input("Scan pull requests? (y/N): ").lower() == "y"
-            gists = input("Scan employee gists? (y/N): ").lower() == "y"
-            top_leaks = input("Search top leaks? (y/N): ").lower() == "y"
-            pattern_in = ""
-            if input("Do you want to select specific leak types? (y/N): ").lower() == "y":
-                print("Available leak patterns:")
-                for idx, name in get_pattern_list():
-                    print(f"{idx}. {name}")
-                pattern_in = input("Pattern numbers to scan (comma separated, blank for all): ").strip()
-            selected_patterns = parse_pattern_selection(pattern_in)
-            set_active_patterns(selected_patterns)
-            wayback = input("Scan Wayback snapshots? (y/N): ").lower() == "y"
-            wiki = input("Scan repository wiki? (y/N): ").lower() == "y"
-            releases = input("Scan releases? (y/N): ").lower() == "y"
-            actions = input("Scan actions logs? (y/N): ").lower() == "y"
-            include_buckets = input("Search open buckets? (y/N): ").lower() == "y"
-            docker_flag = input("Scan DockerHub too? (y/N): ").lower() == "y"
             verify_ai = input("Verify leaks with AI? (y/N): ").lower() == "y"
             active_verify = input("Active token verify? (y/N): ").lower() == "y"
             notify = input("Send Telegram/Discord alerts? (y/N): ").lower() == "y"
