@@ -1,0 +1,10 @@
+Googleai
+Sallaapp
+Uber
+OpenAI
+Facebook
+Twitter
+Dropbox
+Amazon
+GitHub
+GitLab
