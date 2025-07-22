@@ -40,7 +40,7 @@ The CLI now highlights the severity of each finding in color for quick triage.
 Each built‑in regex pattern carries a default severity (high or medium) and that
 value is used when displaying results.
 When active verification is enabled, each leak is tested with a tiny HTTP request. Unverified results are discarded so the report only lists tokens that still work.
-Verified leaks include a small **PoC** command showing the curl request that confirmed the token is valid.
+Verified leaks include a small **PoC** command showing the curl request that confirmed the token is valid. Results tables provide copy buttons next to each secret and PoC so you can reuse them quickly.
 All verification requests go through the same backoff helper used for normal HTTP traffic,
 rotating user agents and retrying automatically so network hiccups don't cause false negatives.
 Public GitHub Gists are also scanned to catch secrets that might be shared outside repositories, including gists owned by employees when that option is selected.

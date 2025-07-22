@@ -662,7 +662,7 @@ STREAM_HTML = """
         row.className=(sev==='high'?'table-danger':(sev==='medium'?'table-warning':'table-light'))+' fade';
         const activeVal=data.active===null?'?':(data.active?'<span class="badge bg-success">True</span>':'<span class="badge bg-secondary">False</span>');
         const icon = PLATFORM_ICONS[plat] || 'fa-solid fa-circle';
-        const pocCol = data.poc ? `<code>${data.poc}</code>` : '';
+        const pocCol = data.poc ? `<code>${data.poc}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.poc}"><i class=\"fa fa-copy\"></i></button>` : '';
         const shotCol = data.screenshot ? `<img src="/screenshots/${scan_id}/${data.screenshot}" style="max-width:150px">` : '';
         const sevBadge = `<span class="badge ${sev==='high'?'bg-danger':(sev==='medium'?'bg-warning text-dark':sev==='low'?'bg-info text-dark':'bg-secondary')}">${sev}</span>`;
         row.innerHTML=`<td>${idx}</td><td><i class="${icon} me-1"></i>${data.source}</td><td><a href="${data.file}" target="_blank">${data.file}</a></td><td>${data.leak_type}</td><td><code>${data.value}</code> <button class="btn btn-sm btn-secondary ms-1 copy-btn" data-val="${data.value}"><i class="fa fa-copy"></i></button></td><td>${sevBadge}</td><td>${activeVal}</td><td>${pocCol}</td><td>${shotCol}</td>`;
