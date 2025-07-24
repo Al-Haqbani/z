@@ -173,7 +173,9 @@ of concurrent threads used in full-auto mode.
 Set `EMPLOLEAKS_LOG_LEVEL` (e.g. `DEBUG`, `INFO`, `WARNING`) to change
 the verbosity of these logs if you need more or less detail.
 `EMPLOLEAKS_TIMEOUT` and `EMPLOLEAKS_RETRIES` can adjust HTTP timeouts and retry
-counts for all network requests if you need slower or more persistent scanning.
+counts for all network requests.
+`EMPLOLEAKS_ENTROPY` controls the Shannon entropy threshold (default `3.0`) so
+you can tune how strict leak detection is.
 If you have your own JSON file of regex rules, set `EMPLOLEAKS_EXTRA_PATTERNS`
 to the file path so those patterns are loaded automatically at startup.
 Set `EMPLOLEAKS_EXCLUDE` to a comma-separated list of regex patterns to ignore

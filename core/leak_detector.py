@@ -41,6 +41,12 @@ def _build_master_regex() -> re.Pattern | None:
 
 _MASTER_REGEX = _build_master_regex()
 
+# entropy threshold can be overridden via EMPLOLEAKS_ENTROPY
+try:
+    _DEFAULT_ENTROPY = float(os.environ.get("EMPLOLEAKS_ENTROPY", "3.0"))
+except ValueError:
+    _DEFAULT_ENTROPY = 3.0
+
 
 def _entropy(value: str) -> float:
     """Calculate Shannon entropy of the provided string."""
@@ -56,7 +62,7 @@ def _entropy(value: str) -> float:
     return ent
 
 
-def detect_leaks(text, entropy_threshold: float = 3.0, patterns: List[str] | None = None):
+def detect_leaks(text, entropy_threshold: float = _DEFAULT_ENTROPY, patterns: List[str] | None = None):
     """Return list of (name, value) for each pattern found in text.
 
     A simple entropy check filters obvious false positives.
