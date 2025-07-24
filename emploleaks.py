@@ -236,6 +236,7 @@ def main():
         "bitbucket": bitbucket_token,
         "swaggerhub": swagger_token,
         "grayhat": grayhat_token,
+        "googlevrp": None,
         "shorturl": short_token,
         "trufflehog": github_token,
         "gitea": gitea_token,
@@ -398,7 +399,7 @@ def main():
         if choice == "1":
             start_web_ui(args.host)
             platform = input(
-                "Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog/gitea/jsfile/shorturl): "
+                "Platform (github/gitlab/bitbucket/swaggerhub/dockerhub/huggingface/npm/pypi/reddit/pastebin/gist/grayhat/trufflehog/gitea/jsfile/shorturl/googlevrp): "
             )
             keyword = input("Keyword: ")
             employees = None

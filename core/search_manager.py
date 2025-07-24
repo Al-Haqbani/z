@@ -11,6 +11,7 @@ from .gist_searcher import GitHubGistSearcher
 from .bitbucket_scraper import BitbucketSearcher
 from .grayhat_scraper import GrayHatSearcher
 from .gitea_api import GiteaSearcher
+from .googlevrp_searcher import GoogleVRPSearcher
 from .recon_searcher import ReconSearcher
 from .jsfile_searcher import JSFileSearcher
 from .trufflehog_searcher import TruffleHogSearcher
@@ -36,6 +37,7 @@ class SearchManager:
         "gist": GitHubGistSearcher,
         "grayhat": GrayHatSearcher,
         "gitea": GiteaSearcher,
+        "googlevrp": GoogleVRPSearcher,
         "recon": ReconSearcher,
         "jsfile": JSFileSearcher,
         "trufflehog": TruffleHogSearcher,
