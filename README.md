@@ -19,6 +19,7 @@ Recent updates also integrate private key signatures (RSA, DSA, EC and PGP) and 
 Additional patterns now detect Supabase, Vercel, Railway, Kaggle, Asana and Bugcrowd tokens for even broader coverage. Slack bot tokens, HuggingFace access tokens and Zendesk secrets are also included so leaks from those services are flagged. Recent updates add **Anthropic** and **Gemini** API keys so modern AI services are covered.
 New patterns also detect GitHub app secrets, GitHub Enterprise PATs, Telegram API credentials and ChatGPT API keys. We incorporated leak types shared by security researchers so tokens like *Mistral AI keys*, *Zoom JWTs* and *Discord webhooks* are recognized as well.
 Okta API tokens and Azure client secrets are included too, expanding coverage of enterprise services. Trello and Dropbox API tokens have also been added to the detection rules. Recent updates extend coverage to **Ollama** and **Perplexity AI** keys as well.
+Recent updates also add **DeepL** authentication keys and **SerpAPI** keys, further broadening support for popular AI and search services.
 
 To further reduce false positives, matches are filtered using a small entropy check. Short or low‑entropy strings are ignored unless they resemble real credentials. Generic patterns also require at least one digit so ordinary words like `generator-app` aren't flagged.
 

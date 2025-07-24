@@ -94,6 +94,8 @@ def _load_patterns() -> List[Dict[str, str]]:
         {"name": "Gemini API Key", "regex": r"gsk_[A-Za-z0-9]{20,}"},
         {"name": "Ollama API Key", "regex": r"ollama_[A-Za-z0-9]{30,}"},
         {"name": "Perplexity API Key", "regex": r"pplx_[A-Za-z0-9]{40}"},
+        {"name": "DeepL Auth Key", "regex": r"(?i)deepl[-_]?auth[-_]?key[\\s\"'=:\-]*([a-f0-9]{32}:[a-z]{2})"},
+        {"name": "SerpAPI Key", "regex": r"(?i)serpapi[_-]?key[\\s\"'=:\-]*([a-z0-9]{32})"},
     ]
 
 
