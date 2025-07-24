@@ -274,6 +274,12 @@ For convenience this logic is also available as a standalone platform named
 `jsfile` so you can include archived JavaScript scanning when running normal or
 full‑auto scans. Simply choose `jsfile` as the platform and supply the target
 domain.
+The `hidden path` menu option builds on this logic to fetch code from a GitHub
+repository, extract URL paths, and test them against a chosen domain. You can
+also run a simple **API fuzz** routine that probes common paths such as `/api`,
+`/api/v1` and `/api/login` to quickly check a site for typical API endpoints.
+A helper script attempts to discover the real IP address behind Cloudflare by
+resolving a few common subdomains like `direct` or `origin`.
 A fourth option allows scanning a list of JavaScript URLs stored in a text file.
 
 ```bash

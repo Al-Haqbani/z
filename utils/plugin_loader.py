@@ -1,6 +1,9 @@
 import re
 import importlib.util
-import yaml
+try:
+    import yaml
+except Exception:  # pragma: no cover - optional dependency
+    yaml = None
 from pathlib import Path
 from types import ModuleType
 from typing import List

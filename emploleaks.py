@@ -393,7 +393,7 @@ def main():
     # Interactive menu fallback
     while True:
         print(
-            "\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. JS File List Scan\n5. Recon Scan\n6. Web Interface\n7. Build Wordlist\n8. Exit"
+            "\nOptions:\n1. Normal Scan\n2. Full Auto Mode\n3. Smart JS Scan\n4. JS File List Scan\n5. Recon Scan\n6. Hidden Path Scan\n7. Fuzz API Paths\n8. Web Interface\n9. Build Wordlist\n10. Exit"
         )
         choice = input("Select option: ")
         if choice == "1":
@@ -724,11 +724,25 @@ def main():
             else:
                 print("No URLs found.")
         elif choice == "6":
+            repo = input("GitHub repository (owner/repo): ").strip()
+            domain = input("Domain to test paths on: ").strip()
+            from utils.github_hidden_paths import fetch_repo_paths, test_paths
+            paths = fetch_repo_paths(repo, github_token)
+            results = test_paths(domain, paths)
+            for r in results:
+                print(f"{r['path']} GET={r['get']} POST={r['post']}")
+        elif choice == "7":
+            domain = input("Domain to fuzz: ").strip()
+            from utils.fuzz_api_paths import fuzz_api
+            results = fuzz_api(domain)
+            for r in results:
+                print(f"{r['path']} -> {r['status']}")
+        elif choice == "8":
             if web_app:
                 web_app.run(port=8000)
             else:
                 print("Web interface not available (Flask missing)")
-        elif choice == "7":
+        elif choice == "9":
             keyword = input("Keyword or domain for wordlist: ")
             repo = input("Repository (owner/repo) for additional words, blank to skip: ").strip() or None
             repos = [repo] if repo else []
@@ -740,7 +754,7 @@ def main():
             from utils.wordlist_builder import build_wordlist
             path = build_wordlist(keyword, repos=repos)
             print(f"Wordlist saved to {path}")
-        elif choice == "8":
+        elif choice == "10":
             sys.exit()
         else:
             print("Invalid option")
